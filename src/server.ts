@@ -9,9 +9,11 @@ import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import corsOptions from './config/corsConfig';
+import connectToDb from './utils/connectToDb';
 
 // Routers import
-import testRouter from './routes/api/v1/test.routes';
+import testRouter from './routes/test.routes';
+import userRouter from './routes/user.routes';
 
 // creating an express app
 const app: Application = express();
@@ -40,6 +42,7 @@ app.use(fileUpload());
 
 // Routes
 app.use('/api/v1/test', testRouter);
+app.use('/api/v1/user', userRouter);
 
 // JWT Verification
 
@@ -47,10 +50,6 @@ app.use('/api/v1/test', testRouter);
 
 // 404
 app.all('*', (req: Request, res: Response) => {
-  res.status(404);
-  if (req.accepts('html')) {
-    res.sendFile(path.join(__dirname, '..', 'views', '404.html'));
-  }
   if (req.accepts('json')) {
     res.json({ error: '404 not found' });
   }
@@ -62,8 +61,11 @@ app.all('*', (req: Request, res: Response) => {
 // Error handling
 
 // Listening
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(
     `server running on port ${PORT}, in ${process.env.NODE_ENV} enviroment`
   );
+
+  // Connect To Database
+  await connectToDb();
 });
