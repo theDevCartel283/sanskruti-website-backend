@@ -9,11 +9,15 @@ import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import corsOptions from './config/corsConfig';
+import verifyJwt from './middleware/verifyJwt';
 import connectToDb from './utils/connectToDb';
 
 // Routers import
 import testRouter from './routes/test.routes';
 import userRouter from './routes/user.routes';
+
+// Protected Router Imports
+import userProtectedRouter from './routes/user.protectedRoutes';
 
 // creating an express app
 const app: Application = express();
@@ -45,8 +49,10 @@ app.use('/api/v1/test', testRouter);
 app.use('/api/v1/user', userRouter);
 
 // JWT Verification
+app.use(verifyJwt);
 
 // Protected Routes
+app.use('/api/v1/user', userProtectedRouter);
 
 // 404
 app.all('*', (req: Request, res: Response) => {

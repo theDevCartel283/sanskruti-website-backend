@@ -4,13 +4,18 @@ import { ReqUserObject } from '../schema/user.schema';
 import bcrypt from 'bcrypt';
 import { ReqUserNamePwd } from '../schema/user.schema';
 import jwt from 'jsonwebtoken';
+import { VerifyRequest } from '../middleware/verifyJwt';
 
+// Register
 export const handleRegister = async (
   req: Request<{}, {}, ReqUserObject>,
   res: Response
 ) => {
   const userAlreadyExists = await UserModel.findOne({
-    username: req.body.username,
+    $or: [
+      { username: req.body.username }, // check if username exists
+      { email: req.body.email }, // check if email exists
+    ],
   });
 
   // check if user already exists
@@ -44,6 +49,7 @@ export const handleRegister = async (
   }
 };
 
+// Login
 export const handleAuthentication = async (
   req: Request<{}, {}, ReqUserNamePwd>,
   res: Response
@@ -55,7 +61,7 @@ export const handleAuthentication = async (
   if (!foundUser)
     return res
       .status(401)
-      .send({ message: 'usernaem or password is incorrect' }); // Unauthorized
+      .send({ message: 'username or password is incorrect' }); // Unauthorized
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
@@ -105,4 +111,60 @@ export const handleAuthentication = async (
   } else {
     res.status(401).send('username or password is incorrect');
   }
+};
+
+// Protected Routes Controllers
+// Get User Details
+export const handleGetUser = async (
+  req: VerifyRequest<null, null, null>,
+  res: Response
+) => {
+  const username = req.username;
+
+  // username doesn't exist in jwt token
+  if (!username) return res.status(404).send('user not found');
+
+  const user = await UserModel.findOne({ username: username });
+
+  // username doesn't exist in db
+  if (!user) return res.status(404).send('user not found');
+
+  const userTrimmend = {
+    username: user.username,
+    name: user.name,
+    email: user.email,
+    dob: user.dob,
+    mobileNo: user.mobileNo,
+    address: user.address,
+  };
+
+  res.status(200).send(userTrimmend);
+};
+
+// Logout User
+export const handleLogout = async (
+  req: VerifyRequest<null, null, null>,
+  res: Response
+) => {
+  const username = req.username;
+
+  // username doesn't exist in jwt token
+  if (!username) return res.send(200).send('logged out');
+
+  const user = await UserModel.findOneAndUpdate(
+    { username: username },
+    { refreshToken: 'null' }
+  );
+
+  // username doesn't exist in db
+  if (!user) return res.send(200).send('user not found');
+
+  // clear cookie
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  res.status(200).send(`user ${user.username} was successfully logged out`);
 };
