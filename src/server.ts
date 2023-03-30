@@ -9,11 +9,12 @@ import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import corsOptions from './config/corsConfig';
-import verifyJwt from './middleware/verifyJwt';
-import connectToDb from './utils/connectToDb';
+import verifyAccessJwt from './middleware/verifyJwt';
+import connectToDb from './utils/connectToDb.utils';
 
 // Routers import
 import testRouter from './routes/test.routes';
+import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
 
 // Protected Router Imports
@@ -31,25 +32,24 @@ app.use(cors(corsOptions));
 
 // Middleware
 // handle url encoded data / form data
-app.use(
-  express.urlencoded({ extended: true, parameterLimit: 100000, limit: '50mb' })
-);
+app.use(express.urlencoded({ extended: false }));
 
 // parse json
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json());
 
 // middleware for cookies
 app.use(cookieParser());
 
 // File Upload
-app.use(fileUpload());
+// app.use(fileUpload());
 
 // Routes
 app.use('/api/v1/test', testRouter);
+app.use('/api/v1/refresh', refreshRouter);
 app.use('/api/v1/user', userRouter);
 
-// JWT Verification
-app.use(verifyJwt);
+// Access JWT Verification
+app.use(verifyAccessJwt);
 
 // Protected Routes
 app.use('/api/v1/user', userProtectedRouter);

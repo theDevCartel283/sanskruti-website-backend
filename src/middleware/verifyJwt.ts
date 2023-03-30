@@ -6,16 +6,13 @@ export type VerifyRequest<TParams, TBody, TQuery> = Request<
   {},
   TBody,
   TQuery
-> & { username?: string };
+>;
 
-const verifyJwt = (
-  req: VerifyRequest<null, null, null>,
-  res: Response,
-  next: NextFunction
-) => {
+const verifyAccessJwt = (req: Request, res: Response, next: NextFunction) => {
   const header = (req.headers['authorization'] ||
     req.headers['Authorization']) as string;
-  if (!header?.startsWith('Bearer ')) return res.sendStatus(401); // Unauthorized
+  if (!header?.startsWith('Bearer '))
+    return res.status(401).send({ message: 'access token not found' }); // Unauthorized
 
   // get access token
   const token = header.split(' ')[1];
@@ -28,9 +25,10 @@ const verifyJwt = (
   }
   jwt.verify(token, access_public, (err, decoded: any) => {
     if (err) return res.sendStatus(403); // Forbidden
-    req.username = decoded.username;
+    req.body.username = decoded.username;
+    req.body.userRole = decoded.userRole;
     next();
   });
 };
 
-export default verifyJwt;
+export default verifyAccessJwt;
