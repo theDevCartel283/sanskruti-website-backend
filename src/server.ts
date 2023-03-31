@@ -13,7 +13,7 @@ import verifyAccessJwt from './middleware/verifyJwt';
 import connectToDb from './utils/connectToDb.utils';
 
 // Routers import
-import testRouter from './routes/test.routes';
+import healthCheckRouter from './routes/healthCheck.routes';
 import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
 
@@ -22,29 +22,28 @@ import userProtectedRouter from './routes/user.protectedRoutes';
 
 // creating an express app
 const app: Application = express();
-const PORT = process.env.PORT || 3500;
+const PORT = Number(process.env.PORT) || 3500;
 
-// handle options credentials check before cors
-// and fetch cookes credentials requirement
-// app.use(credentials);
 // Cors - Cross Origin Resource Sharing
 app.use(cors(corsOptions));
 
 // Middleware
 // handle url encoded data / form data
-app.use(express.urlencoded({ extended: false }));
+app.use(
+  express.urlencoded({ extended: false, parameterLimit: 100000, limit: '50mb' })
+);
 
 // parse json
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // middleware for cookies
 app.use(cookieParser());
 
 // File Upload
-// app.use(fileUpload());
+app.use(fileUpload());
 
 // Routes
-app.use('/api/v1/test', testRouter);
+app.use('/api/v1/healthcheck', healthCheckRouter);
 app.use('/api/v1/refresh', refreshRouter);
 app.use('/api/v1/user', userRouter);
 
