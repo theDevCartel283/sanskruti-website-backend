@@ -1,4 +1,4 @@
-import { TokenPayload } from './../../utils/jwt.utils';
+import { TokenPayload } from '../../utils/jwt.utils';
 import { Response } from 'express';
 import { VerifyRequest } from '../../middleware/verifyJwt';
 import UserModel from '../../model/user.model';

@@ -1,5 +1,5 @@
 import express from 'express';
-import * as refreshController from '../contorllers/refresh.controller';
+import * as refreshController from '../controllers/refresh.controller';
 
 const router = express.Router();
 

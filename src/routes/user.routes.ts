@@ -1,5 +1,5 @@
 import express from 'express';
-import * as userController from '../contorllers/user/index.user.controller';
+import * as userController from '../controllers/user/index.user.controller';
 import validateResources from '../middleware/validateResources';
 import { blankSchema } from '../schema/blank.schema';
 import { userNamePwd, userObject } from '../schema/user.schema';

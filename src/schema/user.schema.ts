@@ -10,6 +10,14 @@ export const userNamePwd = z.object({
   }),
 });
 
+export const userUpdatePassword = userNamePwd.merge(
+  z.object({
+    updatePassword: z.string({
+      required_error: 'update password is not defined',
+    }),
+  })
+);
+
 export const userDetails = z.object({
   name: z.string({
     required_error: 'name is not defined',
@@ -38,5 +46,6 @@ export const userObject = userNamePwd.merge(userDetails);
 
 // types
 export type ReqUserNamePwd = z.infer<typeof userNamePwd>;
+export type ReqUserUpdatePassword = z.infer<typeof userUpdatePassword>;
 export type ReqUserDetails = z.infer<typeof userDetails>;
 export type ReqUserObject = z.infer<typeof userObject>;
