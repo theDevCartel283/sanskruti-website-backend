@@ -2,11 +2,21 @@ import { blankSchema } from './../schema/blank.schema';
 import express from 'express';
 import * as userController from '../controllers/user/index.user.controller';
 import validateResources from '../middleware/validateResources';
-import { userNamePwd, userUpdatePassword } from '../schema/user.schema';
+import {
+  userDetails,
+  userNamePwd,
+  userUpdatePassword,
+} from '../schema/user.schema';
 
 const router = express.Router();
 
 router.get('/', userController.handleGetUser);
+
+router.post(
+  '/update',
+  validateResources(blankSchema, userDetails, blankSchema),
+  userController.handleUpdateUser
+);
 
 router.get('/logout', userController.handleLogout);
 

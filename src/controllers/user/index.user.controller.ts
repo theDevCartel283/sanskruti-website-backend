@@ -5,6 +5,7 @@ import handleAuthentication from './login.user.controller';
 import handleGetUser from './getuser.user.controller';
 import handleLogout from './logout.user.controller';
 import handleUpdatePassword from './updatePassword.user.controller';
+import handleUpdateUser from './updateUser.user.controller';
 import handleDelete from './delete.user.controller';
 
 export {
@@ -15,5 +16,6 @@ export {
   handleGetUser,
   handleLogout,
   handleUpdatePassword,
+  handleUpdateUser,
   handleDelete,
 };
