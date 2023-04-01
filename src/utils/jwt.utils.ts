@@ -2,19 +2,19 @@ import jwt from 'jsonwebtoken';
 import { Roles } from '../config/roles.config';
 
 export type TokenPayload = {
-  username: string;
+  email: string;
   userRole: string;
 };
 
 export const signAccessToken = (
-  username: string,
+  email: string,
   role: 'USER' | 'ADMIN' | 'SUPERADMIN'
 ) => {
   const access_private = process.env.ACCESS_TOKEN_PRIVATE;
   if (!access_private) throw Error('access token private secret not found');
 
   const payload: TokenPayload = {
-    username: username,
+    email: email,
     userRole: Roles[role],
   };
 
@@ -27,14 +27,14 @@ export const signAccessToken = (
 };
 
 export const signRefreshToken = (
-  username: string,
+  email: string,
   role: 'USER' | 'ADMIN' | 'SUPERADMIN'
 ) => {
   const refresh_private = process.env.REFRESH_TOKEN_PRIVATE;
   if (!refresh_private) throw Error('refresh token private secret not found');
 
   const payload: TokenPayload = {
-    username: username,
+    email: email,
     userRole: Roles[role],
   };
 

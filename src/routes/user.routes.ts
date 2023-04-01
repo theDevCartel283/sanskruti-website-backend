@@ -2,7 +2,7 @@ import express from 'express';
 import * as userController from '../controllers/user/index.user.controller';
 import validateResources from '../middleware/validateResources';
 import { blankSchema } from '../schema/blank.schema';
-import { userNamePwd, userObject } from '../schema/user.schema';
+import { userEmailPwd, userObject } from '../schema/user.schema';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post(
 );
 router.post(
   '/login',
-  validateResources(blankSchema, userNamePwd, blankSchema),
+  validateResources(blankSchema, userEmailPwd, blankSchema),
   userController.handleAuthentication
 );
 

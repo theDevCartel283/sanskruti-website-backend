@@ -1,41 +1,41 @@
 import { Request, Response } from 'express';
 import UserModel from '../../model/user.model';
-import { ReqUserNamePwd } from '../../schema/user.schema';
+import { ReqEmailPwd } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import * as JWT from '../../utils/jwt.utils';
 import getRole from '../../utils/getRole.util';
 
 // Login
 export const handleAuthentication = async (
-  req: Request<{}, {}, ReqUserNamePwd>,
+  req: Request<{}, {}, ReqEmailPwd>,
   res: Response
 ) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   // check if user exists
-  const foundUser = await UserModel.findOne({ username: username });
+  const foundUser = await UserModel.findOne({ email: email });
   if (!foundUser)
     return res
       .status(401)
-      .send({ message: 'username or password is incorrect' }); // Unauthorized
+      .send({ message: 'email/number or password is incorrect' }); // Unauthorized
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
 
   if (match) {
     const role = getRole(foundUser.role);
-    if (!role) throw Error(`user ${foundUser.username} role not defined`);
+    if (!role) throw Error(`user ${foundUser.name} role not defined`);
     try {
       // create JWT
       // Access Token
-      const accessToken = JWT.signAccessToken(foundUser.username, role);
+      const accessToken = JWT.signAccessToken(foundUser.email, role);
 
       // Refresh Token
-      const refreshToken = JWT.signRefreshToken(foundUser.username, role);
+      const refreshToken = JWT.signRefreshToken(foundUser.email, role);
 
       // store refresh token in db
       await UserModel.findOneAndUpdate(
-        { username: foundUser.username },
+        { email: foundUser.email },
         { refreshToken: refreshToken }
       );
 
@@ -48,7 +48,7 @@ export const handleAuthentication = async (
       });
       res.status(200).send({
         message: `successfully logged in as ${role.toLocaleLowerCase()} ${
-          foundUser.username
+          foundUser.name
         }`,
         accessToken,
       });
@@ -57,7 +57,7 @@ export const handleAuthentication = async (
       res.sendStatus(500);
     }
   } else {
-    res.status(401).send({ message: 'username or password is incorrect' });
+    res.status(401).send({ message: 'email/number or password is incorrect' });
   }
 };
 

@@ -8,14 +8,14 @@ export const handleUpdatePassword = async (
   req: Request<{}, {}, ReqUserUpdatePassword>,
   res: Response
 ) => {
-  const { username, password, updatePassword } = req.body;
+  const { email, password, updatePassword } = req.body;
 
   // check if user exists
-  const foundUser = await UserModel.findOne({ username: username });
+  const foundUser = await UserModel.findOne({ email });
   if (!foundUser)
     return res
       .status(401)
-      .send({ message: 'username or password is incorrect' }); // Unauthorized
+      .send({ message: 'email/number or password is incorrect' }); // Unauthorized
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
@@ -26,7 +26,7 @@ export const handleUpdatePassword = async (
     try {
       // update password in db
       await UserModel.findOneAndUpdate(
-        { username: foundUser.username },
+        { email: foundUser.email },
         { password: hashedPassword }
       );
 
@@ -38,7 +38,7 @@ export const handleUpdatePassword = async (
       res.sendStatus(500);
     }
   } else {
-    res.status(401).send({ message: 'username or password is incorrect' });
+    res.status(401).send({ message: 'email/number or password is incorrect' });
   }
 };
 

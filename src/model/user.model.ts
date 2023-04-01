@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -22,11 +22,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   dob: {
     type: Date,
     required: true,
@@ -34,6 +29,7 @@ const userSchema = new mongoose.Schema({
   mobileNo: {
     type: Number,
     required: true,
+    unique: true,
   },
   address: {
     type: String,

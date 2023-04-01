@@ -18,8 +18,7 @@ export const handleRefresh = async (req: Request, res: Response) => {
   const refresh_public = process.env.REFRESH_TOKEN_PUBLIC;
   if (!refresh_public) return res.sendStatus(500);
   jwt.verify(refreshToken, refresh_public, (err, decoded: any) => {
-    if (err || foundUser.username !== decoded.username)
-      return res.sendStatus(403); // Forbidden
+    if (err || foundUser.email !== decoded.email) return res.sendStatus(403); // Forbidden
 
     // roles
     const role = getRole(foundUser.role);
@@ -27,7 +26,7 @@ export const handleRefresh = async (req: Request, res: Response) => {
 
     // refresh token verified create access token
     // Access Token
-    const accessToken = JWT.signAccessToken(foundUser.username, role);
+    const accessToken = JWT.signAccessToken(foundUser.email, role);
     res.status(200).json({ accessToken });
   });
 };

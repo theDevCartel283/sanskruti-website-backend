@@ -4,7 +4,7 @@ import * as userController from '../controllers/user/index.user.controller';
 import validateResources from '../middleware/validateResources';
 import {
   userDetails,
-  userNamePwd,
+  userEmailPwd,
   userUpdatePassword,
 } from '../schema/user.schema';
 
@@ -28,7 +28,7 @@ router.post(
 
 router.delete(
   '/delete',
-  validateResources(blankSchema, userNamePwd, blankSchema),
+  validateResources(blankSchema, userEmailPwd, blankSchema),
   userController.handleDelete
 );
 

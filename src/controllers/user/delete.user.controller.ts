@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 import UserModel from '../../model/user.model';
-import { ReqUserNamePwd } from '../../schema/user.schema';
+import { ReqEmailPwd } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 
 // Delete
 const handleDelete = async (
-  req: Request<{}, {}, ReqUserNamePwd>,
+  req: Request<{}, {}, ReqEmailPwd>,
   res: Response
 ) => {
-  const { username, password } = req.body;
-  const foundUser = await UserModel.findOne(
-    { username: username } // check if username exists
-  );
+  const { email, password } = req.body;
+  const foundUser = await UserModel.findOne({ email: email });
 
   // check if user doesn't exists
   if (!foundUser) return res.sendStatus(200); // Ok, As we are going delete the user anyway
@@ -21,12 +19,10 @@ const handleDelete = async (
   if (match) {
     try {
       // delete user
-      const user = await UserModel.findOneAndDelete({ username: username });
-      res
-        .status(200)
-        .send({
-          message: `user ${foundUser.username} was successfully deleted`,
-        });
+      const user = await UserModel.findOneAndDelete({ email: foundUser.email });
+      res.status(200).send({
+        message: `user ${foundUser.name} was successfully deleted`,
+      });
     } catch (err: any) {
       console.log(err);
       res.status(502).send(err); // Bad Gateway

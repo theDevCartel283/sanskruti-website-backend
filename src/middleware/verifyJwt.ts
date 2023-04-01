@@ -25,7 +25,7 @@ const verifyAccessJwt = (req: Request, res: Response, next: NextFunction) => {
   }
   jwt.verify(token, access_public, (err, decoded: any) => {
     if (err) return res.sendStatus(403); // Forbidden
-    req.body.username = decoded.username;
+    req.body.email = decoded.email;
     req.body.userRole = decoded.userRole;
     next();
   });

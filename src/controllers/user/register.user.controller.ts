@@ -9,12 +9,7 @@ const handleRegister = async (
   req: Request<{}, {}, ReqUserObject>,
   res: Response
 ) => {
-  const userAlreadyExists = await UserModel.findOne({
-    $or: [
-      { username: req.body.username }, // check if username exists
-      { email: req.body.email }, // check if email exists
-    ],
-  });
+  const userAlreadyExists = await UserModel.findOne({ email: req.body.email });
 
   // check if user already exists
   if (userAlreadyExists)
@@ -26,11 +21,10 @@ const handleRegister = async (
   try {
     // create new user
     const newUser = new UserModel({
-      username: req.body.username,
+      name: req.body.name,
       password: hashedPassword,
       refreshToken: 'null',
       role: Roles['USER'],
-      name: req.body.name,
       email: req.body.email,
       dob: new Date(req.body.dob),
       mobileNo: req.body.mobileNo,
@@ -42,7 +36,7 @@ const handleRegister = async (
 
     res
       .status(201)
-      .send({ message: `success, new user ${user.username} was created` });
+      .send({ message: `success, new user ${user.name} was created` });
   } catch (err: any) {
     console.log(err);
     res.status(502).send(err); // Bad Gateway

@@ -8,20 +8,19 @@ export const handleUpdateUser = async (
   req: Request<{}, {}, ReqUserDetails & TokenPayload>,
   res: Response
 ) => {
-  const { username } = req.body;
+  const { email } = req.body;
 
   // check if user exists
-  const foundUser = await UserModel.findOne({ username: username });
+  const foundUser = await UserModel.findOne({ email: email });
   if (!foundUser)
-    return res.status(401).send({ message: 'username is incorrect' }); // Unauthorized
+    return res.status(401).send({ message: 'email is incorrect' }); // Unauthorized
 
   try {
     // update user in db
     await UserModel.findOneAndUpdate(
-      { username: foundUser.username },
+      { email: foundUser.email },
       {
         name: req.body.name,
-        email: req.body.email,
         dob: req.body.dob,
         mobileNo: req.body.mobileNo,
         address: req.body.address,
@@ -29,7 +28,7 @@ export const handleUpdateUser = async (
     );
 
     res.status(200).send({
-      message: `user ${foundUser.username} was successfully updated`,
+      message: `user ${foundUser.name} was successfully updated`,
     });
   } catch (err: any) {
     console.log(err);

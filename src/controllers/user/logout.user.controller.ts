@@ -8,13 +8,13 @@ const handleLogout = async (
   req: VerifyRequest<null, TokenPayload, null>,
   res: Response
 ) => {
-  const username = req.body.username;
+  const { email } = req.body;
 
   // username doesn't exist in jwt token
-  if (!username) return res.send(200).send('logged out');
+  if (!email) return res.send(200).send('logged out');
 
   const user = await UserModel.findOneAndUpdate(
-    { username: username },
+    { email: email },
     { refreshToken: 'null' }
   );
 
@@ -29,7 +29,7 @@ const handleLogout = async (
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
-  res.status(200).send(`user ${user.username} was successfully logged out`);
+  res.status(200).send(`user ${user.name} was successfully logged out`);
 };
 
 export default handleLogout;

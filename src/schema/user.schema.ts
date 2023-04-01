@@ -1,16 +1,18 @@
 import { z } from 'zod';
 
 // schemas
-export const userNamePwd = z.object({
-  username: z.string({
-    required_error: 'username is not defined',
-  }),
+export const userEmailPwd = z.object({
+  email: z
+    .string({
+      required_error: 'email is not defined',
+    })
+    .email(),
   password: z.string({
     required_error: 'password is not defined',
   }),
 });
 
-export const userUpdatePassword = userNamePwd.merge(
+export const userUpdatePassword = userEmailPwd.merge(
   z.object({
     updatePassword: z.string({
       required_error: 'update password is not defined',
@@ -19,14 +21,14 @@ export const userUpdatePassword = userNamePwd.merge(
 );
 
 export const userDetails = z.object({
-  name: z.string({
-    required_error: 'name is not defined',
-  }),
   email: z
     .string({
       required_error: 'email is not defined',
     })
     .email(),
+  name: z.string({
+    required_error: 'name is not defined',
+  }),
   dob: z
     .string({
       required_error: 'dob is not defined',
@@ -42,10 +44,10 @@ export const userDetails = z.object({
   }),
 });
 
-export const userObject = userNamePwd.merge(userDetails);
+export const userObject = userEmailPwd.merge(userDetails);
 
 // types
-export type ReqUserNamePwd = z.infer<typeof userNamePwd>;
+export type ReqEmailPwd = z.infer<typeof userEmailPwd>;
 export type ReqUserUpdatePassword = z.infer<typeof userUpdatePassword>;
 export type ReqUserDetails = z.infer<typeof userDetails>;
 export type ReqUserObject = z.infer<typeof userObject>;

@@ -19,6 +19,10 @@ import userRouter from './routes/user.routes';
 
 // Protected Router Imports
 import userProtectedRouter from './routes/user.protectedRoutes';
+import {
+  verifyIsAdmin,
+  verifyIsSuperAdmin,
+} from './middleware/verifyIsAdmin.middleware';
 
 // creating an express app
 const app: Application = express();
@@ -46,12 +50,24 @@ app.use(fileUpload());
 app.use('/api/v1/healthcheck', healthCheckRouter);
 app.use('/api/v1/refresh', refreshRouter);
 app.use('/api/v1/user', userRouter);
+// get product
 
 // Access JWT Verification
 app.use(verifyAccessJwt);
 
 // Protected Routes
 app.use('/api/v1/user', userProtectedRouter);
+
+// verify user is admin or super admin
+app.use(verifyIsAdmin);
+
+// Admin Routes
+// crud product
+
+// verify user is super admin
+app.use(verifyIsSuperAdmin);
+
+// Super admin routes
 
 // 404
 app.all('*', (req: Request, res: Response) => {
