@@ -13,7 +13,9 @@ const handleRegister = async (
 
   // check if user already exists
   if (userAlreadyExists)
-    return res.status(409).send({ message: 'user already exists' }); // Conflict
+    return res
+      .status(409)
+      .send({ message: 'user already exists', type: 'warning' }); // Conflict
 
   // hash password
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -36,10 +38,13 @@ const handleRegister = async (
 
     res
       .status(201)
-      .send({ message: `success, new user ${user.name} was created` });
+      .send({
+        message: `success, new user ${user.name} was created`,
+        type: 'success',
+      });
   } catch (err: any) {
     console.log(err);
-    res.status(502).send(err); // Bad Gateway
+    res.status(502).send({ message: 'something went wrong', type: 'info' }); // Bad Gateway
   }
 };
 

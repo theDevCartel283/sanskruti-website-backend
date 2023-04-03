@@ -15,9 +15,10 @@ export const handleAuthentication = async (
   // check if user exists
   const foundUser = await UserModel.findOne({ email: email });
   if (!foundUser)
-    return res
-      .status(401)
-      .send({ message: 'email/number or password is incorrect' }); // Unauthorized
+    return res.status(401).send({
+      message: 'email / number or password is incorrect',
+      type: 'warning',
+    }); // Unauthorized
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
@@ -50,14 +51,18 @@ export const handleAuthentication = async (
         message: `successfully logged in as ${role.toLocaleLowerCase()} ${
           foundUser.name
         }`,
+        type: 'success',
         accessToken,
       });
     } catch (err: any) {
       console.log(err);
-      res.sendStatus(500);
+      res.status(500).send({ message: 'something went wrong', type: 'info' });
     }
   } else {
-    res.status(401).send({ message: 'email/number or password is incorrect' });
+    res.status(401).send({
+      message: 'email / number or password is incorrect',
+      type: 'warning',
+    });
   }
 };
 

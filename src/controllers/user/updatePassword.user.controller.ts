@@ -13,9 +13,10 @@ export const handleUpdatePassword = async (
   // check if user exists
   const foundUser = await UserModel.findOne({ email });
   if (!foundUser)
-    return res
-      .status(401)
-      .send({ message: 'email/number or password is incorrect' }); // Unauthorized
+    return res.status(401).send({
+      message: 'email / number or password is incorrect',
+      type: 'warning',
+    }); // Unauthorized
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
@@ -32,13 +33,17 @@ export const handleUpdatePassword = async (
 
       res.status(200).send({
         message: 'password changed successfully',
+        type: 'success',
       });
     } catch (err: any) {
       console.log(err);
       res.sendStatus(500);
     }
   } else {
-    res.status(401).send({ message: 'email/number or password is incorrect' });
+    res.status(401).send({
+      message: 'email / number or password is incorrect',
+      type: 'warning',
+    });
   }
 };
 

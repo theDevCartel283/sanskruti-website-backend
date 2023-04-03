@@ -13,7 +13,9 @@ export const handleUpdateUser = async (
   // check if user exists
   const foundUser = await UserModel.findOne({ email: email });
   if (!foundUser)
-    return res.status(401).send({ message: 'email is incorrect' }); // Unauthorized
+    return res
+      .status(401)
+      .send({ message: 'something went wrong', type: 'info' }); // Unauthorized
 
   try {
     // update user in db
@@ -29,10 +31,11 @@ export const handleUpdateUser = async (
 
     res.status(200).send({
       message: `user ${foundUser.name} was successfully updated`,
+      type: 'success',
     });
   } catch (err: any) {
     console.log(err);
-    res.sendStatus(500);
+    res.status(500).send({ message: 'something went wrong', type: 'info' });
   }
 };
 
