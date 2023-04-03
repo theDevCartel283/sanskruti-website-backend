@@ -12,7 +12,7 @@ const verifyAccessJwt = (req: Request, res: Response, next: NextFunction) => {
   const header = (req.headers['authorization'] ||
     req.headers['Authorization']) as string;
   if (!header?.startsWith('Bearer '))
-    return res.status(401).send({ message: 'access token not found' }); // Unauthorized
+    return res.status(401).json({ message: 'access token not found' }); // Unauthorized
 
   // get access token
   const token = header.split(' ')[1];

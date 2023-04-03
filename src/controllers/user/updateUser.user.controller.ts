@@ -15,7 +15,7 @@ export const handleUpdateUser = async (
   if (!foundUser)
     return res
       .status(401)
-      .send({ message: 'something went wrong', type: 'info' }); // Unauthorized
+      .json({ message: 'something went wrong', type: 'info' }); // Unauthorized
 
   try {
     // update user in db
@@ -29,13 +29,13 @@ export const handleUpdateUser = async (
       }
     );
 
-    res.status(200).send({
+    res.status(200).json({
       message: `user ${foundUser.name} was successfully updated`,
       type: 'success',
     });
   } catch (err: any) {
     console.log(err);
-    res.status(500).send({ message: 'something went wrong', type: 'info' });
+    res.status(500).json({ message: 'something went wrong', type: 'info' });
   }
 };
 

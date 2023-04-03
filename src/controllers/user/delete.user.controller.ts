@@ -13,7 +13,7 @@ const handleDelete = async (
 
   // check if user doesn't exists
   if (!foundUser)
-    return res.status(200).send({
+    return res.status(200).json({
       message: `user was successfully deleted`,
       type: 'success',
     }); // Ok, As we are going delete the user anyway
@@ -24,19 +24,19 @@ const handleDelete = async (
     try {
       // delete user
       const user = await UserModel.findOneAndDelete({ email: foundUser.email });
-      res.status(200).send({
+      res.status(200).json({
         message: `user ${foundUser.name} was successfully deleted`,
         type: 'success',
       });
     } catch (err: any) {
       console.log(err);
-      res.status(502).send({
+      res.status(502).json({
         message: `Bad Gateway`,
         type: 'warning',
       }); // Bad Gateway
     }
   } else {
-    res.status(403).send({
+    res.status(403).json({
       message: `Forbidden`,
       type: 'warning',
     }); // Forbidden

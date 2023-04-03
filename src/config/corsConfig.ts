@@ -2,7 +2,7 @@ import cors from 'cors';
 
 const node_env = process.env.NODE_ENV;
 
-export const allowedOrigins = ['https://vishal-kamath.github.io'];
+export const allowedOrigins = ['http://localhost:3000'];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     if (node_env === 'developement' && origin === undefined) {

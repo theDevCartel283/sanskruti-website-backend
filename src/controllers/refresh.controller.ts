@@ -7,7 +7,7 @@ import UserModel from '../model/user.model';
 export const handleRefresh = async (req: Request, res: Response) => {
   const cookie = req.cookies;
   if (!cookie?.jwt)
-    return res.status(401).send({ message: 'request cookie empty' });
+    return res.status(401).json({ message: 'request cookie empty' });
   const refreshToken: string = cookie.jwt;
 
   // find user

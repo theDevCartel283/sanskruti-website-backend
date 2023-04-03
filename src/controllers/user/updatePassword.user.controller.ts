@@ -13,7 +13,7 @@ export const handleUpdatePassword = async (
   // check if user exists
   const foundUser = await UserModel.findOne({ email });
   if (!foundUser)
-    return res.status(401).send({
+    return res.status(401).json({
       message: 'email / number or password is incorrect',
       type: 'warning',
     }); // Unauthorized
@@ -31,7 +31,7 @@ export const handleUpdatePassword = async (
         { password: hashedPassword }
       );
 
-      res.status(200).send({
+      res.status(200).json({
         message: 'password changed successfully',
         type: 'success',
       });
@@ -40,7 +40,7 @@ export const handleUpdatePassword = async (
       res.sendStatus(500);
     }
   } else {
-    res.status(401).send({
+    res.status(401).json({
       message: 'email / number or password is incorrect',
       type: 'warning',
     });

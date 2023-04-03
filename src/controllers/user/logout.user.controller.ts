@@ -12,7 +12,7 @@ const handleLogout = async (
 
   // username doesn't exist in jwt token
   if (!email)
-    return res.send(200).send({ message: 'logged out', type: 'success' });
+    return res.send(200).json({ message: 'logged out', type: 'success' });
 
   const user = await UserModel.findOneAndUpdate(
     { email: email },
@@ -21,7 +21,7 @@ const handleLogout = async (
 
   // username doesn't exist in db
   if (!user)
-    return res.send(200).send({ message: 'logged out', type: 'success' });
+    return res.send(200).json({ message: 'logged out', type: 'success' });
 
   // clear cookie
   res.clearCookie('jwt', {
@@ -31,12 +31,10 @@ const handleLogout = async (
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
-  res
-    .status(200)
-    .send({
-      message: `user ${user.name} was successfully logged out`,
-      type: 'success',
-    });
+  res.status(200).json({
+    message: `user ${user.name} was successfully logged out`,
+    type: 'success',
+  });
 };
 
 export default handleLogout;

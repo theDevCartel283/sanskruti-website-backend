@@ -15,7 +15,7 @@ export const handleAuthentication = async (
   // check if user exists
   const foundUser = await UserModel.findOne({ email: email });
   if (!foundUser)
-    return res.status(401).send({
+    return res.status(401).json({
       message: 'email / number or password is incorrect',
       type: 'warning',
     }); // Unauthorized
@@ -47,7 +47,7 @@ export const handleAuthentication = async (
         sameSite: 'none',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
-      res.status(200).send({
+      res.status(200).json({
         message: `successfully logged in as ${role.toLocaleLowerCase()} ${
           foundUser.name
         }`,
@@ -56,10 +56,10 @@ export const handleAuthentication = async (
       });
     } catch (err: any) {
       console.log(err);
-      res.status(500).send({ message: 'something went wrong', type: 'info' });
+      res.status(500).json({ message: 'something went wrong', type: 'info' });
     }
   } else {
-    res.status(401).send({
+    res.status(401).json({
       message: 'email / number or password is incorrect',
       type: 'warning',
     });
