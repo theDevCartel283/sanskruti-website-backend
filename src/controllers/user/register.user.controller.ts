@@ -9,13 +9,25 @@ const handleRegister = async (
   req: Request<{}, {}, ReqUserObject>,
   res: Response
 ) => {
-  const userAlreadyExists = await UserModel.findOne({ email: req.body.email });
+  const userEmailAlreadyExists = await UserModel.findOne({
+    email: req.body.email,
+  });
 
-  // check if user already exists
-  if (userAlreadyExists)
+  // check if user email already exists
+  if (userEmailAlreadyExists)
     return res
       .status(409)
-      .json({ message: 'user already exists', type: 'warning' }); // Conflict
+      .json({ message: 'user email already exists', type: 'warning' }); // Conflict
+
+  const userNumberAlreadyExists = await UserModel.findOne({
+    mobileNo: req.body.mobileNo,
+  });
+
+  // check if user number already exists
+  if (userNumberAlreadyExists)
+    return res
+      .status(409)
+      .json({ message: 'user mobile number already exists', type: 'warning' }); // Conflict
 
   // hash password
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
