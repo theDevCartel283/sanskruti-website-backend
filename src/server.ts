@@ -16,6 +16,7 @@ import connectToDb from './utils/connectToDb.utils';
 import healthCheckRouter from './routes/healthCheck.routes';
 import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
+import adminRouter from './routes/admin.routes';
 
 // Protected Router Imports
 import userProtectedRouter from './routes/user.protectedRoutes';
@@ -60,6 +61,7 @@ app.use('/api/v1/user', userProtectedRouter);
 
 // verify user is admin or super admin
 app.use(verifyIsAdmin);
+app.use('/api/v1/admin', adminRouter);
 
 // Admin Routes
 // crud product
