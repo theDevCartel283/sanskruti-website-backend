@@ -3,6 +3,7 @@ import UserModel from '../../model/user.model';
 import { ReqUserObject } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import { Roles } from '../../config/roles.config';
+import logger from '../../utils/logger.utils';
 
 // Register
 const handleRegister = async (
@@ -47,13 +48,15 @@ const handleRegister = async (
 
     // save user
     const user = await newUser.save();
-
+    logger.success(
+      `success, new user ${user.name} [id:${user._id}] was created`
+    );
     res.status(201).json({
       message: `success, new user ${user.name} was created`,
       type: 'success',
     });
   } catch (err: any) {
-    console.log(err);
+    logger.error(`user registeration error\n${err}`);
     res.status(502).json({ message: 'something went wrong', type: 'info' }); // Bad Gateway
   }
 };

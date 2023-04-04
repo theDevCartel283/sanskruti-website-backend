@@ -11,6 +11,7 @@ import cors from 'cors';
 import corsOptions from './config/corsConfig';
 import verifyAccessJwt from './middleware/verifyJwt';
 import connectToDb from './utils/connectToDb.utils';
+import logger from './utils/logger.utils';
 
 // Routers import
 import healthCheckRouter from './routes/healthCheck.routes';
@@ -85,7 +86,7 @@ app.all('*', (req: Request, res: Response) => {
 
 // Listening
 app.listen(PORT, async () => {
-  console.log(
+  logger.info(
     `server running on port ${PORT}, in ${process.env.NODE_ENV} enviroment`
   );
 

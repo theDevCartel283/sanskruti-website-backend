@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from './logger.utils';
 
 async function connectToDb() {
   let database_uri = process.env.DATABASE_DEV_URI;
@@ -8,9 +9,9 @@ async function connectToDb() {
   try {
     if (!database_uri) throw Error('Datebase Uri not defined');
     await mongoose.connect(database_uri);
-    console.log('connected to DB');
+    logger.success('connected to DB');
   } catch (error: any) {
-    console.log(`Could not connect to Db \n${(error as Error).stack}`);
+    logger.error(`Could not connect to Db \n${(error as Error).stack}`);
     process.exit(1);
   }
 }

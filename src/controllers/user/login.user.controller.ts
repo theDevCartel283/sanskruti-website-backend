@@ -4,6 +4,7 @@ import { ReqEmailPwd } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import * as JWT from '../../utils/jwt.utils';
 import getRole from '../../utils/getRole.util';
+import logger from '../../utils/logger.utils';
 
 // Login
 export const handleAuthentication = async (
@@ -55,7 +56,7 @@ export const handleAuthentication = async (
         accessToken,
       });
     } catch (err: any) {
-      console.log(err);
+      logger.error(`user login error\n${err}`);
       res.status(500).json({ message: 'something went wrong', type: 'info' });
     }
   } else {

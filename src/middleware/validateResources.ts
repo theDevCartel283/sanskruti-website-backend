@@ -1,5 +1,6 @@
 import { z, AnyZodObject } from 'zod';
 import { Request, Response, NextFunction } from 'express';
+import logger from '../utils/logger.utils';
 
 const validateResources =
   (
@@ -23,6 +24,7 @@ const validateResources =
       next();
     } catch (err: any) {
       res.status(400).send(err);
+      logger.error(`validation error\n${err}`);
     }
   };
 

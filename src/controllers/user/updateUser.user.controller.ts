@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserModel from '../../model/user.model';
 import { ReqUserDetails } from '../../schema/user.schema';
 import { TokenPayload } from '../../utils/jwt.utils';
+import logger from '../../utils/logger.utils';
 
 // Update user
 export const handleUpdateUser = async (
@@ -34,7 +35,7 @@ export const handleUpdateUser = async (
       type: 'success',
     });
   } catch (err: any) {
-    console.log(err);
+    logger.error(`update user error\n${err}`);
     res.status(500).json({ message: 'something went wrong', type: 'info' });
   }
 };
