@@ -18,6 +18,7 @@ import healthCheckRouter from './routes/healthCheck.routes';
 import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
 import adminRouter from './routes/admin.routes';
+import superAdminRouter from './routes/superadmin.routes';
 
 // Protected Router Imports
 import userProtectedRouter from './routes/user.protectedRoutes';
@@ -71,6 +72,7 @@ app.use('/api/v1/admin', adminRouter);
 app.use(verifyIsSuperAdmin);
 
 // Super admin routes
+app.use('/api/v1/admin', superAdminRouter);
 
 // 404
 app.all('*', (req: Request, res: Response) => {
