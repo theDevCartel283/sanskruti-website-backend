@@ -19,4 +19,6 @@ router.post(
   superadminController.handleBanUser
 );
 
+router.get('/getBannnedUser', superadminController.handleGetBannedUser);
+
 export default router;

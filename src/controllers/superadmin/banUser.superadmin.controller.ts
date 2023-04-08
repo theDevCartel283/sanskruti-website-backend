@@ -9,12 +9,12 @@ const handleBanUser = async (
   res: Response
 ) => {
   try {
-    // create new user
+    // create new banned user
     const newBannedUser = new BannedEmailModel({
       email: req.body.email,
     });
 
-    // save user
+    // save banned user
     const bannedUser = await newBannedUser.save();
     logger.info(`user email:${bannedUser.email} was successfully banned`);
     res.status(201).json({
