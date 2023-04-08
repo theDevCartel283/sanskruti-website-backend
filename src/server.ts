@@ -73,7 +73,7 @@ app.use('/api/v1/admin', adminRouter);
 app.use(verifyIsSuperAdmin);
 
 // Super admin routes
-app.use('/api/v1/admin', superAdminRouter);
+app.use('/api/v1/superadmin', superAdminRouter);
 
 // 404
 app.all('*', (req: Request, res: Response) => {
