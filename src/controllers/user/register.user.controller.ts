@@ -4,12 +4,26 @@ import { ReqUserObject } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import { Roles } from '../../config/roles.config';
 import logger from '../../utils/logger.utils';
+import BannedEmailModel from '../../model/bannedEmail';
 
 // Register
 const handleRegister = async (
   req: Request<{}, {}, ReqUserObject>,
   res: Response
 ) => {
+  const userIsBanned = await BannedEmailModel.findOne({
+    email: req.body.email,
+  });
+
+  // check if user email is banned
+  if (userIsBanned)
+    return res
+      .status(403)
+      .json({
+        message: `user email:${req.body.email} has been banned`,
+        type: 'warning',
+      }); // Forbidden
+
   const userEmailAlreadyExists = await UserModel.findOne({
     email: req.body.email,
   });
