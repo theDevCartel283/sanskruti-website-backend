@@ -19,6 +19,12 @@ router.post(
   superadminController.handleBanUser
 );
 
+router.post(
+  '/unbanUser',
+  validateResources(blankSchema, BanEmail, blankSchema),
+  superadminController.handleUnbanUser
+);
+
 router.get('/getBannnedUser', superadminController.handleGetBannedUser);
 
 export default router;
