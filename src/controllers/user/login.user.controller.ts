@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import * as JWT from '../../utils/jwt.utils';
 import getRole from '../../utils/getRole.util';
 import logger from '../../utils/logger.utils';
+import BannedEmailModel from '../../model/bannedEmail';
 
 // Login
 export const handleAuthentication = async (
@@ -20,6 +21,17 @@ export const handleAuthentication = async (
       message: 'email / number or password is incorrect',
       type: 'warning',
     }); // Unauthorized
+
+  const userIsBanned = await BannedEmailModel.findOne({
+    email: email,
+  });
+
+  // check if user email is banned
+  if (userIsBanned)
+    return res.status(403).json({
+      message: `user email:${email} has been banned`,
+      type: 'warning',
+    }); // Forbidden
 
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
