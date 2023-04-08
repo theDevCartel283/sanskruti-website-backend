@@ -3,28 +3,26 @@ import logger from '../../utils/logger.utils';
 import { ReqBanEmail } from '../../schema/superadmin';
 import BannedEmailModel from '../../model/bannedEmail';
 
-// Ban User
-const handleBanUser = async (
+// UnBan User
+const handleUnbanUser = async (
   req: Request<{}, {}, ReqBanEmail>,
   res: Response
 ) => {
   try {
-    // create new banned user
-    const newBannedUser = new BannedEmailModel({
+    // unban user
+    const unbannedUser = await BannedEmailModel.findByIdAndDelete({
       email: req.body.email,
     });
 
-    // save banned user
-    const bannedUser = await newBannedUser.save();
-    logger.info(`user email:${bannedUser.email} was successfully banned`);
+    logger.info(`user email:${req.body.email} was successfully unbanned`);
     res.status(201).json({
-      message: `user email:${bannedUser.email} was successfully banned`,
+      message: `user email:${req.body.email} was successfully unbanned`,
       type: 'success',
     });
   } catch (err: any) {
-    logger.error(`user banning error\n${err}`);
+    logger.error(`user unbanning error\n${err}`);
     res.status(502).json({ message: 'something went wrong', type: 'info' }); // Bad Gateway
   }
 };
 
-export default handleBanUser;
+export default handleUnbanUser;

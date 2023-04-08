@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import BannedEmailModel from '../../model/bannedEmail';
 import logger from '../../utils/logger.utils';
 
-// Register
+// fetch Banned User
 const handleBanUser = async (req: Request, res: Response) => {
   try {
     // fetch banned users
