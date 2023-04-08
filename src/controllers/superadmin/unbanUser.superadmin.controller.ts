@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import logger from '../../utils/logger.utils';
 import { ReqBanEmail } from '../../schema/superadmin';
-import BannedEmailModel from '../../model/bannedEmail';
+import BannedEmailModel from '../../model/bannedEmail.model';
 
 // UnBan User
 const handleUnbanUser = async (

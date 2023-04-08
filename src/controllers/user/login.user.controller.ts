@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import * as JWT from '../../utils/jwt.utils';
 import getRole from '../../utils/getRole.util';
 import logger from '../../utils/logger.utils';
-import BannedEmailModel from '../../model/bannedEmail';
+import BannedEmailModel from '../../model/bannedEmail.model';
 
 // Login
 export const handleAuthentication = async (

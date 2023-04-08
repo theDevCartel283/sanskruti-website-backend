@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import BannedEmailModel from '../../model/bannedEmail';
+import BannedEmailModel from '../../model/bannedEmail.model';
 import logger from '../../utils/logger.utils';
 
 // fetch Banned User
