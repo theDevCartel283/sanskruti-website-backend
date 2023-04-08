@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import * as JWT from '../utils/jwt.utils';
 import getRole from '../utils/getRole.util';
 import UserModel from '../model/user.model';
+import { env } from '../config/env';
 
 export const handleRefresh = async (req: Request, res: Response) => {
   const cookie = req.cookies;
@@ -15,7 +16,7 @@ export const handleRefresh = async (req: Request, res: Response) => {
   if (!foundUser) return res.sendStatus(401); // Unauthorized
 
   // verify refresh jwt
-  const refresh_public = process.env.REFRESH_TOKEN_PUBLIC;
+  const refresh_public = env.REFRESH_TOKEN_PUBLIC;
   if (!refresh_public) return res.sendStatus(500);
   jwt.verify(refreshToken, refresh_public, (err, decoded: any) => {
     if (err || foundUser.email !== decoded.email) return res.sendStatus(403); // Forbidden

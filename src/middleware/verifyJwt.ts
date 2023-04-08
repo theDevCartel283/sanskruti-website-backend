@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger.utils';
+import { env } from '../config/env';
 
 export type VerifyRequest<TParams, TBody, TQuery> = Request<
   TParams,
@@ -19,7 +20,7 @@ const verifyAccessJwt = (req: Request, res: Response, next: NextFunction) => {
   const token = header.split(' ')[1];
 
   // verify token
-  const access_public = process.env.ACCESS_TOKEN_PUBLIC;
+  const access_public = env.ACCESS_TOKEN_PUBLIC;
   if (!access_public) {
     logger.error('access token public key undefined');
     return res.sendStatus(500);

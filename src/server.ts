@@ -12,6 +12,7 @@ import corsOptions from './config/corsConfig';
 import verifyAccessJwt from './middleware/verifyJwt';
 import connectToDb from './utils/connectToDb.utils';
 import logger from './utils/logger.utils';
+import { env } from './config/env';
 
 // Routers import
 import healthCheckRouter from './routes/healthCheck.routes';
@@ -29,7 +30,7 @@ import {
 
 // creating an express app
 const app: Application = express();
-const PORT = Number(process.env.PORT) || 3500;
+const PORT = Number(env.PORT) || 3500;
 
 // Cors - Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -88,9 +89,7 @@ app.all('*', (req: Request, res: Response) => {
 
 // Listening
 app.listen(PORT, async () => {
-  logger.info(
-    `server running on port ${PORT}, in ${process.env.NODE_ENV} enviroment`
-  );
+  logger.info(`server running on port ${PORT}, in ${env.NODE_ENV} enviroment`);
 
   // Connect To Database
   await connectToDb();
