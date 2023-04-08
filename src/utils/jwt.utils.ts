@@ -7,42 +7,25 @@ export type TokenPayload = {
   userRole: string;
 };
 
-export const signAccessToken = (
+export const signToken = (
+  key: 'ACCESS_TOKEN_PRIVATE' | 'REFRESH_TOKEN_PRIVATE',
   email: string,
   role: 'USER' | 'ADMIN' | 'SUPERADMIN'
 ) => {
-  const access_private = env.ACCESS_TOKEN_PRIVATE;
-  if (!access_private) throw Error('access token private secret not found');
+  const token_private_key = env[key];
+  if (!token_private_key) throw Error(`${key} private secret not found`);
 
   const payload: TokenPayload = {
     email: email,
     userRole: Roles[role],
   };
 
-  const accessToken = jwt.sign(payload, access_private, {
+  const expiresIn = key === 'ACCESS_TOKEN_PRIVATE' ? '15m' : '30d';
+
+  const token = jwt.sign(payload, token_private_key, {
     algorithm: 'RS256',
-    expiresIn: '15m',
+    expiresIn,
   });
 
-  return accessToken;
-};
-
-export const signRefreshToken = (
-  email: string,
-  role: 'USER' | 'ADMIN' | 'SUPERADMIN'
-) => {
-  const refresh_private = env.REFRESH_TOKEN_PRIVATE;
-  if (!refresh_private) throw Error('refresh token private secret not found');
-
-  const payload: TokenPayload = {
-    email: email,
-    userRole: Roles[role],
-  };
-
-  const refreshToken = jwt.sign(payload, refresh_private, {
-    algorithm: 'RS256',
-    expiresIn: '30d',
-  });
-
-  return refreshToken;
+  return token;
 };

@@ -30,10 +30,18 @@ export const handleAuthentication = async (
     try {
       // create JWT
       // Access Token
-      const accessToken = JWT.signAccessToken(foundUser.email, role);
+      const accessToken = JWT.signToken(
+        'ACCESS_TOKEN_PRIVATE',
+        foundUser.email,
+        role
+      );
 
       // Refresh Token
-      const refreshToken = JWT.signRefreshToken(foundUser.email, role);
+      const refreshToken = JWT.signToken(
+        'REFRESH_TOKEN_PRIVATE',
+        foundUser.email,
+        role
+      );
 
       // store refresh token in db
       await UserModel.findOneAndUpdate(

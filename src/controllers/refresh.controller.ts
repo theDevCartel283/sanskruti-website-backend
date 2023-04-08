@@ -27,7 +27,11 @@ export const handleRefresh = async (req: Request, res: Response) => {
 
     // refresh token verified create access token
     // Access Token
-    const accessToken = JWT.signAccessToken(foundUser.email, role);
+    const accessToken = JWT.signToken(
+      'ACCESS_TOKEN_PRIVATE',
+      foundUser.email,
+      role
+    );
     res.status(200).json({ accessToken });
   });
 };
