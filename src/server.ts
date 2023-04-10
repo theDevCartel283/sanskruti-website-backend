@@ -16,7 +16,6 @@ import { env } from './config/env';
 
 // Routers import
 import healthCheckRouter from './routes/healthCheck.routes';
-import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
 import adminRouter from './routes/admin.routes';
 import superAdminRouter from './routes/superadmin.routes';
@@ -52,7 +51,6 @@ app.use(fileUpload());
 
 // Routes
 app.use('/api/v1/healthcheck', healthCheckRouter);
-app.use('/api/v1/refresh', refreshRouter);
 app.use('/api/v1/user', userRouter);
 // get product
 
