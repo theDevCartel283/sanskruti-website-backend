@@ -52,6 +52,7 @@ app.use(fileUpload());
 // Routes
 app.use('/api/v1/healthcheck', healthCheckRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/admin', adminRouter);
 // get product
 
 // Access JWT Verification
@@ -62,7 +63,6 @@ app.use('/api/v1/user', userProtectedRouter);
 
 // verify user is admin or super admin
 app.use(verifyIsAdmin);
-app.use('/api/v1/admin', adminRouter);
 
 // Admin Routes
 // crud product

@@ -29,7 +29,8 @@ const addProduct = async (req: Request<{}, {}, ReqProductObject>, res: Response)
                 is_best_seller: req.body.is_best_seller,
                 seo_tittle: req.body.seo_tittle,
                 seo_description: req.body.seo_description,
-                seo_keyword: req.body.seo_keyword
+                seo_keyword: req.body.seo_keyword,
+                createdBy: req.body.createdBy
             });
 
 

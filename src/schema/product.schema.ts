@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ObjectId } from 'bson';
 
 
 // schemas
@@ -22,6 +23,14 @@ export const ProductObject = z.object({
     seo_tittle: z.string({ required_error: "seo tittle is not defined" }),
     seo_description: z.string({ required_error: "seo description is not defined" }),
     seo_keyword: z.string({ required_error: "seo keyword is not defined" }),
+    createdBy: z.string().refine((value) => {
+        try {
+            new ObjectId(value);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }, 'Invalid ObjectId')
 
 });
 
