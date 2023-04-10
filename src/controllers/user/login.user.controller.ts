@@ -4,6 +4,8 @@ import { ReqEmailPwd } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import * as JWT from '../../utils/jwt.utils';
 import getRole from '../../utils/getRole.util';
+import logger from '../../utils/logger.utils';
+import BannedEmailModel from '../../model/bannedEmail.model';
 
 // Login
 export const handleAuthentication = async (
@@ -20,6 +22,17 @@ export const handleAuthentication = async (
       type: 'warning',
     }); // Unauthorized
 
+  const userIsBanned = await BannedEmailModel.findOne({
+    email: email,
+  });
+
+  // check if user email is banned
+  if (userIsBanned)
+    return res.status(403).json({
+      message: `user email:${email} has been banned`,
+      type: 'warning',
+    }); // Forbidden
+
   // evaluate password
   const match = await bcrypt.compare(password, foundUser.password);
 
@@ -29,10 +42,18 @@ export const handleAuthentication = async (
     try {
       // create JWT
       // Access Token
-      const accessToken = JWT.signAccessToken(foundUser.email, role);
+      const accessToken = JWT.signToken(
+        'ACCESS_TOKEN_PRIVATE',
+        foundUser.email,
+        role
+      );
 
       // Refresh Token
-      const refreshToken = JWT.signRefreshToken(foundUser.email, role);
+      const refreshToken = JWT.signToken(
+        'REFRESH_TOKEN_PRIVATE',
+        foundUser.email,
+        role
+      );
 
       // store refresh token in db
       await UserModel.findOneAndUpdate(
@@ -55,7 +76,7 @@ export const handleAuthentication = async (
         accessToken,
       });
     } catch (err: any) {
-      console.log(err);
+      logger.error(`user login error\n${err}`);
       res.status(500).json({ message: 'something went wrong', type: 'info' });
     }
   } else {

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserModel from '../../model/user.model';
 import { ReqEmailPwd } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
+import logger from '../../utils/logger.utils';
 
 // Delete
 const handleDelete = async (
@@ -29,7 +30,7 @@ const handleDelete = async (
         type: 'success',
       });
     } catch (err: any) {
-      console.log(err);
+      logger.error(`delete user error\n${err}`);
       res.status(502).json({
         message: `Bad Gateway`,
         type: 'warning',

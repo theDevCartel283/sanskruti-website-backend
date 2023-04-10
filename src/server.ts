@@ -11,12 +11,14 @@ import cors from 'cors';
 import corsOptions from './config/corsConfig';
 import verifyAccessJwt from './middleware/verifyJwt';
 import connectToDb from './utils/connectToDb.utils';
+import logger from './utils/logger.utils';
+import { env } from './config/env';
 
 // Routers import
 import healthCheckRouter from './routes/healthCheck.routes';
-import refreshRouter from './routes/refresh.routes';
 import userRouter from './routes/user.routes';
 import adminRouter from './routes/admin.routes';
+import superAdminRouter from './routes/superadmin.routes';
 
 // Protected Router Imports
 import userProtectedRouter from './routes/user.protectedRoutes';
@@ -27,7 +29,7 @@ import {
 
 // creating an express app
 const app: Application = express();
-const PORT = Number(process.env.PORT) || 3500;
+const PORT = Number(env.PORT) || 3500;
 
 // Cors - Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -49,7 +51,6 @@ app.use(fileUpload());
 
 // Routes
 app.use('/api/v1/healthcheck', healthCheckRouter);
-app.use('/api/v1/refresh', refreshRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/admin', adminRouter);
 // get product
@@ -70,6 +71,7 @@ app.use(verifyIsAdmin);
 app.use(verifyIsSuperAdmin);
 
 // Super admin routes
+app.use('/api/v1/superadmin', superAdminRouter);
 
 // 404
 app.all('*', (req: Request, res: Response) => {
@@ -85,9 +87,7 @@ app.all('*', (req: Request, res: Response) => {
 
 // Listening
 app.listen(PORT, async () => {
-  console.log(
-    `server running on port ${PORT}, in ${process.env.NODE_ENV} enviroment`
-  );
+  logger.info(`server running on port ${PORT}, in ${env.NODE_ENV} enviroment`);
 
   // Connect To Database
   await connectToDb();

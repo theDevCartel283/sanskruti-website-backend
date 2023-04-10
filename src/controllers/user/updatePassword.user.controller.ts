@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserModel from '../../model/user.model';
 import { ReqUserUpdatePassword } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
+import logger from '../../utils/logger.utils';
 
 // Update Password
 export const handleUpdatePassword = async (
@@ -36,7 +37,7 @@ export const handleUpdatePassword = async (
         type: 'success',
       });
     } catch (err: any) {
-      console.log(err);
+      logger.error(`update user password error\n${err}`);
       res.sendStatus(500);
     }
   } else {

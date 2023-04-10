@@ -1,11 +1,10 @@
 import cors from 'cors';
-
-const node_env = process.env.NODE_ENV;
+import { env } from './env';
 
 export const allowedOrigins = ['http://localhost:3000'];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    if (node_env === 'developement' && origin === undefined) {
+    if (env.NODE_ENV === 'development' && origin === undefined) {
       return callback(null, true);
     }
     if (origin === undefined) {

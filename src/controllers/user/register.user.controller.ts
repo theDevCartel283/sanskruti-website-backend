@@ -3,19 +3,44 @@ import UserModel from '../../model/user.model';
 import { ReqUserObject } from '../../schema/user.schema';
 import bcrypt from 'bcrypt';
 import { Roles } from '../../config/roles.config';
+import logger from '../../utils/logger.utils';
+import BannedEmailModel from '../../model/bannedEmail.model';
 
 // Register
 const handleRegister = async (
   req: Request<{}, {}, ReqUserObject>,
   res: Response
 ) => {
-  const userAlreadyExists = await UserModel.findOne({ email: req.body.email });
+  const userIsBanned = await BannedEmailModel.findOne({
+    email: req.body.email,
+  });
 
-  // check if user already exists
-  if (userAlreadyExists)
+  // check if user email is banned
+  if (userIsBanned)
+    return res.status(403).json({
+      message: `user email:${req.body.email} has been banned`,
+      type: 'warning',
+    }); // Forbidden
+
+  const userEmailAlreadyExists = await UserModel.findOne({
+    email: req.body.email,
+  });
+
+  // check if user email already exists
+  if (userEmailAlreadyExists)
     return res
       .status(409)
-      .json({ message: 'user already exists', type: 'warning' }); // Conflict
+      .json({ message: 'user email already exists', type: 'warning' }); // Conflict
+
+  const userNumberAlreadyExists = await UserModel.findOne({
+    mobileNo: req.body.mobileNo,
+  });
+
+  // check if user number already exists
+  if (userNumberAlreadyExists)
+    return res
+      .status(409)
+      .json({ message: 'user mobile number already exists', type: 'warning' }); // Conflict
 
   // hash password
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -35,13 +60,15 @@ const handleRegister = async (
 
     // save user
     const user = await newUser.save();
-
+    logger.success(
+      `success, new user ${user.name} [id:${user._id}] was created`
+    );
     res.status(201).json({
       message: `success, new user ${user.name} was created`,
       type: 'success',
     });
   } catch (err: any) {
-    console.log(err);
+    logger.error(`user registeration error\n${err}`);
     res.status(502).json({ message: 'something went wrong', type: 'info' }); // Bad Gateway
   }
 };

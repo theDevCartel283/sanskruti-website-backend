@@ -1,47 +1,98 @@
 import jwt from 'jsonwebtoken';
 import { Roles } from '../config/roles.config';
+import { env } from '../config/env';
+import logger from './logger.utils';
+import UserModel from '../model/user.model';
+import getRole from './getRole.util';
 
 export type TokenPayload = {
   email: string;
   userRole: string;
 };
 
-export const signAccessToken = (
+export const signToken = (
+  key: 'ACCESS_TOKEN_PRIVATE' | 'REFRESH_TOKEN_PRIVATE',
   email: string,
   role: 'USER' | 'ADMIN' | 'SUPERADMIN'
 ) => {
-  const access_private = process.env.ACCESS_TOKEN_PRIVATE;
-  if (!access_private) throw Error('access token private secret not found');
+  const token_private_key = env[key];
+  if (!token_private_key) throw Error(`${key} private secret not found`);
 
   const payload: TokenPayload = {
     email: email,
     userRole: Roles[role],
   };
 
-  const accessToken = jwt.sign(payload, access_private, {
+  const expiresIn = key === 'ACCESS_TOKEN_PRIVATE' ? '15m' : '30d';
+
+  const token = jwt.sign(payload, token_private_key, {
     algorithm: 'RS256',
-    expiresIn: '15m',
+    expiresIn,
   });
 
-  return accessToken;
+  return token;
 };
 
-export const signRefreshToken = (
-  email: string,
-  role: 'USER' | 'ADMIN' | 'SUPERADMIN'
-) => {
-  const refresh_private = process.env.REFRESH_TOKEN_PRIVATE;
-  if (!refresh_private) throw Error('refresh token private secret not found');
+export function verifyJwt(
+  token: string,
+  key: 'ACCESS_TOKEN_PUBLIC' | 'REFRESH_TOKEN_PUBLIC'
+) {
+  const token_public_key = env[key];
+  if (!token_public_key) throw Error(`${key} public secret not found`);
 
-  const payload: TokenPayload = {
-    email: email,
-    userRole: Roles[role],
+  try {
+    const decoded = jwt.verify(token, token_public_key) as TokenPayload;
+    return {
+      valid: true,
+      expired: false,
+      decoded,
+    };
+  } catch (err: any) {
+    return {
+      valid: false,
+      expired: err.message === 'jwt expired',
+      decoded: null,
+    };
+  }
+}
+
+export const tokenRefresh: (refreshToken: string) => Promise<{
+  valid: boolean;
+  newAccessToken?: string;
+  email?: string;
+  role?: 'USER' | 'ADMIN' | 'SUPERADMIN';
+}> = async (refreshToken) => {
+  // validate refresh Token
+  const validRefreshTokenUser = await UserModel.findOne({ refreshToken });
+  if (!validRefreshTokenUser) return { valid: false };
+
+  // validate refreshToken
+  const { valid, expired, decoded } = verifyJwt(
+    refreshToken,
+    'REFRESH_TOKEN_PUBLIC'
+  );
+
+  // invalid or expired or decoded is empty
+  if (!valid || expired || !decoded) return { valid: false };
+
+  // now refresh token is valide
+  // get user role
+  const role = getRole(validRefreshTokenUser.role);
+  if (!role) {
+    logger.error(`User ${validRefreshTokenUser.email} role is undefined`);
+    return { valid: false };
+  }
+
+  const newAccessToken = signToken(
+    'ACCESS_TOKEN_PRIVATE',
+    validRefreshTokenUser.email,
+    role
+  );
+
+  return {
+    valid: true,
+    newAccessToken,
+    email: validRefreshTokenUser.email,
+    role,
   };
-
-  const refreshToken = jwt.sign(payload, refresh_private, {
-    algorithm: 'RS256',
-    expiresIn: '30d',
-  });
-
-  return refreshToken;
 };
