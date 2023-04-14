@@ -15,7 +15,7 @@ const handleDelete = async (
   // check if user doesn't exists
   if (!foundUser)
     return res.status(200).json({
-      message: `user was successfully deleted`,
+      message: `user not found`,
       type: 'success',
     }); // Ok, As we are going delete the user anyway
 

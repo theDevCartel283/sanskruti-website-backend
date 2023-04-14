@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import ProductModel from '../../model/product.model';
+import { ReqProductObject } from '../../schema/product.schema';
+import { TokenPayload } from '../../utils/jwt.utils';
 
-const updateProduct = async (req: Request, res: Response) => {
+const updateProduct = async (req:Request<{}, {}, ReqProductObject & TokenPayload>, res: Response) => {
     const id: any = req.query.id;
     if (id.length == 24) {
         const product = await ProductModel.findById(id);

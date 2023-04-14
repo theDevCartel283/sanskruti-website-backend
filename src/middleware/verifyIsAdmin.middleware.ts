@@ -8,6 +8,7 @@ export const verifyIsAdmin = (
   next: NextFunction
 ) => {
   const role = getRole(req.body.userRole);
+  console.log(req.body.userRole);
 
   if (role === 'USER' || role === undefined) {
     return res.sendStatus(403); // Forbidden

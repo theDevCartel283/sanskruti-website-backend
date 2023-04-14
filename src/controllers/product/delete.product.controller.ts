@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import ProductModel from '../../model/product.model';
 import { Roles } from '../../config/roles.config';
+import { TokenPayload } from '../../utils/jwt.utils';
 
-const deleteProduct = async (req: Request, res: Response) => {
+const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
     const id: any = req.query.id
     if (id.length == 24) {
         const product: any = await ProductModel.findById(id);

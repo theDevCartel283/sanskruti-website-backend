@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import ProductModel from '../../model/product.model';
 import { Roles } from '../../config/roles.config';
 import { ReqProductObject } from '../../schema/product.schema';
+import { TokenPayload } from '../../utils/jwt.utils';
 
 
-const addProduct = async (req: Request<{}, {}, ReqProductObject>, res: Response) => {
+const addProduct = async (req: Request<{}, {}, ReqProductObject & TokenPayload>, res: Response) => {
     const productAlreadyExists = await ProductModel.findOne({
         name: req.body.name
     });
@@ -17,6 +18,8 @@ const addProduct = async (req: Request<{}, {}, ReqProductObject>, res: Response)
             const newProduct = new ProductModel({
                 name: req.body.name,
                 description: req.body.description,
+                size:req.body.size,
+                color:req.body.color,
                 stock: req.body.stock,
                 price: req.body.price,
                 gst_price: req.body.gst_price,
@@ -30,7 +33,7 @@ const addProduct = async (req: Request<{}, {}, ReqProductObject>, res: Response)
                 seo_tittle: req.body.seo_tittle,
                 seo_description: req.body.seo_description,
                 seo_keyword: req.body.seo_keyword,
-                createdBy: req.body.createdBy
+                createdBy: req.body.email
             });
 
 

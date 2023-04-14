@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { userEmailPwd } from './user.schema';
 import { ObjectId } from 'bson';
 
 
@@ -10,6 +11,8 @@ export const ProductObject = z.object({
     description: z.string({
         required_error: 'product brand name is required',
     }),
+    size:z.string({required_error:"size is not defined"}),
+    color:z.string({required_error:"color is not defined"}),
     stock: z.number({ required_error: "stock is not defined" }),
     price: z.number({ required_error: "price is not defined" }),
     gst_price: z.number({ required_error: "gst price is not defined" }),
@@ -23,19 +26,20 @@ export const ProductObject = z.object({
     seo_tittle: z.string({ required_error: "seo tittle is not defined" }),
     seo_description: z.string({ required_error: "seo description is not defined" }),
     seo_keyword: z.string({ required_error: "seo keyword is not defined" }),
-    createdBy: z.string().refine((value) => {
-        try {
-            new ObjectId(value);
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }, 'Invalid ObjectId')
+    // createdBy: z.string().refine((value) => {
+    //     try {
+    //         new ObjectId(value);
+    //         return true;
+    //     } catch (error) {
+    //         return false;
+    //     }
+    // }, 'Invalid ObjectId')
 
 });
 
-
+const newProductObject=ProductObject.merge(userEmailPwd);
 
 // types
 export type ReqProductObject = z.infer<typeof ProductObject>;
+export type ReqNewProductObject=z.infer<typeof newProductObject >;
 

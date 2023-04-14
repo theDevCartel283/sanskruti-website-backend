@@ -24,6 +24,14 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    color:{
+        type: String,
+        required: true
+    },
+    size:{
+        type: String,
+        required: true
+    },
     stock: {
         type: Number,
         required: true
@@ -79,8 +87,7 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: String,
         required: true
     },
 
