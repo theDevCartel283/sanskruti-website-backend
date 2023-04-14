@@ -1,10 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import logger from '../utils/logger.utils';
-import { env } from '../config/env';
-import UserModel from '../model/user.model';
-import { signToken, tokenRefresh, verifyJwt } from '../utils/jwt.utils';
-import getRole from '../utils/getRole.util';
+import { tokenRefresh, verifyJwt } from '../utils/jwt.utils';
 
 export type VerifyRequest<TParams, TBody, TQuery> = Request<
   TParams,
