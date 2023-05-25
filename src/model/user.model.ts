@@ -1,41 +1,90 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  googleId: {
+    type: Number,
+    required: false,
+    default: null,
+  },
+  Mobile_No: {
+    type: Number,
+    required: true,
+    default: null,
+  },
   email: {
     type: String,
     required: true,
-    unique: true,
+    default: null,
   },
   password: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  provider: {
     type: String,
     required: true,
   },
   refreshToken: {
     type: String,
-    required: true,
+    required: false,
   },
   role: {
     type: String,
     required: true,
+    default: "5c83809e-d05a-11ed-afa1-0242ac120002",
   },
-  name: {
-    type: String,
-    required: true,
-  },
+
   dob: {
     type: Date,
-    required: true,
+    required: false,
+    default: null,
   },
-  mobileNo: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
+  address: [
+    {
+      fullName: {
+        type: String,
+        required: true,
+        default: null,
+      },
+      contactNo: {
+        type: Number,
+        required: true,
+        default: null,
+      },
+      pincode: {
+        type: Number,
+        required: true,
+        default: null,
+      },
+      nearBy: {
+        type: String,
+        required: true,
+        default: null,
+      },
+      landmark: {
+        type: String,
+        required: true,
+        default: null,
+      },
+      city: {
+        type: String,
+        required: true,
+        default: null,
+      },
+      state: {
+        type: String,
+        required: true,
+        default: null,
+      },
+    },
+  ],
 });
 
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model("User", userSchema);
 export default UserModel;

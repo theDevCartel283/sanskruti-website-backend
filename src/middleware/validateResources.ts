@@ -1,6 +1,6 @@
-import { z, AnyZodObject } from 'zod';
-import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger.utils';
+import { z, AnyZodObject } from "zod";
+import { Request, Response, NextFunction } from "express";
+import logger from "../utils/logger.utils";
 
 const validateResources =
   (
@@ -14,6 +14,8 @@ const validateResources =
       body: bodySchema,
       query: querySchema,
     });
+
+    console.log(req.body, "jeand");
 
     try {
       schema.parse({

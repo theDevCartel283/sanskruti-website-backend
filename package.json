@@ -17,9 +17,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/passport": "^1.0.12",
+    "@types/passport-facebook": "^2.1.11",
     "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
     "chalk": "^4.1.2",
     "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.7",
@@ -27,8 +31,13 @@
     "envsafe": "^2.0.3",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
+    "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.6.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -37,7 +46,10 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/express-fileupload": "^1.4.1",
+    "@types/express-session": "^1.17.7",
     "@types/jsonwebtoken": "^9.0.1",
+    "@types/multer": "^1.4.7",
+    "@types/passport-google-oauth20": "^2.0.11",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.3"

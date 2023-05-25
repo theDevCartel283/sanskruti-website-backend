@@ -1,33 +1,32 @@
-import { Request, Response } from 'express';
-import ProductModel from '../../model/product.model';
-import { Roles } from '../../config/roles.config';
+import { NextFunction, Request, Response } from "express";
+import ProductModel from "../../model/product.model";
+import { Roles } from "../../config/roles.config";
+import ErrorHandler from "../../utils/errorHandler.utils";
 
-const getproductDetails = async (req: Request, res: Response) => {
-    const id: any = req.query.id;
-    if (id.length == 24) {
-        const product = await ProductModel.findById(id);
-        if (!product) {
-            return res.status(500).json({
-                success: false,
-                message: "product not found"
-            });
-        }
-        else {
-            res.status(200).json({
-                success: true,
-                product
-            })
-        }
-    }
-    else {
-        res.status(500).json({
-            success: false,
-            message: "wrong id / id length should be of 24 char"
-        })
-    }
+const getproductDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const productAlreadyExists = await ProductModel.findOne({
+    name: req.query.name,
+  });
 
+  const arr = {
+    size: req.body.size,
+    color: req.body.color,
+    stock: req.body.stock,
+    price: req.body.price,
+  };
 
-
-}
+  if (productAlreadyExists) {
+    res.status(200).json({
+      success: true,
+      productAlreadyExists,
+    });
+  } else {
+    return next(new ErrorHandler("product not found", "error", 404));
+  }
+};
 
 export default getproductDetails;

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import UserModel from '../../model/user.model';
-import { ReqUserDetails } from '../../schema/user.schema';
-import { TokenPayload } from '../../utils/jwt.utils';
-import logger from '../../utils/logger.utils';
+import { Request, Response } from "express";
+import UserModel from "../../model/user.model";
+import { ReqUserDetails } from "../../schema/user.schema";
+import { TokenPayload } from "../../utils/jwt.utils";
+import logger from "../../utils/logger.utils";
 
 // Update user
 export const handleUpdateUser = async (
@@ -16,7 +16,7 @@ export const handleUpdateUser = async (
   if (!foundUser)
     return res
       .status(401)
-      .json({ message: 'something went wrong', type: 'info' }); // Unauthorized
+      .json({ message: "something went wrong", type: "info" }); // Unauthorized
 
   try {
     // update user in db
@@ -31,12 +31,12 @@ export const handleUpdateUser = async (
     );
 
     res.status(200).json({
-      message: `user ${foundUser.name} was successfully updated`,
-      type: 'success',
+      message: `user ${foundUser.username} was successfully updated`,
+      type: "success",
     });
   } catch (err: any) {
     logger.error(`update user error\n${err}`);
-    res.status(500).json({ message: 'something went wrong', type: 'info' });
+    res.status(500).json({ message: "something went wrong", type: "info" });
   }
 };
 

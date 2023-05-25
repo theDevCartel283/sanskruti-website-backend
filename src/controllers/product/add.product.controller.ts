@@ -1,57 +1,65 @@
-import { Request, Response } from 'express';
-import ProductModel from '../../model/product.model';
-import { Roles } from '../../config/roles.config';
-import { ReqProductObject } from '../../schema/product.schema';
-import { TokenPayload } from '../../utils/jwt.utils';
+import { Request, Response } from "express";
+import ProductModel from "../../model/product.model";
+import { Roles } from "../../config/roles.config";
+import { ReqProductObjectWithName } from "../../schema/product.schema";
+import { TokenPayload } from "../../utils/jwt.utils";
+import multer from "multer";
+import path from "path";
+const directory = path.join(__dirname, "../../../public/images");
 
+var upload = multer({ dest: `${directory}` });
 
-const addProduct = async (req: Request<{}, {}, ReqProductObject & TokenPayload>, res: Response) => {
-    const productAlreadyExists = await ProductModel.findOne({
-        name: req.body.name
+const addProduct = async (
+  req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
+  res: Response
+) => {
+  console.log(req.body);
+  console.log(req.files);
+  const productAlreadyExists = await ProductModel.findOne({
+    name: req.body.name,
+  });
+  const arr: any = req.files;
+  var imgArray: Array<String> = [];
+  if (arr !== undefined) {
+    arr.forEach((item: any) => {
+      imgArray.push(item.filename);
     });
+  }
+  let isExist: boolean = false;
 
-    if (productAlreadyExists) {
-        return res.status(409).send({ message: 'product already exists' });
+  if (productAlreadyExists) {
+    res.status(409).json({ message: "product already exists" });
+  } else {
+    try {
+      const newProduct = new ProductModel({
+        name: req.body.name,
+        images: imgArray,
+        description: req.body.description,
+        gst_price: req.body.gst_price,
+        sale_price: req.body.sale_price,
+        MainCategory: req.body.MainCategory,
+        SubCategory: req.body.SubCategory,
+        brand_name: req.body.brand_name,
+        is_featured: req.body.is_featured,
+        is_new_arrival: req.body.is_new_arrival,
+        is_best_seller: req.body.is_best_seller,
+        meta_tittle: req.body.meta_tittle,
+        meta_description: req.body.meta_description,
+        meta_keyword: req.body.meta_keyword,
+        createdBy: req.body.userUniqueIdentity,
+      });
+
+      const product = await newProduct.save();
+      res.status(201).json({
+        success: true,
+        product,
+      });
+    } catch (error) {
+      res.status(502).json({
+        error,
+      });
     }
-    else {
-        try {
-            const newProduct = new ProductModel({
-                name: req.body.name,
-                description: req.body.description,
-                size:req.body.size,
-                color:req.body.color,
-                stock: req.body.stock,
-                price: req.body.price,
-                gst_price: req.body.gst_price,
-                sale_price: req.body.sale_price,
-                MainCategory: req.body.MainCategory,
-                SubCategory: req.body.SubCategory,
-                brand_name: req.body.brand_name,
-                is_featured: req.body.is_featured,
-                is_new_arrival: req.body.is_new_arrival,
-                is_best_seller: req.body.is_best_seller,
-                seo_tittle: req.body.seo_tittle,
-                seo_description: req.body.seo_description,
-                seo_keyword: req.body.seo_keyword,
-                createdBy: req.body.email
-            });
-
-
-            const product = await newProduct.save();
-            res
-                .status(201).json({
-                    success: true,
-                    product
-                });
-
-        } catch (error) {
-            res.status(502).json({
-                error
-            });
-        }
-    }
-
-
-}
+  }
+};
 
 export default addProduct;

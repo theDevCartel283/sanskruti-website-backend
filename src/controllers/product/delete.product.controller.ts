@@ -1,36 +1,24 @@
-import { Request, Response } from 'express';
-import ProductModel from '../../model/product.model';
-import { Roles } from '../../config/roles.config';
-import { TokenPayload } from '../../utils/jwt.utils';
+import { Request, Response } from "express";
+import ProductModel from "../../model/product.model";
+import { Roles } from "../../config/roles.config";
+import { TokenPayload } from "../../utils/jwt.utils";
 
 const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
-    const id: any = req.query.id
-    if (id.length == 24) {
-        const product: any = await ProductModel.findById(id);
+  const productAlreadyExists = await ProductModel.findOne({
+    name: req.query.name,
+  });
 
-        if (!product) {
-            return res.status(500).json({
-                success: false,
-                message: "product not found"
-            });
-        }
-        else {
-            await product.deleteOne(req.query);
-            res.status(200).json({
-                success: true,
-                message: "Product Deleted Successfully"
-            })
-
-        }
-    }
-    else {
-        res.status(500).json({
-            success: false,
-            message: "wrong id / id length should be of 24 char"
-        })
-    }
-
-
-}
+  if (productAlreadyExists) {
+    await ProductModel.deleteOne(req.query);
+    res.status(200).json({
+      success: true,
+      message: "product deleted successfully",
+    });
+  } else {
+    res.status(500).json({
+      message: "product does not exist",
+    });
+  }
+};
 
 export default deleteProduct;

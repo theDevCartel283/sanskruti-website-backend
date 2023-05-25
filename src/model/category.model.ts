@@ -1,22 +1,21 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     subCategory: [
-        {
-            type: String
-        }
-    ]
-},
-    {
-        timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
-    });
+      {
+        type: String,
+      },
+    ],
+  },
+  {
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+  }
+);
 
-
-const categoryModel = mongoose.model('Category', categorySchema);
+const categoryModel = mongoose.model("Category", categorySchema);
 export default categoryModel;
-
-

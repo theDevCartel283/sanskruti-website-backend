@@ -1,31 +1,45 @@
-import express from 'express';
-import * as userController from '../controllers/user/index.user.controller';
-import * as productController from '../controllers/product/index.product.controller';
-import * as color_sizeController from '../controllers/color_size/index.color_size.controller';
-import validateResources from '../middleware/validateResources';
-import { blankSchema } from '../schema/blank.schema';
-import { userEmailPwd, userObject } from '../schema/user.schema';
-import * as categoryController from '../controllers/category/index.category.controller';
+import express, { Request, Response } from "express";
+import * as userController from "../controllers/user/index.user.controller";
+import * as productController from "../controllers/product/index.product.controller";
+import * as varientController from "../controllers/varient/index.varient.controller";
+import validateResources from "../middleware/validateResources";
+import { blankSchema } from "../schema/blank.schema";
+import * as imageController from "../controllers/image/index.image.controller";
+import {
+  userEmailPwd,
+  emailPwdWithUsername,
+  userMobileNoPwd,
+  userMobileNoPwdWithUsername,
+} from "../schema/user.schema";
+import * as categoryController from "../controllers/category/index.category.controller";
+import passport from "passport";
 
 const router = express.Router();
 
 router.post(
-  '/register',
-  validateResources(blankSchema, userObject, blankSchema),
-  userController.handleRegister
+  "/emailregister",
+  validateResources(blankSchema, emailPwdWithUsername, blankSchema),
+  userController.handleRegisterWithEmail
 );
 router.post(
-  '/login',
-  validateResources(blankSchema, userEmailPwd, blankSchema),
-  userController.handleAuthentication
+  "/numberregister",
+  validateResources(blankSchema, userMobileNoPwdWithUsername, blankSchema),
+  userController.handleRegisterWithNumber
 );
-router.get('/categories', categoryController.getCategory);
-router.get('/colors',color_sizeController.getColor);
-router.get('/sizes',color_sizeController.getSize);
+router.post(
+  "/emaillogin",
+  validateResources(blankSchema, userEmailPwd, blankSchema),
+  userController.handleAuthenticationWithEmail
+);
+router.post(
+  "/numberlogin",
+  validateResources(blankSchema, userMobileNoPwd, blankSchema),
+  userController.handleAuthenticationWithNumber
+);
 
+router.get("/categories", categoryController.getCategory);
 
-
-router.get('/getallProducts', productController.getallProducts);
-router.get('/product', productController.getproductDetails);
-
+router.get("/getallProducts", productController.getallProducts);
+router.get("/product", productController.getproductDetails);
+router.get("/getVarients", varientController.getallVarients);
 export default router;
