@@ -36,8 +36,8 @@ router.post(
 router.get("/oauth/me", myProfile);
 router.get("/oauth/logout", logout);
 
-router.get("/emaillogout", userController.handleLogoutForEmail);
-router.get("/numberlogout", userController.handleLogoutForNumber);
+router.get("/emaillogout", userController.handleLogout);
+router.get("/numberlogout", userController.handleLogout);
 
 router.post(
   "/password/update",

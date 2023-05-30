@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ProductModel from "../../model/product.model";
 import { Roles } from "../../config/roles.config";
 import { TokenPayload } from "../../utils/jwt.utils";
+import fs from "fs";
 
 const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
   const productAlreadyExists = await ProductModel.findOne({
@@ -9,6 +10,9 @@ const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
   });
 
   if (productAlreadyExists) {
+    productAlreadyExists.images.map((item) => {
+      fs.unlinkSync(item);
+    });
     await ProductModel.deleteOne(req.query);
     res.status(200).json({
       success: true,

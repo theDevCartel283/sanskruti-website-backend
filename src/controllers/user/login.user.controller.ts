@@ -20,6 +20,7 @@ export const handleAuthenticationWithEmail = async (
     return res.status(401).json({
       message: "email / number or password is incorrect",
       type: "warning",
+      isAuthenticated: false,
     }); // Unauthorized
 
   const userIsBanned = await BannedEmailModel.findOne({
@@ -31,6 +32,7 @@ export const handleAuthenticationWithEmail = async (
     return res.status(403).json({
       message: `user email:${email} has been banned`,
       type: "warning",
+      isAuthenticated: false,
     }); // Forbidden
 
   // evaluate password
@@ -68,7 +70,6 @@ export const handleAuthenticationWithEmail = async (
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "none",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
       res.status(200).json({
@@ -77,6 +78,7 @@ export const handleAuthenticationWithEmail = async (
         }`,
         type: "success",
         accessToken,
+        isAuthenticated: true,
       });
     } catch (err: any) {
       logger.error(`user login error\n${err}`);
@@ -86,6 +88,7 @@ export const handleAuthenticationWithEmail = async (
     res.status(401).json({
       message: "email / number or password is incorrect",
       type: "warning",
+      isAuthenticated: false,
     });
   }
 };
@@ -102,6 +105,7 @@ export const handleAuthenticationWithNumber = async (
     return res.status(401).json({
       message: "email / number or password is incorrect",
       type: "warning",
+      isAuthenticated: false,
     }); // Unauthorized
 
   // const userIsBanned = await BannedEmailModel.findOne({
@@ -151,7 +155,6 @@ export const handleAuthenticationWithNumber = async (
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "none",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
       res.status(200).json({
@@ -160,15 +163,21 @@ export const handleAuthenticationWithNumber = async (
         }`,
         type: "success",
         accessToken,
+        isAuthenticated: true,
       });
     } catch (err: any) {
       logger.error(`user login error\n${err}`);
-      res.status(500).json({ message: "something went wrong", type: "info" });
+      res.status(500).json({
+        message: "something went wrong",
+        type: "info",
+        isAuthenticated: false,
+      });
     }
   } else {
     res.status(401).json({
       message: "email / number or password is incorrect",
       type: "warning",
+      isAuthenticated: false,
     });
   }
 };

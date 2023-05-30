@@ -33,10 +33,7 @@ router.get(
       const role: any = getRole(userRole);
 
       if (provider === "Email") {
-        res.status(502).json({
-          message: `user already exists with ${provider} login`,
-          type: "error",
-        });
+        res.redirect(302, "http://localhost:3000/");
       } else {
         // create JWT
         // Access Token
@@ -57,20 +54,15 @@ router.get(
         // store refresh token in db
         await UserModel.findOneAndUpdate(
           { email: userEmail },
-          { refreshToken: refreshToken }
+          { refreshToken: refreshToken, accessToken: accessToken }
         );
         // create httpOnly cookie
         res.cookie("jwt", refreshToken, {
-          httpOnly: true,
+          httpOnly: false,
           secure: false,
           maxAge: 30 * 24 * 60 * 60 * 1000,
         });
-        console.log(req.headers["authorization"]);
-        res.status(200).json({
-          message: `successfully logged in as ${userEmail}`,
-          type: "success",
-          accessToken,
-        });
+        res.redirect(302, "http://localhost:3000/home");
       }
     }
   }

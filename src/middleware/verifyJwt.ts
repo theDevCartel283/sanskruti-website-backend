@@ -18,14 +18,18 @@ const verifyAccessJwt = async (
   const header = (req.headers["authorization"] ||
     req.headers["Authorization"]) as string;
   if (!header?.startsWith("Bearer "))
-    return res.status(401).json({ message: "access token not found" }); // Unauthorized
+    return res
+      .status(401)
+      .json({ message: "access token not found", type: "warning" }); // Unauthorized
 
   const accessToken = header.split(" ")[1];
 
   // get refresh Token
   const cookie = req.cookies;
   if (!cookie?.jwt)
-    return res.status(401).json({ message: "request cookie empty" });
+    return res
+      .status(401)
+      .json({ message: "request cookie empty", type: "warning" });
   const refreshToken: string = cookie.jwt;
 
   // Case 1: accessToken doesn't exist refresh token exists

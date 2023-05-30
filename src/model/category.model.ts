@@ -2,7 +2,24 @@ import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema(
   {
-    name: {
+    Title: {
+      type: String,
+      required: true,
+    },
+    Image: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    Slug: {
+      type: String,
+      required: true,
+    },
+    Meta_Title: {
+      type: String,
+      required: true,
+    },
+    Meta_Description: {
       type: String,
       required: true,
     },

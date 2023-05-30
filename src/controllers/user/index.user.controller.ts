@@ -9,10 +9,7 @@ import {
 
 // Protected
 import handleGetUser from "./getuser.user.controller";
-import {
-  handleLogoutForEmail,
-  handleLogoutForNumber,
-} from "./logout.user.controller";
+import { handleLogout } from "./logout.user.controller";
 import handleUpdatePassword from "./updatePassword.user.controller";
 import handleUpdateUser from "./updateUser.user.controller";
 import {
@@ -31,8 +28,7 @@ export {
 
   // Protected
   handleGetUser,
-  handleLogoutForEmail,
-  handleLogoutForNumber,
+  handleLogout,
   handleUpdatePassword,
   handleUpdateUser,
   handleDeleteForEmail,

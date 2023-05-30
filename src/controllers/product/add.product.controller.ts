@@ -13,18 +13,9 @@ const addProduct = async (
   req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
   res: Response
 ) => {
-  console.log(req.body);
-  console.log(req.files);
   const productAlreadyExists = await ProductModel.findOne({
     name: req.body.name,
   });
-  const arr: any = req.files;
-  var imgArray: Array<String> = [];
-  if (arr !== undefined) {
-    arr.forEach((item: any) => {
-      imgArray.push(item.filename);
-    });
-  }
   let isExist: boolean = false;
 
   if (productAlreadyExists) {
@@ -33,7 +24,6 @@ const addProduct = async (
     try {
       const newProduct = new ProductModel({
         name: req.body.name,
-        images: imgArray,
         description: req.body.description,
         gst_price: req.body.gst_price,
         sale_price: req.body.sale_price,

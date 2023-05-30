@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { TokenPayload } from '../utils/jwt.utils';
-import getRole from '../utils/getRole.util';
+import { Request, Response, NextFunction } from "express";
+import { TokenPayload } from "../utils/jwt.utils";
+import getRole from "../utils/getRole.util";
 
 export const verifyIsAdmin = (
   req: Request<{}, {}, TokenPayload>,
@@ -8,9 +8,8 @@ export const verifyIsAdmin = (
   next: NextFunction
 ) => {
   const role = getRole(req.body.userRole);
-  console.log(req.body.userRole);
 
-  if (role === 'USER' || role === undefined) {
+  if (role === "USER" || role === undefined) {
     return res.sendStatus(403); // Forbidden
   }
 
@@ -25,7 +24,7 @@ export const verifyIsSuperAdmin = (
 ) => {
   const role = getRole(req.body.userRole);
 
-  if (role === 'USER' || role === 'ADMIN' || role === undefined) {
+  if (role === "USER" || role === "ADMIN" || role === undefined) {
     return res.sendStatus(403); // Forbidden
   }
 

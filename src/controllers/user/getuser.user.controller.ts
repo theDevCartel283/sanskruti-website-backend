@@ -10,12 +10,11 @@ export const handleGetUser = async (
   res: Response
 ) => {
   const { provider, userUniqueIdentity } = req.body;
-  console.log(req.body);
 
   // email doesn't exist in jwt token
   if (!userUniqueIdentity) return res.status(404).send("user not found");
 
-  if (provider === "Email" || provider === "google") {
+  if (provider === "Email") {
     const user = await UserModel.findOne({ email: userUniqueIdentity });
     // username doesn't exist in db
     if (!user) return res.status(404).send("user not found");
@@ -24,6 +23,7 @@ export const handleGetUser = async (
       name: user.username,
       email: user.email,
       provider: user.provider,
+      role: user.role,
     };
 
     res.status(200).send(userTrimmend);
@@ -36,6 +36,7 @@ export const handleGetUser = async (
       name: user.username,
       Mobile_No: user.Mobile_No,
       provider: user.provider,
+      role: user.role,
     };
 
     res.status(200).send(userTrimmend);

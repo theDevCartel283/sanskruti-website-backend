@@ -56,6 +56,10 @@ app.use(
     secret: "ashjvasdhbsaduyvuyvvsa",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: false,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    },
   })
 );
 

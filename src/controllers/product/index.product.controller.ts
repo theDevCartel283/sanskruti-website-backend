@@ -4,6 +4,8 @@ import deleteProduct from "./delete.product.controller";
 import getproductDetails from "./getproductDetails.controller";
 import updateProduct from "./update.product.controller";
 import addVariations from "./variations.product.controller";
+import addProductImages from "./add.productImage.controller";
+import deleteProductImages from "./delete.productImage.controller";
 
 export {
   addVariations,
@@ -12,4 +14,6 @@ export {
   deleteProduct,
   getproductDetails,
   updateProduct,
+  addProductImages,
+  deleteProductImages,
 };

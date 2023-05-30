@@ -1,9 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 export const myProfile = (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    success: true,
-    user: req.user,
-  });
+  if (req.user) {
+    res.status(200).json({
+      type: "success",
+      isAuthenticated: true,
+      user: req.user,
+    });
+  } else {
+    res.status(200).json({
+      success: false,
+      isAuthenticated: false,
+      user: req.user,
+    });
+  }
 };
 
 export const logout = (req: Request, res: Response, next: NextFunction) => {

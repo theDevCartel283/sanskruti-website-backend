@@ -14,9 +14,6 @@ const validateResources =
       body: bodySchema,
       query: querySchema,
     });
-
-    console.log(req.body, "jeand");
-
     try {
       schema.parse({
         params: req.params,

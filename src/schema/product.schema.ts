@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { ZodObject, object, z } from "zod";
 import { userEmailPwd } from "./user.schema";
 import { ObjectId } from "bson";
 

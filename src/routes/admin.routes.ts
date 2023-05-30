@@ -10,13 +10,17 @@ import { ProductObject } from "../schema/product.schema";
 import { varientDetails } from "../schema/varients.schema";
 import * as imageController from "../controllers/image/index.image.controller";
 import { varientArray } from "../schema/varients.schema";
+import {
+  asyncArrayMiddleware,
+  asyncSingleMiddleware,
+} from "../middleware/middlware";
 const router = express.Router();
 
 // product
 
 router.post(
   "/newProduct",
-  upload.array("productImg"),
+  validateResources(blankSchema, ProductObject, blankSchema),
   productController.addProduct
 );
 router.put(
@@ -34,10 +38,15 @@ router.delete("/delete", productController.deleteProduct);
 
 // categories
 
-router.put(
+router.post(
   "/addCategory",
   validateResources(blankSchema, categoryDetails, blankSchema),
   categoryController.addCategory
+);
+router.put(
+  "/updateCategory",
+  validateResources(blankSchema, categoryDetails, blankSchema),
+  categoryController.updateCategory
 );
 router.delete("/deleteCategory", categoryController.deleteCategory);
 
@@ -50,18 +59,27 @@ router.put(
 router.delete("/deleteVarient", varientController.deleteVarient);
 
 //images
+
+// ##product
+
 router.get("/allImages", imageController.getallImages);
 
 router.post(
-  "/addImages",
-  upload.single("avatar"),
-  async (req: Request, res: Response) => {
-    const file: any = req.file;
-    console.log(file);
-    res.status(201).json({
-      message: "upload successfully",
-    });
-  }
+  "/addProductImages",
+  upload.array("image"),
+  asyncArrayMiddleware,
+  productController.addProductImages
 );
+router.post("/deleteProductImage", productController.deleteProductImages);
+
+// ##category
+router.post(
+  "/addCategoryImage",
+  upload.single("image"),
+  asyncSingleMiddleware,
+  categoryController.addCategoryImage
+);
+
+router.post("/deleteCategoryImage", categoryController.deleteCategoryImage);
 
 export default router;
