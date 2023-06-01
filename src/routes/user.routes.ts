@@ -11,6 +11,7 @@ import {
   userMobileNoPwdWithUsername,
   authWithUsername,
   register,
+  auth,
 } from "../schema/user.schema";
 import * as categoryController from "../controllers/category/index.category.controller";
 
@@ -23,7 +24,7 @@ router.post(
 );
 router.post(
   "/login",
-  validateResources(blankSchema, authWithUsername, blankSchema),
+  validateResources(blankSchema, auth, blankSchema),
   userController.handleAuthentication
 );
 
