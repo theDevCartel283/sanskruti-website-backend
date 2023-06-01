@@ -6,8 +6,8 @@ import * as wishlistController from "../controllers/wishlist/index.wishlist.cont
 import * as cartController from "../controllers/cart/index.cart.controller";
 import validateResources from "../middleware/validateResources";
 import {
+  Address,
   addressObject,
-  arr,
   auth,
   userDetails,
   userEmailPwd,
@@ -64,7 +64,7 @@ router.post(
 );
 router.put(
   "/address",
-  validateResources(blankSchema, arr, blankSchema),
+  validateResources(blankSchema, Address, blankSchema),
   userController.updateAddress
 );
 

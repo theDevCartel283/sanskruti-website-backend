@@ -85,8 +85,12 @@ export const addressObject = z.object({
   city: z.string({ required_error: "city is not Defined" }),
   state: z.string({ required_error: "state is not Defined" }),
 });
-export const arr = z.object({
-  arr: z.array(z.object({})),
+export const Address = z.object({
+  newAddress: addressObject.merge(
+    z.object({
+      id: z.string(),
+    })
+  ),
 });
 
 export const userObject = userEmailPwd.merge(userDetails);
@@ -109,4 +113,4 @@ export type ReqUserUpdatePassword = z.infer<typeof userUpdatePassword>;
 export type ReqUserDetails = z.infer<typeof userDetails>;
 export type ReqUserObject = z.infer<typeof userObject>;
 export type ReqAddressObject = z.infer<typeof addressObject>;
-export type ReqArr = z.infer<typeof arr>;
+export type ReqAddress = z.infer<typeof Address>;

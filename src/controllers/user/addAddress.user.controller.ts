@@ -3,6 +3,7 @@ import UserModel from "../../model/user.model";
 import { ReqAddressObject } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
+import { v4 as uuidV4 } from "uuid";
 
 export const addAddress = async (
   req: Request<{}, {}, TokenPayload & ReqAddressObject>,
@@ -29,7 +30,7 @@ export const addAddress = async (
     }); // U
   }
 
-  let isExist: boolean = false;
+  let isExist = false;
   user?.address.forEach((i: any) => {
     if (
       i.fullName === fullName &&
@@ -45,32 +46,33 @@ export const addAddress = async (
   });
 
   if (isExist) {
-    res.status(409).json({
+    return res.status(409).json({
       message: "address already exist",
       type: "warning",
     });
-  } else {
-    try {
-      const newAddressObj = {
-        fullName,
-        contactNo,
-        pincode,
-        nearBy,
-        landmark,
-        city,
-        state,
-      };
-      user.address.push(newAddressObj);
+  }
 
-      const updatedUser = await user.save({ validateBeforeSave: false });
-      res.status(201).json({
-        type: "success",
-        address: updatedUser.address,
-      });
-    } catch (error) {
-      res.status(502).json({
-        error,
-      });
-    }
+  try {
+    const newAddressObj = {
+      id: uuidV4(),
+      fullName,
+      contactNo,
+      pincode,
+      nearBy,
+      landmark,
+      city,
+      state,
+    };
+    user.address.push(newAddressObj);
+
+    const updatedUser = await user.save({ validateBeforeSave: false });
+    return res.status(201).json({
+      type: "success",
+      address: updatedUser.address,
+    });
+  } catch (error) {
+    res.status(502).json({
+      error,
+    });
   }
 };

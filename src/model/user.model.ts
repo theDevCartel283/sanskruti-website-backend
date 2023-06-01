@@ -52,6 +52,10 @@ const userSchema = new mongoose.Schema({
   },
   address: [
     {
+      id: {
+        type: String,
+        required: true,
+      },
       fullName: {
         type: String,
         required: true,

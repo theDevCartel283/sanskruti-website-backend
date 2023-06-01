@@ -1,41 +1,44 @@
 import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
-import { ReqArr } from "../../schema/user.schema";
+import { ReqAddress } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
+import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 export const updateAddress = async (
-  req: Request<{}, {}, TokenPayload & ReqArr>,
+  req: Request<{}, {}, TokenPayload & ReqAddress>,
   res: Response
 ) => {
-  const { userUniqueIdentity, provider, arr } = req.body;
+  const { userUniqueIdentity, newAddress } = req.body;
 
-  if (provider === "Email" || provider === "google") {
-    const user = await UserModel.findOne({ email: userUniqueIdentity });
-    const updateAddress = await UserModel.updateOne(
-      { email: userUniqueIdentity },
-      {
-        $set: {
-          address: arr,
-        },
-      }
-    );
-    res.status(200).json({
-      success: true,
-      updateAddress,
-    });
-  } else {
-    const user = await UserModel.findOne({ Mobile_No: userUniqueIdentity });
-    const updateAddress = await UserModel.updateOne(
-      { Mobile_No: userUniqueIdentity },
-      {
-        $set: {
-          address: arr,
-        },
-      }
-    );
-    res.status(200).json({
-      success: true,
-      updateAddress,
-    });
+  var user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  if (!user) {
+    return res.status(401).json({
+      message: "user not found",
+      type: "error",
+      isAuthenticated: false,
+    }); // U
   }
+
+  const newAddressArray = user.address.map((address) =>
+    address.id === newAddress.id ? newAddress : address
+  );
+
+  const updateAddress = await UserModel.findOneAndUpdate(
+    { email: user.email },
+    {
+      $set: {
+        address: newAddressArray,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    address: updateAddress?.address,
+  });
 };
