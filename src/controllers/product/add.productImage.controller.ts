@@ -3,7 +3,6 @@ import ProductModel from "../../model/product.model";
 
 const addProductImages = async (req: Request, res: Response) => {
   const imagePathArray: any = req.body.imagePathArray;
-  console.log(imagePathArray);
   const productAlreadyExists = await ProductModel.findOne({
     _id: req.query._id,
   });

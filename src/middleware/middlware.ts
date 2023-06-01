@@ -7,7 +7,6 @@ export const asyncArrayMiddleware = (
 ) => {
   const arr: Array<string> = [];
   const temp: any = req.files;
-  console.log(temp);
   for (let x in temp) {
     arr.push(temp[x].path);
   }

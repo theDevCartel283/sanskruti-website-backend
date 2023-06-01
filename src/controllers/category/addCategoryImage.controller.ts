@@ -3,7 +3,6 @@ import categoryModel from "../../model/category.model";
 
 const addCategoryImage = async (req: Request, res: Response) => {
   const imagePath: any = req.body.imagePath;
-  console.log(imagePath);
   const categoryAlreadyExists = await categoryModel.findOne({
     _id: req.query._id,
   });

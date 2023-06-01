@@ -19,7 +19,6 @@ const addToCart = async (
       sale_price: req.body.sale_price,
     },
   ];
-  console.log(req.body);
 
   if (!user) {
     const newCart = new cartModel({

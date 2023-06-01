@@ -16,7 +16,6 @@ const updateCategory = async (req: Request, res: Response) => {
         runValidators: true,
         useFindAndModify: false,
       });
-      console.log(newCategory);
       res.status(200).json({
         type: "success",
         newCategory,

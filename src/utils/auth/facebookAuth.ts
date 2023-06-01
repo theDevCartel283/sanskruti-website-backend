@@ -12,7 +12,6 @@ export const connectPassport = () => {
         callbackURL: "http://localhost:3000/api/v1/auth/facebookRedirect",
       },
       async function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
         return done(null, profile);
         // const user = await newUserModel.findOne({
         //   googleId: profile.id,
