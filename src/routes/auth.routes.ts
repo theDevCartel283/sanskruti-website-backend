@@ -62,7 +62,12 @@ router.get(
           secure: false,
           maxAge: 30 * 24 * 60 * 60 * 1000,
         });
-        res.redirect(302, "http://localhost:3000/home");
+        res.redirect(
+          302,
+          `${req.protocol}://${
+            req.hostname === "localhost" ? "localhost:3000" : req.hostname
+          }/home`
+        );
       }
     }
   }
