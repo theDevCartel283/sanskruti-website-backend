@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
 import { ReqAddressObject } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
+import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 export const addAddress = async (
   req: Request<{}, {}, TokenPayload & ReqAddressObject>,
@@ -19,11 +20,13 @@ export const addAddress = async (
     state,
   } = req.body;
 
-  var user: any = {};
-  if (provider === "Email" || provider === "google") {
-    user = await UserModel.findOne({ email: userUniqueIdentity });
-  } else {
-    user = await UserModel.findOne({ Mobile_No: userUniqueIdentity });
+  var user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  if (!user) {
+    return res.status(401).json({
+      message: "user not found",
+      type: "error",
+      isAuthenticated: false,
+    }); // U
   }
 
   let isExist: boolean = false;
@@ -44,6 +47,7 @@ export const addAddress = async (
   if (isExist) {
     res.status(409).json({
       message: "address already exist",
+      type: "warning",
     });
   } else {
     try {
@@ -61,7 +65,7 @@ export const addAddress = async (
       const updatedUser = await user.save({ validateBeforeSave: false });
       res.status(201).json({
         type: "success",
-        updatedUser,
+        address: updatedUser.address,
       });
     } catch (error) {
       res.status(502).json({
