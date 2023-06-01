@@ -8,6 +8,7 @@ import validateResources from "../middleware/validateResources";
 import {
   addressObject,
   arr,
+  auth,
   userDetails,
   userEmailPwd,
   userMobileNoPwd,
@@ -45,15 +46,15 @@ router.post(
 );
 
 router.delete(
-  "/emaildelete",
-  validateResources(blankSchema, userEmailPwd, blankSchema),
-  userController.handleDeleteForEmail
+  "/delete",
+  validateResources(blankSchema, auth, blankSchema),
+  userController.handleDelete
 );
 
 router.delete(
   "/numberdelete",
   validateResources(blankSchema, userMobileNoPwd, blankSchema),
-  userController.handleDeleteForNumber
+  userController.handleDelete
 );
 
 router.post(
