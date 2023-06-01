@@ -1,11 +1,5 @@
-import {
-  handleRegisterWithEmail,
-  handleRegisterWithNumber,
-} from "./register.user.controller";
-import {
-  handleAuthenticationWithEmail,
-  handleAuthenticationWithNumber,
-} from "./login.user.controller";
+import { handleRegister } from "./register.user.controller";
+import { handleAuthentication } from "./login.user.controller";
 
 // Protected
 import handleGetUser from "./getuser.user.controller";
@@ -21,10 +15,8 @@ import { updateAddress } from "./updateAddress.user.controller";
 import { getAllAddress } from "./allAddress.user.controller";
 
 export {
-  handleRegisterWithEmail,
-  handleRegisterWithNumber,
-  handleAuthenticationWithEmail,
-  handleAuthenticationWithNumber,
+  handleRegister,
+  handleAuthentication,
 
   // Protected
   handleGetUser,

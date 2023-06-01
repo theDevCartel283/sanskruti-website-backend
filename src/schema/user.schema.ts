@@ -7,6 +7,21 @@ export const username = z.object({
   }),
 });
 
+export const auth = z.object({
+  emailOrNumber: z.union([z.string().email(), z.number()]),
+  password: z.string(),
+});
+
+export const authWithUsername = auth.merge(username);
+
+export const emailAndNumber = z.object({
+  email: z.string().email(),
+  Mobile_No: z.number(),
+  password: z.string(),
+});
+
+export const register = username.merge(emailAndNumber);
+
 // email register
 export const userEmailPwd = z.object({
   email: z
@@ -79,6 +94,11 @@ export const emailPwdWithUsername = userEmailPwd.merge(username);
 export const userMobileNoPwdWithUsername = userMobileNoPwd.merge(username);
 
 // types
+export type ReqAuth = z.infer<typeof auth>;
+export type ReqAuthWithUsername = z.infer<typeof authWithUsername>;
+
+export type ReqRegister = z.infer<typeof register>;
+
 export type ReqEmailPwd = z.infer<typeof userEmailPwd>;
 export type RequserMobileNoPwd = z.infer<typeof userMobileNoPwd>;
 export type ReqEmailPwdWithUsername = z.infer<typeof emailPwdWithUsername>;
