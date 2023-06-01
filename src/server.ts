@@ -2,8 +2,6 @@
 import path from "path";
 import * as dotenv from "dotenv";
 dotenv.config({ path: path.join(__dirname, "..", ".env") });
-import { connectPassportGoogle } from "./utils/googleAuth";
-import { connectPassport } from "./utils/facebookAuth";
 
 // imports
 import express, { Application, Request, Response } from "express";
@@ -14,7 +12,7 @@ import verifyAccessJwt from "./middleware/verifyJwt";
 import connectToDb from "./utils/connectToDb.utils";
 import logger from "./utils/logger.utils";
 import { env } from "./config/env";
-import session from "express-session";
+
 import errFunction from "./middleware/error.middleware";
 
 // Routers import
@@ -30,7 +28,7 @@ import {
   verifyIsAdmin,
   verifyIsSuperAdmin,
 } from "./middleware/verifyIsAdmin.middleware";
-import passport from "passport";
+import { authInit } from "./utils/auth/authInit";
 
 // creating an express app
 const app: Application = express();
@@ -51,23 +49,10 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/user", userRouter);
-app.use(
-  session({
-    secret: "ashjvasdhbsaduyvuyvvsa",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: false,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    },
-  })
-);
 
-app.use(passport.authenticate("session"));
-app.use(passport.initialize());
-app.use(passport.session());
-connectPassportGoogle();
-connectPassport();
+// oauth2.0
+authInit(app);
+
 app.use("/api/v1", authRouter);
 // get product
 
