@@ -32,7 +32,7 @@ import { authInit } from "./utils/auth/authInit";
 
 // creating an express app
 const app: Application = express();
-const PORT = Number(env.PORT) || 3500;
+const PORT = Number(env.PORT) || 4000;
 
 // Cors - Cross Origin Resource Sharing
 app.use(cors());
