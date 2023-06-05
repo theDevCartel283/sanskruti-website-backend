@@ -24,6 +24,14 @@ export const handleAuthentication = async (
       isAuthenticated: false,
     }); // Unauthorized
 
+  if (foundUser.provider !== "Email/Number") {
+    return res.status(401).json({
+      message: "email / number or password is incorrect",
+      type: "warning",
+      isAuthenticated: false,
+    }); //
+  }
+
   const userIsBanned = await BannedEmailModel.findOne({
     email: foundUser.email,
   });
