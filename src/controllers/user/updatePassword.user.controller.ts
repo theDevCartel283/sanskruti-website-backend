@@ -1,22 +1,24 @@
-import { Request, Response } from 'express';
-import UserModel from '../../model/user.model';
-import { ReqUserUpdatePassword } from '../../schema/user.schema';
-import bcrypt from 'bcrypt';
-import logger from '../../utils/logger.utils';
+import { Request, Response } from "express";
+import UserModel from "../../model/user.model";
+import { ReqUserUpdatePassword } from "../../schema/user.schema";
+import bcrypt from "bcrypt";
+import logger from "../../utils/logger.utils";
+import { TokenPayload } from "../../utils/jwt.utils";
+import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 // Update Password
 export const handleUpdatePassword = async (
-  req: Request<{}, {}, ReqUserUpdatePassword>,
+  req: Request<{}, {}, ReqUserUpdatePassword & TokenPayload>,
   res: Response
 ) => {
-  const { email, password, updatePassword } = req.body;
+  const { userUniqueIdentity, password, updatePassword } = req.body;
 
   // check if user exists
-  const foundUser = await UserModel.findOne({ email });
+  const foundUser = await getUserFromEmailOrNumber(userUniqueIdentity);
   if (!foundUser)
     return res.status(401).json({
-      message: 'email / number or password is incorrect',
-      type: 'warning',
+      message: "email / number or password is incorrect",
+      type: "warning",
     }); // Unauthorized
 
   // evaluate password
@@ -33,8 +35,8 @@ export const handleUpdatePassword = async (
       );
 
       res.status(200).json({
-        message: 'password changed successfully',
-        type: 'success',
+        message: "password changed successfully",
+        type: "success",
       });
     } catch (err: any) {
       logger.error(`update user password error\n${err}`);
@@ -42,8 +44,8 @@ export const handleUpdatePassword = async (
     }
   } else {
     res.status(401).json({
-      message: 'email / number or password is incorrect',
-      type: 'warning',
+      message: "password is incorrect",
+      type: "error",
     });
   }
 };

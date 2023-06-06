@@ -14,7 +14,6 @@ export const handleGetUser = async (
 
   // email doesn't exist in jwt token
   if (!userUniqueIdentity) return res.status(404).send("user not found");
-
   const user = await getUserFromEmailOrNumber(userUniqueIdentity);
   // username doesn't exist in db
   if (!user) {
@@ -26,14 +25,14 @@ export const handleGetUser = async (
   }
 
   const userTrimmend = {
-    name: user.username,
+    username: user.username,
     email: user.email,
     address: user.address,
     Mobile_No: user.Mobile_No,
     dob: user.dob,
   };
 
-  res.status(200).send(userTrimmend);
+  res.status(200).json(userTrimmend);
 };
 
 export default handleGetUser;

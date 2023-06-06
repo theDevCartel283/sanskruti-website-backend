@@ -68,6 +68,7 @@ export const addAddress = async (
     const updatedUser = await user.save({ validateBeforeSave: false });
     return res.status(201).json({
       type: "success",
+      message: "new address added",
       address: updatedUser.address,
     });
   } catch (error) {

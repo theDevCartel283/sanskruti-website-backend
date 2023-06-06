@@ -39,6 +39,8 @@ export const updateAddress = async (
 
   res.status(200).json({
     success: true,
+    type: "success",
+    message: "Address updated successfully",
     address: updateAddress?.address,
   });
 };
