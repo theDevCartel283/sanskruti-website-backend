@@ -1,9 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
-import { myProfile, logout } from "../controllers/auth/user";
 import * as JWT from "../utils/jwt.utils";
 import getRole from "../utils/getRole.util";
-import UserModel from "../model/user.model";
 
 const router = express.Router();
 
@@ -11,6 +9,8 @@ router.get(
   "/googlelogin",
   passport.authenticate("google", {
     scope: ["profile", "email"],
+    successRedirect: "/auth/googleRedirect",
+    failureRedirect: "/auth/login",
   })
 );
 
@@ -18,6 +18,8 @@ router.get(
   "/facebooklogin",
   passport.authenticate("facebook", {
     scope: ["profile", "email"],
+    successRedirect: "/auth/facebookRedirect",
+    failureRedirect: "/auth/login",
   })
 );
 
@@ -32,43 +34,31 @@ router.get(
       const provider: any = user.provider;
       const role: any = getRole(userRole);
 
-      if (provider === "Email") {
-        res.redirect(302, "http://localhost:3000/");
-      } else {
-        // create JWT
-        // Access Token
-        const accessToken = JWT.signTokenForEmail(
-          "ACCESS_TOKEN_PRIVATE",
-          userEmail,
-          provider,
-          role
-        );
+      // create httpOnly cookie
+      const accessToken = JWT.signTokenForEmail(
+        "ACCESS_TOKEN_PRIVATE",
+        userEmail,
+        provider,
+        role
+      );
 
-        // Refresh Token
-        const refreshToken = JWT.signTokenForEmail(
-          "REFRESH_TOKEN_PRIVATE",
-          userEmail,
-          provider,
-          role
-        );
-        // store refresh token in db
-        await UserModel.findOneAndUpdate(
-          { email: userEmail },
-          { refreshToken: refreshToken, accessToken: accessToken }
-        );
-        // create httpOnly cookie
-        res.cookie("jwt", refreshToken, {
-          httpOnly: false,
-          secure: false,
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
-        res.redirect(
-          302,
-          `${req.protocol}://${
-            req.hostname === "localhost" ? "localhost:3000" : req.hostname
-          }/home`
-        );
-      }
+      // create httpOnly cookie
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        path: "/",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      res.redirect(
+        302,
+        `${req.protocol}://${
+          req.hostname === "localhost" ? "localhost:3000" : req.hostname
+        }/`
+      );
+    } else {
+      res.redirect("/auth/login");
     }
   }
 );
@@ -80,8 +70,5 @@ router.get(
     res.send("logged in");
   }
 );
-
-router.get("/me", myProfile);
-router.get("/logout", logout);
 
 export default router;
