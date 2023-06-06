@@ -1,15 +1,24 @@
-import { str, envsafe, port, url } from 'envsafe';
+import { str, envsafe, port, url } from "envsafe";
 
 export const env = envsafe({
   PORT: port({
     devDefault: 3500,
-    desc: 'The port the app is running on',
+    desc: "The port the app is running on",
     example: 80,
   }),
   NODE_ENV: str({
-    devDefault: 'development',
-    choices: ['development', 'production'],
+    devDefault: "development",
+    choices: ["development", "production"],
   }),
+
+  // endpoint
+  ENDPOINT: url(),
+
+  // google auth
+  GOOGLE_CLIENT_ID: str(),
+  GOOGLE_CLIENT_SECRET: str(),
+
+  // database
   DATABASE_DEV_URI: url(),
   DATABASE_PROD_URI: url(),
 

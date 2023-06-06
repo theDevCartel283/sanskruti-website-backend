@@ -1,15 +1,16 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import UserModel from "../../model/user.model";
+import { env } from "../../config/env";
+import { Roles } from "../../config/roles.config";
 
 export const connectPassportGoogle = () => {
   passport.use(
     new GoogleStrategy(
       {
-        clientID:
-          "715667966784-sqgodbqvb2v07okrcbb4ihi2j1upsc2m.apps.googleusercontent.com",
-        clientSecret: "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",
-        callbackURL: "http://localhost:4000/api/v1/auth/googleRedirect",
+        clientID: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+        callbackURL: `${env.ENDPOINT}/api/v1/auth/googleRedirect`,
       },
       async function (accessToken, refreshToken, profile, done) {
         const user = await UserModel.findOne({
@@ -24,9 +25,9 @@ export const connectPassportGoogle = () => {
             refreshToken: null,
             accessToken: null,
             provider: "google",
-            role: "5c83809e-d05a-11ed-afa1-0242ac120002",
-            password: 0,
-            Mobile_No: 91,
+            role: Roles["USER"],
+            password: "0",
+            Mobile_No: null,
           });
           await newUser.save();
 
