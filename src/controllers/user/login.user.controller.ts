@@ -24,6 +24,7 @@ export const handleAuthentication = async (
       isAuthenticated: false,
     }); // Unauthorized
 
+  // Guard clause for google
   if (foundUser.provider !== "Email/Number") {
     return res.status(401).json({
       message: "email / number or password is incorrect",
@@ -61,24 +62,12 @@ export const handleAuthentication = async (
         role
       );
 
-      // Refresh Token
-      const refreshToken = JWT.signTokenForEmail(
-        "REFRESH_TOKEN_PRIVATE",
-        foundUser.email,
-        foundUser.provider,
-        role
-      );
-
-      // store refresh token in db
-      await UserModel.findOneAndUpdate(
-        { email: foundUser.email },
-        { refreshToken: refreshToken }
-      );
-
       // create httpOnly cookie
-      res.cookie("jwt", refreshToken, {
+      res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
+        sameSite: "strict",
+        path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
       res.status(200).json({
@@ -86,7 +75,6 @@ export const handleAuthentication = async (
           foundUser.username
         }`,
         type: "success",
-        accessToken,
         isAuthenticated: true,
       });
     } catch (err: any) {

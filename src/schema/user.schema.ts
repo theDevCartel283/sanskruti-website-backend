@@ -44,35 +44,26 @@ export const userMobileNoPwd = z.object({
   }),
 });
 
-export const userUpdatePassword = userEmailPwd.merge(
-  z.object({
-    updatePassword: z.string({
-      required_error: "update password is not defined",
-    }),
-  })
-);
+export const userUpdatePassword = z.object({
+  password: z.string({
+    required_error: "update password is not defined",
+  }),
+  updatePassword: z.string({
+    required_error: "update password is not defined",
+  }),
+});
 
 export const userDetails = z.object({
+  username: z.string({
+    required_error: "name is not defined",
+  }),
   email: z
     .string({
       required_error: "email is not defined",
     })
     .email(),
-  name: z.string({
-    required_error: "name is not defined",
-  }),
-  dob: z
-    .string({
-      required_error: "dob is not defined",
-    })
-    .refine((data) => !isNaN(Date.parse(new Date(data).toDateString())), {
-      message: "invalid date",
-    }),
-  mobileNo: z.number({
-    required_error: "mobile number is not defined",
-  }),
-  address: z.string({
-    required_error: "address is not defined",
+  Mobile_No: z.number({
+    required_error: "Mobile Number is not defined",
   }),
 });
 

@@ -15,18 +15,21 @@ export const handleRegister = asyncErrorFunction(
     res: Response,
     next: NextFunction
   ) => {
-    if (req.body.username.trim() === "" || req.body.password.trim() === "") {
-      return next(new ErrorHandler("Feild is empty", "error", 404));
-    }
-
     const userEmailAlreadyExists = await getUserFromEmailOrNumber(
       req.body.email
     );
-
     // check if user email already exists
     if (userEmailAlreadyExists)
+      return next(new ErrorHandler("user Email already exists", "error", 409)); // Conflict
+
+    const userMobileNumberExists = await getUserFromEmailOrNumber(
+      req.body.Mobile_No
+    );
+
+    // check if user mobile number already exists
+    if (userMobileNumberExists)
       return next(
-        new ErrorHandler("user Email already exists", "warning", 409)
+        new ErrorHandler("user mobile number already exists", "error", 409)
       ); // Conflict
 
     // hash password
@@ -37,7 +40,6 @@ export const handleRegister = asyncErrorFunction(
       username: req.body.username,
       password: hashedPassword,
       provider: "Email/Number",
-      refreshToken: "null",
       role: Roles["USER"],
       email: req.body.email,
       Mobile_No: req.body.Mobile_No,

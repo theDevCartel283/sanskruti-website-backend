@@ -26,7 +26,7 @@ export const signTokenForEmail = (
     provider: provider,
   };
 
-  const expiresIn = key === "ACCESS_TOKEN_PRIVATE" ? "45m" : "30d";
+  const expiresIn = key === "ACCESS_TOKEN_PRIVATE" ? "30d" : "30d";
 
   const token = jwt.sign(payload, token_private_key, {
     algorithm: "RS256",
@@ -51,7 +51,7 @@ export const signTokenForNumber = (
     provider: provider,
   };
 
-  const expiresIn = key === "ACCESS_TOKEN_PRIVATE" ? "45m" : "30d";
+  const expiresIn = key === "ACCESS_TOKEN_PRIVATE" ? "30d" : "30d";
 
   const token = jwt.sign(payload, token_private_key, {
     algorithm: "RS256",
