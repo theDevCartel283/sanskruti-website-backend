@@ -13,11 +13,11 @@ const userSchema = new mongoose.Schema({
   },
   Mobile_No: {
     type: Number,
-    required: true,
     default: null,
   },
   email: {
     type: String,
+    unique: true,
     required: true,
     default: null,
   },
@@ -30,19 +30,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  refreshToken: {
-    type: String,
-    required: false,
-  },
-  accessToken: {
-    type: String,
-    required: false,
-    default: null,
-  },
   role: {
     type: String,
     required: true,
-    default: "5c83809e-d05a-11ed-afa1-0242ac120002",
   },
 
   dob: {
