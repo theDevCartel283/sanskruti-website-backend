@@ -27,7 +27,7 @@ export const handleUpdateUser = async (
       .json({ message: "email already exists", type: "warning" }); // Unauthorized
 
   // check if mobile number exists
-  const foundMobileNumber = await UserModel.findOne({ email });
+  const foundMobileNumber = await UserModel.findOne({ Mobile_No });
   if (foundMobileNumber && foundUser.Mobile_No !== Mobile_No)
     return res
       .status(400)
