@@ -30,6 +30,10 @@ export const env = envsafe({
   REFRESH_TOKEN_PRIVATE: str(),
   REFRESH_TOKEN_PUBLIC: str(),
 
+  // email token
+  EMAIL_TOKEN_PRIVATE: str(),
+  EMAIL_TOKEN_PUBLIC: str(),
+
   // Role Secret
   USER_ROLE: str(),
   ADMIN_ROLE: str(),

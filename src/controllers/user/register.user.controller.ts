@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import UserModel from "../../model/user.model";
-import { ReqAuthWithUsername, ReqRegister } from "../../schema/user.schema";
+import { ReqRegister } from "../../schema/user.schema";
 import bcrypt from "bcrypt";
 import { Roles } from "../../config/roles.config";
 import logger from "../../utils/logger.utils";
 import ErrorHandler from "../../utils/errorHandler.utils";
 import asyncErrorFunction from "../../middleware/catchAsyncError.middleware";
 import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
+import sendEmail from "../../utils/email/sendEmail";
+import { getVerifyEmailFormat } from "../../utils/email/verifyEmailFormat";
 
 // Register
 export const handleRegister = asyncErrorFunction(
@@ -32,6 +34,16 @@ export const handleRegister = asyncErrorFunction(
         new ErrorHandler("user mobile number already exists", "error", 409)
       ); // Conflict
 
+    sendEmail({
+      email: req.body.email,
+      message: getVerifyEmailFormat(
+        req.body.username,
+        req.body.email,
+        "Email/Number"
+      ),
+      subject: "Email Verification - from Sanskruti Nx",
+    });
+
     // hash password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -42,7 +54,9 @@ export const handleRegister = asyncErrorFunction(
       provider: "Email/Number",
       role: Roles["USER"],
       email: req.body.email,
+      email_verified: false,
       Mobile_No: req.body.Mobile_No,
+      Mobile_No_verified: false,
     });
 
     // save user
