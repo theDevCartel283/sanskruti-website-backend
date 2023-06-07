@@ -55,7 +55,7 @@ export const handleAuthentication = async (
       // create JWT
       // Access Token
 
-      const accessToken = JWT.signTokenForEmail(
+      const accessToken = JWT.signToken(
         "ACCESS_TOKEN_PRIVATE",
         foundUser.email,
         foundUser.provider,

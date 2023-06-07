@@ -35,7 +35,7 @@ router.get(
       const role: any = getRole(userRole);
 
       // create httpOnly cookie
-      const accessToken = JWT.signTokenForEmail(
+      const accessToken = JWT.signToken(
         "ACCESS_TOKEN_PRIVATE",
         userEmail,
         provider,
