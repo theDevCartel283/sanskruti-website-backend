@@ -11,7 +11,7 @@ export const handleVerifyEmail = async (
 ) => {
   const { token } = req.body;
 
-  const { valid, decoded, expired } = verifyJwt(token, "ACCESS_TOKEN_PUBLIC");
+  const { valid, decoded, expired } = verifyJwt(token, "EMAIL_TOKEN_PUBLIC");
 
   if (!valid || !decoded || expired)
     return res
