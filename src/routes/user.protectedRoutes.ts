@@ -18,6 +18,7 @@ import { reviewObject } from "../schema/review.schema";
 import { wishlistDetails } from "../schema/wishlist.schema";
 import { cartDetails, emailName } from "../schema/cart.schema";
 import { logout, myProfile } from "../controllers/auth/user";
+import { z } from "zod";
 
 const router = express.Router();
 
@@ -57,18 +58,27 @@ router.delete(
   userController.handleDelete
 );
 
-router.post(
-  "/address",
-  validateResources(blankSchema, addressObject, blankSchema),
-  userController.addAddress
-);
-router.put(
-  "/address",
-  validateResources(blankSchema, Address, blankSchema),
-  userController.updateAddress
-);
-
-router.get("/address", userController.getAllAddress);
+router
+  .route("/address")
+  .get(
+    // Get all address
+    userController.getAllAddress
+  )
+  .post(
+    // Add address
+    validateResources(blankSchema, addressObject, blankSchema),
+    userController.addAddress
+  )
+  .put(
+    // Update Address
+    validateResources(blankSchema, Address, blankSchema),
+    userController.updateAddress
+  )
+  .delete(
+    // Delete Address
+    validateResources(blankSchema, blankSchema, z.object({ id: z.string() })),
+    userController.handleDeleteAddress
+  );
 
 router.get(
   "/cartitems",
