@@ -10,7 +10,9 @@ import handleUpdateUser from "./updateUser.user.controller";
 import { handleDelete } from "./delete.user.controller";
 import { addAddress } from "./addAddress.user.controller";
 import { updateAddress } from "./updateAddress.user.controller";
+import { handleDeleteAddress } from "./deleteAddress.user.controller";
 import { getAllAddress } from "./allAddress.user.controller";
+import { handleVerifyEmail } from "./verifyEmail.user.controller";
 
 export {
   handleRegister,
@@ -23,6 +25,11 @@ export {
   handleDelete,
   addAddress,
   updateAddress,
+  handleDeleteAddress,
   getAllAddress,
+
   getAllUsers,
+
+  handleVerifyEmail,
+
 };

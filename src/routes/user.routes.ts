@@ -29,6 +29,8 @@ router.post(
   userController.handleAuthentication
 );
 
+router.post("/verify", userController.handleVerifyEmail);
+
 router.get("/categories", categoryController.getCategory);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
 

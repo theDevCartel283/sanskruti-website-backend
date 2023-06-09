@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
-import { ReqAddress } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 
-export const updateAddress = async (
-  req: Request<{}, {}, TokenPayload & ReqAddress>,
+export const handleDeleteAddress = async (
+  req: Request<{}, {}, TokenPayload, { id: string }>,
   res: Response
 ) => {
-  const { userUniqueIdentity, newAddress } = req.body;
+  const { userUniqueIdentity } = req.body;
+  const { id } = req.query;
 
   var user = await UserModel.findById(userUniqueIdentity);
   if (!user) {
@@ -15,12 +15,10 @@ export const updateAddress = async (
       message: "user not found",
       type: "error",
       isAuthenticated: false,
-    }); // U
+    }); // Unauthorized
   }
 
-  const newAddressArray = user.address.map((address) =>
-    address.id === newAddress.id ? newAddress : address
-  );
+  const newAddressArray = user.address.filter((address) => address.id !== id);
 
   const updateAddress = await UserModel.findOneAndUpdate(
     { email: user.email },
@@ -39,7 +37,7 @@ export const updateAddress = async (
   res.status(200).json({
     success: true,
     type: "success",
-    message: "Address updated successfully",
+    message: "Address deleted successfully",
     address: updateAddress?.address,
   });
 };

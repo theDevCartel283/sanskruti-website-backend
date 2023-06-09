@@ -20,14 +20,14 @@ export const connectPassportGoogle = () => {
         if (!user) {
           const newUser = await UserModel.create({
             googleId: profile.id,
-            name: profile.displayName,
+            username: profile.displayName,
             email: profile._json.email,
-            refreshToken: null,
-            accessToken: null,
+            email_verified: true,
             provider: "google",
             role: Roles["USER"],
             password: "0",
             Mobile_No: null,
+            Mobile_No_verified: false,
           });
           await newUser.save();
 

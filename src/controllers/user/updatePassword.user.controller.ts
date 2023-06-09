@@ -4,7 +4,6 @@ import { ReqUserUpdatePassword } from "../../schema/user.schema";
 import bcrypt from "bcrypt";
 import logger from "../../utils/logger.utils";
 import { TokenPayload } from "../../utils/jwt.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 // Update Password
 export const handleUpdatePassword = async (
@@ -14,7 +13,7 @@ export const handleUpdatePassword = async (
   const { userUniqueIdentity, password, updatePassword } = req.body;
 
   // check if user exists
-  const foundUser = await getUserFromEmailOrNumber(userUniqueIdentity);
+  const foundUser = await UserModel.findById(userUniqueIdentity);
   if (!foundUser)
     return res.status(401).json({
       message: "email / number or password is incorrect",

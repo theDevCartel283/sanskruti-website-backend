@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import UserModel from "../../model/user.model";
 import { ReqAuth } from "../../schema/user.schema";
 import bcrypt from "bcrypt";
 import * as JWT from "../../utils/jwt.utils";
@@ -55,9 +54,9 @@ export const handleAuthentication = async (
       // create JWT
       // Access Token
 
-      const accessToken = JWT.signTokenForEmail(
+      const accessToken = JWT.signToken(
         "ACCESS_TOKEN_PRIVATE",
-        foundUser.email,
+        foundUser._id,
         foundUser.provider,
         role
       );
