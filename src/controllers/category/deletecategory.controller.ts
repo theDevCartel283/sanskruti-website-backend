@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import categoryModel from "../../model/category.model";
 import fs from "fs";
+import subCategoryModel from "../../model/subCategory.model";
 
 const deleteCategory = async (req: Request, res: Response) => {
   const id: any = req.query.id;
@@ -13,7 +14,12 @@ const deleteCategory = async (req: Request, res: Response) => {
         message: "category not found",
       });
     } else {
-      fs.unlinkSync(category.Image);
+      if (category.Image) {
+        fs.unlinkSync(category.Image);
+      }
+      await subCategoryModel.deleteMany({
+        Category: category.Title,
+      });
       await category.deleteOne(req.query);
       res.status(200).json({
         type: "success",
