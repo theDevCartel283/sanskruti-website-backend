@@ -1,8 +1,8 @@
 import { TokenPayload } from "../../utils/jwt.utils";
 import { Response } from "express";
 import { VerifyRequest } from "../../middleware/verifyJwt";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 import getRole from "../../utils/getRole.util";
+import UserModel from "../../model/user.model";
 
 // Protected Routes Controller
 // Get User Details
@@ -14,7 +14,7 @@ export const handleGetUser = async (
 
   // email doesn't exist in jwt token
   if (!userUniqueIdentity) return res.status(404).send("user not found");
-  const user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  const user = await UserModel.findById(userUniqueIdentity);
   // username doesn't exist in db
   if (!user) {
     return res.status(401).json({

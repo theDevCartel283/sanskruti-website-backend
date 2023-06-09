@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
 import logger from "../../utils/logger.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 import { verifyJwt } from "../../utils/jwt.utils";
 
 // Update user
@@ -19,7 +18,7 @@ export const handleVerifyEmail = async (
       .json({ message: "something went wrong", type: "info" }); // Unauthorized
 
   // check if user exists
-  const foundUser = await getUserFromEmailOrNumber(decoded?.userUniqueIdentity);
+  const foundUser = await UserModel.findById(decoded?.userUniqueIdentity);
   if (!foundUser)
     return res
       .status(401)

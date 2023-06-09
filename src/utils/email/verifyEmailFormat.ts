@@ -1,11 +1,12 @@
+import { Types } from "mongoose";
 import { signToken } from "../jwt.utils";
 
 export const getVerifyEmailFormat = (
   username: string,
-  email: string,
+  id: Types.ObjectId,
   provider: string
 ) => {
-  const token = signToken("EMAIL_TOKEN_PRIVATE", email, provider, "USER");
+  const token = signToken("EMAIL_TOKEN_PRIVATE", id, provider, "USER");
 
   const link = `http://localhost:3000/auth/verifyEmail?token=${token}`;
 

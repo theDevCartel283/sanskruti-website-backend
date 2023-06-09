@@ -4,16 +4,17 @@ import { env } from "../config/env";
 import logger from "./logger.utils";
 import UserModel from "../model/user.model";
 import getRole from "./getRole.util";
+import { Types } from "mongoose";
 
 export type TokenPayload = {
-  userUniqueIdentity: string | number;
+  userUniqueIdentity: Types.ObjectId;
   userRole: string;
   provider: string;
 };
 
 export const signToken = (
   key: "ACCESS_TOKEN_PRIVATE" | "REFRESH_TOKEN_PRIVATE" | "EMAIL_TOKEN_PRIVATE",
-  email: string,
+  id: Types.ObjectId,
   provider: string,
   role: "USER" | "ADMIN" | "SUPERADMIN"
 ) => {
@@ -21,7 +22,7 @@ export const signToken = (
   if (!token_private_key) throw Error(`${key} private secret not found`);
 
   const payload: TokenPayload = {
-    userUniqueIdentity: email,
+    userUniqueIdentity: id,
     userRole: Roles[role],
     provider: provider,
   };

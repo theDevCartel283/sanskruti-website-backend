@@ -3,7 +3,6 @@ import UserModel from "../../model/user.model";
 import { ReqUserDetails } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import logger from "../../utils/logger.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 import sendEmail from "../../utils/email/sendEmail";
 import { getVerifyEmailFormat } from "../../utils/email/verifyEmailFormat";
 
@@ -15,7 +14,7 @@ export const handleUpdateUser = async (
   const { userUniqueIdentity, username, email, Mobile_No } = req.body;
 
   // check if user exists
-  const foundUser = await getUserFromEmailOrNumber(userUniqueIdentity);
+  const foundUser = await UserModel.findById(userUniqueIdentity);
   if (!foundUser)
     return res
       .status(401)
@@ -33,7 +32,7 @@ export const handleUpdateUser = async (
       email: req.body.email,
       message: getVerifyEmailFormat(
         req.body.username,
-        req.body.email,
+        foundUser._id,
         "Email/Number"
       ),
       subject: "Email Verification - from Sanskruti Nx",

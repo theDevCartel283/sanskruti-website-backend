@@ -34,16 +34,6 @@ export const handleRegister = asyncErrorFunction(
         new ErrorHandler("user mobile number already exists", "error", 409)
       ); // Conflict
 
-    sendEmail({
-      email: req.body.email,
-      message: getVerifyEmailFormat(
-        req.body.username,
-        req.body.email,
-        "Email/Number"
-      ),
-      subject: "Email Verification - from Sanskruti Nx",
-    });
-
     // hash password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -64,6 +54,17 @@ export const handleRegister = asyncErrorFunction(
     logger.success(
       `success, new user ${user.username} [id:${user._id}] was created`
     );
+
+    sendEmail({
+      email: req.body.email,
+      message: getVerifyEmailFormat(
+        req.body.username,
+        newUser._id,
+        "Email/Number"
+      ),
+      subject: "Email Verification - from Sanskruti Nx",
+    });
+
     res.status(201).json({
       message: `success, new user ${user.username} was created`,
       type: "success",

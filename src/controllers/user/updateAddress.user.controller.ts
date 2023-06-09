@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
 import { ReqAddress } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 export const updateAddress = async (
   req: Request<{}, {}, TokenPayload & ReqAddress>,
@@ -10,7 +9,7 @@ export const updateAddress = async (
 ) => {
   const { userUniqueIdentity, newAddress } = req.body;
 
-  var user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  var user = await UserModel.findById(userUniqueIdentity);
   if (!user) {
     return res.status(401).json({
       message: "user not found",

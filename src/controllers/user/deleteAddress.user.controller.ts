@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
 import { TokenPayload } from "../../utils/jwt.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 export const handleDeleteAddress = async (
   req: Request<{}, {}, TokenPayload, { id: string }>,
@@ -10,7 +9,7 @@ export const handleDeleteAddress = async (
   const { userUniqueIdentity } = req.body;
   const { id } = req.query;
 
-  var user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  var user = await UserModel.findById(userUniqueIdentity);
   if (!user) {
     return res.status(401).json({
       message: "user not found",
