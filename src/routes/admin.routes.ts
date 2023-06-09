@@ -3,6 +3,8 @@ import { upload } from "../middleware/upload.middleware";
 import * as productController from "../controllers/product/index.product.controller";
 import * as categoryController from "../controllers/category/index.category.controller";
 import * as varientController from "../controllers/varient/index.varient.controller";
+import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
+import * as userController from "../controllers/user/index.user.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -14,7 +16,11 @@ import {
   asyncArrayMiddleware,
   asyncSingleMiddleware,
 } from "../middleware/middlware";
+import { subCategoryDetails } from "../schema/subcategory.schema";
 const router = express.Router();
+
+// user
+router.get("/getAllUsers", userController.getAllUsers);
 
 // product
 
@@ -50,11 +56,30 @@ router.put(
 );
 router.delete("/deleteCategory", categoryController.deleteCategory);
 
+//subCategories
+router.post(
+  "/addSubCategory",
+  validateResources(blankSchema, subCategoryDetails, blankSchema),
+  subCategoryController.addSubCategory
+);
+router.put(
+  "/updateSubCategory",
+  validateResources(blankSchema, categoryDetails, blankSchema),
+  subCategoryController.updateSubCategory
+);
+router.get("/getSubCategory", subCategoryController.getSubCategory);
+router.delete("/deleteSubCategory", subCategoryController.deleteSubCategory);
+
 //varients
+router.post(
+  "/addVarient",
+  validateResources(blankSchema, varientDetails, blankSchema),
+  varientController.addVarient
+);
 router.put(
   "/updateVarient",
   validateResources(blankSchema, varientDetails, blankSchema),
-  varientController.addVarient
+  varientController.updateVarient
 );
 router.delete("/deleteVarient", varientController.deleteVarient);
 
