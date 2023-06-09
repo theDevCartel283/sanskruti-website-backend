@@ -35,13 +35,13 @@ export const getVerifyEmailFormat = (
       <a
         href="${link}"
         style="
-          box-sizing: border-box;
           text-decoration: none;
           border: 2px solid #eab308;
           background-color: #ffe58f;
-          padding: 5px 5rem;
+          padding: 10px 5rem;
           border-radius: 5px;
           text-align: center;
+          width: 100%;
         "
         >VERIFY EMAIL</a
       >
@@ -68,8 +68,6 @@ export const getVerifyEmailFormat = (
     </div>
     <br />
     <br />
-    <div style="max-width: 30rem; margin: auto">Best regards,</div>
-    <br />
-    <div style="max-width: 30rem; margin: auto">Sanskruti NX</div>
+    <div style="max-width: 30rem; margin: auto">Best regards,<br/>Sanskruti NX</div>
   `;
 };

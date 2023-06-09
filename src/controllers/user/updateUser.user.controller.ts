@@ -4,6 +4,8 @@ import { ReqUserDetails } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import logger from "../../utils/logger.utils";
 import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
+import sendEmail from "../../utils/email/sendEmail";
+import { getVerifyEmailFormat } from "../../utils/email/verifyEmailFormat";
 
 // Update user
 export const handleUpdateUser = async (
@@ -26,6 +28,18 @@ export const handleUpdateUser = async (
       .status(400)
       .json({ message: "email already exists", type: "warning" }); // Unauthorized
 
+  if (foundUser.email !== email) {
+    sendEmail({
+      email: req.body.email,
+      message: getVerifyEmailFormat(
+        req.body.username,
+        req.body.email,
+        "Email/Number"
+      ),
+      subject: "Email Verification - from Sanskruti Nx",
+    });
+  }
+
   // check if mobile number exists
   const foundMobileNumber = await UserModel.findOne({ Mobile_No });
   if (foundMobileNumber && foundUser.Mobile_No !== Mobile_No)
@@ -41,6 +55,8 @@ export const handleUpdateUser = async (
         username,
         Mobile_No,
         email,
+        email_verified:
+          foundUser.email !== email ? false : foundUser.email_verified,
       }
     );
 
