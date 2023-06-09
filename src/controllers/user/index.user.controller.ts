@@ -1,5 +1,6 @@
 import { handleRegister } from "./register.user.controller";
 import { handleAuthentication } from "./login.user.controller";
+import getAllUsers from "./getAll.user.controller";
 
 // Protected
 import handleGetUser from "./getuser.user.controller";
@@ -14,7 +15,6 @@ import { getAllAddress } from "./allAddress.user.controller";
 export {
   handleRegister,
   handleAuthentication,
-
   // Protected
   handleGetUser,
   handleLogout,
@@ -24,4 +24,5 @@ export {
   addAddress,
   updateAddress,
   getAllAddress,
+  getAllUsers,
 };

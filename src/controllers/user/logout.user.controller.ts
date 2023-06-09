@@ -8,6 +8,7 @@ export const handleLogout = async (
   res: Response
 ) => {
   const { userUniqueIdentity, provider } = req.body;
+  console.log(req.body);
 
   // username doesn't exist in jwt token
   if (!userUniqueIdentity)
@@ -63,7 +64,7 @@ export const handleLogout = async (
   } else {
     // clear cookie
     res.clearCookie("accessToken", {
-      httpOnly: true,
+      httpOnly: false,
       secure: false,
       sameSite: "strict",
       path: "/",
