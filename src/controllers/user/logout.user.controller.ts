@@ -7,6 +7,7 @@ export const handleLogout = async (
   req: VerifyRequest<null, TokenPayload, null>,
   res: Response
 ) => {
+
   const { userUniqueIdentity } = req.body;
 
   // username doesn't exist in jwt token
@@ -36,4 +37,5 @@ export const handleLogout = async (
     type: "success",
     isAuthenticated: false,
   });
+
 };

@@ -1,5 +1,6 @@
 import { handleRegister } from "./register.user.controller";
 import { handleAuthentication } from "./login.user.controller";
+import getAllUsers from "./getAll.user.controller";
 
 // Protected
 import handleGetUser from "./getuser.user.controller";
@@ -16,7 +17,6 @@ import { handleVerifyEmail } from "./verifyEmail.user.controller";
 export {
   handleRegister,
   handleAuthentication,
-
   // Protected
   handleGetUser,
   handleLogout,
@@ -27,5 +27,9 @@ export {
   updateAddress,
   handleDeleteAddress,
   getAllAddress,
+
+  getAllUsers,
+
   handleVerifyEmail,
+
 };
