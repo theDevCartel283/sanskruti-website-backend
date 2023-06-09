@@ -19,6 +19,7 @@ export const ProductObject = z.object({
   MainCategory: z.string({ required_error: "main category not defined" }),
   SubCategory: z.string({ required_error: "sub category not defined" }),
   brand_name: z.string({ required_error: "brand name is  not defined" }),
+  slug: z.string({ required_error: "slug is  not defined" }),
   is_featured: z.boolean({
     required_error: "this product featured product or not ? (true/false) ",
   }),

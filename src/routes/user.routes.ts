@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import * as userController from "../controllers/user/index.user.controller";
 import * as productController from "../controllers/product/index.product.controller";
 import * as varientController from "../controllers/varient/index.varient.controller";
+import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
 import {
@@ -31,6 +32,7 @@ router.post(
 router.post("/verify", userController.handleVerifyEmail);
 
 router.get("/categories", categoryController.getCategory);
+router.get("/subcategories", subCategoryController.getAllSubCategories);
 
 router.get("/getallProducts", productController.getallProducts);
 router.get("/product", productController.getproductDetails);
