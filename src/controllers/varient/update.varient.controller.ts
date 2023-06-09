@@ -1,47 +1,63 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import varientModel from "../../model/varients.model";
 import { ReqAllVarientObject } from "../../schema/varients.schema";
+import ErrorHandler from "../../utils/errorHandler.utils";
 
-const addVarient = async (
+const updateVarient = async (
   req: Request<{}, {}, ReqAllVarientObject>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
-  const varientAlreadyExists = await varientModel.findOne({
-    varientName: req.body.varientName.toUpperCase(),
-  });
+  const id = req.query.id;
+  const varientAlreadyExists = await varientModel.findOne({ _id: id });
 
   if (varientAlreadyExists) {
-    const updatedVarient = await varientModel.updateOne(
-      { varientName: req.body.varientName.toUpperCase() },
-      {
-        $set: {
-          varientName: req.body.varientName.toUpperCase(),
-          value: req.body.value,
-        },
+    let isExist = false;
+    const varientArray = await varientModel.find();
+    varientArray.forEach((i) => {
+      if (i.varientName === req.body.varientName) {
+        isExist = true;
       }
-    );
-    res.status(200).json({
-      success: true,
-      updatedVarient,
     });
-  } else {
-    try {
-      const newVarient = new varientModel({
-        varientName: req.body.varientName.toUpperCase(),
-        value: req.body.value,
-      });
-
-      const varient = await newVarient.save();
-      res.status(201).json({
-        success: true,
-        varient,
-      });
-    } catch (error) {
-      res.status(502).json({
-        error,
+    if (isExist) {
+      if (req.body.varientName === varientAlreadyExists.varientName) {
+        await varientModel.updateOne(
+          { _id: id },
+          {
+            $set: {
+              varientName: req.body.varientName.toLowerCase(),
+              value: req.body.value,
+            },
+          }
+        );
+        res.status(200).json({
+          type: "success",
+          message: "varient updated successfully",
+        });
+      } else {
+        return next(new ErrorHandler("varient already exists", "error", 409));
+      }
+    } else {
+      await varientModel.updateOne(
+        { _id: id },
+        {
+          $set: {
+            varientName: req.body.varientName.toLowerCase(),
+            value: req.body.value,
+          },
+        }
+      );
+      res.status(200).json({
+        type: "success",
+        message: "varient updated successfully",
       });
     }
+  } else {
+    res.status(502).json({
+      type: "error",
+      message: "something went wrong",
+    });
   }
 };
 
-export default addVarient;
+export default updateVarient;
