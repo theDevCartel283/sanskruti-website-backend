@@ -31,6 +31,7 @@ const verifyAccessJwt = async (
     //     return res.status(401).send({ message: 'Unauthorized', type: 'warning' });
 
     req.body.userUniqueIdentity = decoded.userUniqueIdentity;
+    req.body.provider = decoded.provider;
     req.body.userRole = decoded.userRole;
     return next();
   }

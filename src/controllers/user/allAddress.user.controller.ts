@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import UserModel from "../../model/user.model";
 import { TokenPayload } from "../../utils/jwt.utils";
-import { getUserFromEmailOrNumber } from "../../utils/user/getUserFromEmailOrNumber";
 
 export const getAllAddress = async (
   req: Request<{}, {}, TokenPayload>,
   res: Response
 ) => {
   const { userUniqueIdentity, provider } = req.body;
-  var user = await getUserFromEmailOrNumber(userUniqueIdentity);
+  var user = await UserModel.findById(userUniqueIdentity);
   if (!user) {
     return res.status(401).json({
       message: "user not found",
