@@ -1,30 +1,21 @@
-import { TokenPayload } from "../../utils/jwt.utils";
-import { Response } from "express";
-import { VerifyRequest } from "../../middleware/verifyJwt";
+import { Request, Response } from "express";
 import getRole from "../../utils/getRole.util";
 import UserModel from "../../model/user.model";
 
 // Protected Routes Controller
 // Get User Details
-export const handleGetUser = async (
-  req: VerifyRequest<null, TokenPayload, null>,
-  res: Response
-) => {
-  const { userUniqueIdentity, userRole } = req.body;
-
-  // email doesn't exist in jwt token
-  if (!userUniqueIdentity) return res.status(404).send("user not found");
-  const user = await UserModel.findById(userUniqueIdentity);
+export const handleGetUserDetails = async (req: Request, res: Response) => {
+  const id = req.query.id;
+  const user = await UserModel.findById({ _id: id });
   // username doesn't exist in db
   if (!user) {
     return res.status(401).json({
       message: "user not found",
       type: "error",
-      isAuthenticated: false,
     }); // Unauthorized
   }
 
-  const role = getRole(userRole);
+  const role = getRole(user.role);
 
   const userTrimmend = {
     username: user.username,
@@ -36,12 +27,12 @@ export const handleGetUser = async (
     dob: user.dob,
     provider: user.provider,
     role,
+    is_Banned_User: user.is_Banned_User,
   };
 
   res.status(200).json({
-    userTrimmend,
-    isAuthenticated: true,
+    user: userTrimmend,
   });
 };
 
-export default handleGetUser;
+export default handleGetUserDetails;
