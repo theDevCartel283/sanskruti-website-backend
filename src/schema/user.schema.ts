@@ -7,6 +7,11 @@ export const username = z.object({
   }),
 });
 
+export const BanAndRoleDetails = z.object({
+  role: z.string(),
+  is_Banned_User: z.boolean(),
+});
+
 export const auth = z.object({
   emailOrNumber: z.union([z.string().email(), z.number()]),
   password: z.string(),
@@ -105,3 +110,4 @@ export type ReqUserDetails = z.infer<typeof userDetails>;
 export type ReqUserObject = z.infer<typeof userObject>;
 export type ReqAddressObject = z.infer<typeof addressObject>;
 export type ReqAddress = z.infer<typeof Address>;
+export type ReqBanAndRole = z.infer<typeof BanAndRoleDetails>;
