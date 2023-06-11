@@ -32,9 +32,7 @@ export const handleAuthentication = async (
     }); //
   }
 
-  const userIsBanned = await BannedEmailModel.findOne({
-    email: foundUser.email,
-  });
+  const userIsBanned = foundUser.is_Banned_User;
 
   // check if user email is banned
   if (userIsBanned)
@@ -75,6 +73,7 @@ export const handleAuthentication = async (
         }`,
         type: "success",
         isAuthenticated: true,
+        role,
       });
     } catch (err: any) {
       logger.error(`user login error\n${err}`);
