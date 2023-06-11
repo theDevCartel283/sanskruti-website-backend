@@ -21,6 +21,8 @@ const router = express.Router();
 
 // user
 router.get("/getAllUsers", userController.getAllUsers);
+router.delete("/deleteuser", userController.deleteUserById);
+router.get("/getUserDetails", userController.handleGetUserDetails);
 
 // product
 
