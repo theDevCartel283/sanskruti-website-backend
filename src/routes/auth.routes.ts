@@ -30,14 +30,14 @@ router.get(
     if (req.user) {
       const user: any = req.user;
       const userRole: any = user.role;
-      const userEmail: any = user.email;
+      const userUniqueIdentity: any = user._id;
       const provider: any = user.provider;
       const role: any = getRole(userRole);
 
       // create httpOnly cookie
       const accessToken = JWT.signToken(
         "ACCESS_TOKEN_PRIVATE",
-        userEmail,
+        userUniqueIdentity,
         provider,
         role
       );
