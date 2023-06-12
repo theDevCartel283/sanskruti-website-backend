@@ -15,7 +15,9 @@ export const ProductObject = z.object({
     required_error: "product description is required",
   }),
   gst_price: z.number({ required_error: "gst price is not defined" }),
-  sale_price: z.number({ required_error: "sale price is not defined" }),
+  sale_price: z
+    .number({ required_error: "sale price is not defined" })
+    .optional(),
   MainCategory: z.string({ required_error: "main category not defined" }),
   SubCategory: z.string({ required_error: "sub category not defined" }),
   brand_name: z.string({ required_error: "brand name is  not defined" }),
