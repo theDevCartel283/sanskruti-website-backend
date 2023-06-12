@@ -6,20 +6,21 @@ import fs from "fs";
 
 const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
   const productAlreadyExists = await ProductModel.findOne({
-    name: req.query.name,
+    _id: req.query.id,
   });
 
   if (productAlreadyExists) {
     productAlreadyExists.images.map((item) => {
       fs.unlinkSync(item);
     });
-    await ProductModel.deleteOne(req.query);
+    await ProductModel.deleteOne({ _id: req.query.id });
     res.status(200).json({
-      success: true,
+      type: "success",
       message: "product deleted successfully",
     });
   } else {
     res.status(500).json({
+      type: "error",
       message: "product does not exist",
     });
   }

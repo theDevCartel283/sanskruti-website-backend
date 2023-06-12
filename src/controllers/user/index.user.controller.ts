@@ -1,5 +1,6 @@
 import { handleRegister } from "./register.user.controller";
 import { handleAuthentication } from "./login.user.controller";
+import getAllUsers from "./getAll.user.controller";
 
 // Protected
 import handleGetUser from "./getuser.user.controller";
@@ -12,11 +13,12 @@ import { updateAddress } from "./updateAddress.user.controller";
 import { handleDeleteAddress } from "./deleteAddress.user.controller";
 import { getAllAddress } from "./allAddress.user.controller";
 import { handleVerifyEmail } from "./verifyEmail.user.controller";
+import deleteUserById from "./deletebyid.user.controller";
+import handleGetUserDetails from "./getalldetails.user.controller";
 
 export {
   handleRegister,
   handleAuthentication,
-
   // Protected
   handleGetUser,
   handleLogout,
@@ -27,5 +29,8 @@ export {
   updateAddress,
   handleDeleteAddress,
   getAllAddress,
+  deleteUserById,
+  getAllUsers,
+  handleGetUserDetails,
   handleVerifyEmail,
 };

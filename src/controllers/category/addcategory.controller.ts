@@ -24,10 +24,12 @@ const addCategory = async (
     });
 
     const category = await newCategory.save();
+    let _id = category._id;
 
     res.status(200).json({
       type: "success",
-      category,
+      _id,
+      message: "Category Added",
     });
   }
 };

@@ -6,13 +6,12 @@ const getallVarients = async (req: Request, res: Response) => {
   const varientsCount: number = await varientModel.countDocuments();
   if (!varients) {
     res.status(401).json({
-      success: false,
+      type: "warning",
       message: "no varient  found",
     });
   } else {
     res.status(200).json({
-      success: true,
-      varientsCount,
+      type: "success",
       varients,
     });
   }

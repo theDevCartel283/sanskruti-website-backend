@@ -19,7 +19,9 @@ const addProduct = async (
   let isExist: boolean = false;
 
   if (productAlreadyExists) {
-    res.status(409).json({ message: "product already exists" });
+    res
+      .status(409)
+      .json({ type: "warning", message: "product already exists" });
   } else {
     try {
       const newProduct = new ProductModel({
@@ -29,6 +31,7 @@ const addProduct = async (
         sale_price: req.body.sale_price,
         MainCategory: req.body.MainCategory,
         SubCategory: req.body.SubCategory,
+        slug: req.body.slug,
         brand_name: req.body.brand_name,
         is_featured: req.body.is_featured,
         is_new_arrival: req.body.is_new_arrival,
@@ -41,12 +44,13 @@ const addProduct = async (
 
       const product = await newProduct.save();
       res.status(201).json({
-        success: true,
-        product,
+        type: "success",
+        message: "product added ",
       });
     } catch (error) {
       res.status(502).json({
-        error,
+        type: "error",
+        message: "something went wrong",
       });
     }
   }
