@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { string } from "zod";
 import express, { Request, Response } from "express";
 import * as userController from "../controllers/user/index.user.controller";
 import * as productController from "../controllers/product/index.product.controller";
@@ -49,7 +49,24 @@ router
     userController.handleForgotPasswordChange
   );
 
-router.post("/verify", userController.handleVerifyEmail);
+router
+  .route("/verifyEmail")
+  .get(
+    validateResources(
+      blankSchema,
+      blankSchema,
+      z.object({ email: string().email() })
+    ),
+    userController.handleVerifyEmailRequest
+  )
+  .post(
+    validateResources(
+      blankSchema,
+      z.object({ token: z.string() }),
+      blankSchema
+    ),
+    userController.handleVerifyEmail
+  );
 
 router.get("/categories", categoryController.getCategory);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
