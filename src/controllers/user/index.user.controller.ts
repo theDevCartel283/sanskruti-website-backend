@@ -1,3 +1,7 @@
+import {
+  handleForgotPasswordChange,
+  handleForgotPasswordRequest,
+} from "./forgotPassword.controller";
 import { handleRegister } from "./register.user.controller";
 import { handleAuthentication } from "./login.user.controller";
 import getAllUsers from "./getAll.user.controller";
@@ -19,6 +23,8 @@ import handleGetUserDetails from "./getalldetails.user.controller";
 export {
   handleRegister,
   handleAuthentication,
+  handleForgotPasswordRequest,
+  handleForgotPasswordChange,
   // Protected
   handleGetUser,
   handleLogout,

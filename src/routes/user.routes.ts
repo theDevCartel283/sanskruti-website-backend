@@ -1,3 +1,4 @@
+import z from "zod";
 import express, { Request, Response } from "express";
 import * as userController from "../controllers/user/index.user.controller";
 import * as productController from "../controllers/product/index.product.controller";
@@ -28,6 +29,25 @@ router.post(
   validateResources(blankSchema, auth, blankSchema),
   userController.handleAuthentication
 );
+
+router
+  .route("/forgotPassword")
+  .get(
+    validateResources(
+      blankSchema,
+      blankSchema,
+      z.object({ email: z.string().email() })
+    ),
+    userController.handleForgotPasswordRequest
+  )
+  .post(
+    validateResources(
+      blankSchema,
+      z.object({ token: z.string(), updatePassword: z.string() }),
+      blankSchema
+    ),
+    userController.handleForgotPasswordChange
+  );
 
 router.post("/verify", userController.handleVerifyEmail);
 
