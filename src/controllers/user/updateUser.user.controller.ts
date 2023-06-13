@@ -27,18 +27,6 @@ export const handleUpdateUser = async (
       .status(400)
       .json({ message: "email already exists", type: "warning" }); // Unauthorized
 
-  if (foundUser.email !== email) {
-    sendEmail({
-      email: req.body.email,
-      message: getVerifyEmailFormat(
-        req.body.username,
-        foundUser._id,
-        "Email/Number"
-      ),
-      subject: "Email Verification - from Sanskruti Nx",
-    });
-  }
-
   // check if mobile number exists
   const foundMobileNumber = await UserModel.findOne({ Mobile_No });
   if (foundMobileNumber && foundUser.Mobile_No !== Mobile_No)
@@ -59,13 +47,28 @@ export const handleUpdateUser = async (
       }
     );
 
-    res.status(200).json({
+    // Send Email verification
+    if (foundUser.email !== email) {
+      sendEmail({
+        email: req.body.email,
+        message: getVerifyEmailFormat(
+          req.body.username,
+          foundUser._id,
+          "Email/Number"
+        ),
+        subject: "Email Verification - from Sanskruti Nx",
+      });
+    }
+
+    return res.status(200).json({
       message: `user was successfully updated`,
       type: "success",
     });
   } catch (err: any) {
     logger.error(`update user error\n${err}`);
-    res.status(500).json({ message: "something went wrong", type: "info" });
+    return res
+      .status(500)
+      .json({ message: "something went wrong", type: "info" });
   }
 };
 
