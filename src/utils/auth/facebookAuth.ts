@@ -1,33 +1,41 @@
 import passport from "passport";
 import { Strategy as FacebookStrategy } from "passport-facebook";
-// import newUserModel from "../model/newUser.model";
-import * as Jwt from "jsonwebtoken";
+import { env } from "../../config/env";
+import UserModel from "../../model/user.model";
+import { Roles } from "../../config/roles.config";
 
-export const connectPassport = () => {
+export const connectPassportFacebook = () => {
   passport.use(
     new FacebookStrategy(
       {
-        clientID: "188658517367833",
-        clientSecret: "66012adc535b96fac584509d6a371989",
-        callbackURL: "http://localhost:3000/api/v1/auth/facebookRedirect",
+        clientID: env.FACEBOOK_CLIENT_ID,
+        clientSecret: env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: `${env.ENDPOINT}/api/v1/auth/facebookRedirect`,
       },
       async function (accessToken, refreshToken, profile, done) {
-        return done(null, profile);
-        // const user = await newUserModel.findOne({
-        //   googleId: profile.id,
-        // });
-        // if (!user) {
-        //   const newUser = await newUserModel.create({
-        //     googleId: profile.id,
-        //     name: profile.displayName,
-        //     email: " ",
-        //     refreshToken: null,
-        //   });
-        //   await newUser.save();
-        //   return done(null, newUser);
-        // } else {
-        //   return done(null, user);
-        // }
+        const user = await UserModel.findOne({
+          facebookId: profile.id,
+        });
+        if (!user) {
+          if (!profile.emails || !profile.emails[0].value) return;
+
+          const newUser = await UserModel.create({
+            facebookId: profile.id,
+            username: profile.displayName,
+            email: profile.emails[0].value,
+            email_verified: true,
+            provider: "facebook",
+            role: Roles["USER"],
+            password: "0",
+            Mobile_No: null,
+            Mobile_No_verified: false,
+          });
+          await newUser.save();
+
+          return done(null, newUser);
+        } else {
+          return done(null, user);
+        }
       }
     )
   );

@@ -68,6 +68,8 @@ export const handleRegister = asyncErrorFunction(
     res.status(201).json({
       message: `success, new user ${user.username} was created`,
       type: "success",
+      content:
+        "Please note an email verification link in sent to you, be sure to verify your email",
     });
   }
 );
