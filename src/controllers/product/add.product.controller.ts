@@ -19,8 +19,7 @@ const addProduct = async (
 
   if (productAlreadyNameExists)
     return res
-      .status(409)
-      .json({ type: "warning", message: "product name already exists" });
+      .status(409).json({ type: "warning", message: "product name already exists" });
 
   const productAlreadySlugExists = await ProductModel.findOne({
     slug: req.body.slug,

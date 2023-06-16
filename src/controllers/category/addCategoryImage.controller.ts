@@ -8,15 +8,30 @@ const addCategoryImage = async (req: Request, res: Response) => {
   });
 
   if (categoryAlreadyExists) {
-    categoryAlreadyExists.Image = imagePath;
-    const category = await categoryAlreadyExists.save({
-      validateBeforeSave: false,
-    });
-    res.status(200).json({
-      type: "success",
-      message: "category image uploaded successfully",
-      category,
-    });
+    if (categoryAlreadyExists.Image === null) {
+      categoryAlreadyExists.Image = imagePath;
+      const category = await categoryAlreadyExists.save({
+        validateBeforeSave: false,
+      });
+      res.status(200).json({
+        type: "success",
+        message: "category image uploaded successfully",
+        category,
+      });
+    } else {
+      await categoryModel.updateOne(
+        { _id: req.query._id },
+        {
+          $set: {
+            Image: req.body.image,
+          },
+        }
+      );
+      res.status(200).json({
+        type: "success",
+        message: "Category image  updated successfully",
+      });
+    }
   } else {
     res.status(500).json({
       type: "error",

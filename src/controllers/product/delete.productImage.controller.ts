@@ -17,7 +17,7 @@ const deleteProductImages = async (req: Request, res: Response) => {
     const product = await productAlreadyExists.save({
       validateBeforeSave: false,
     });
-    fs.unlinkSync(imagePath);
+    // fs.unlinkSync(imagePath);
     res.status(200).json({
       success: true,
       message: "product images deleted successfully",
