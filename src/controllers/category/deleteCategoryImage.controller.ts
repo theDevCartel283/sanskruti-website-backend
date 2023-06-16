@@ -13,7 +13,7 @@ const deleteCategoryImage = async (req: Request, res: Response) => {
     const category = await categoryAlreadyExists.save({
       validateBeforeSave: false,
     });
-    fs.unlinkSync(imagePath);
+    // fs.unlinkSync(imagePath);
     res.status(200).json({
       type: "success",
       message: "category image deleted successfully",

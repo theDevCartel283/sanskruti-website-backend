@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+const fs = require("fs");
 
 export const asyncArrayMiddleware = (
   req: Request,
@@ -19,8 +20,26 @@ export const asyncSingleMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const data: any = req.file;
-  const imagePath = data.path;
-  req.body.imagePath = imagePath;
+  const data1: any = req.file;
+  const data = fs.readFileSync(data1.path);
+
+  // Convert the image to base64 format
+  const base64Image = data.toString("base64");
+  const imageUrl = `data:${data1.mimetype};base64,${base64Image}`;
+  req.body.imagePath = imageUrl;
+  // Remove the temporary file
+  fs.unlinkSync(data1.path);
+  console.log(imageUrl);
   next();
 };
+
+function imageToBase64(imagePath: String) {
+  // Read the image file
+  const imageData = fs.readFileSync(imagePath);
+
+  // Convert the image to base64
+  const base64Image = imageData.toString("base64");
+  fs.unlinkSync(imagePath);
+
+  return base64Image;
+}

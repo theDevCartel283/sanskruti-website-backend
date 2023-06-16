@@ -16,26 +16,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    varients: [
-      {
-        color: {
-          type: String,
-          required: true,
-        },
-        size: {
-          type: String,
-          required: true,
-        },
-        stock: {
-          type: Number,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+    varients: [{}],
     gst_price: {
       type: Number,
       required: true,
