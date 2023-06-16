@@ -6,7 +6,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 // imports
 import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
-import cors from "cors";
+// import cors from "cors";
 // import corsOptions from "./config/corsConfig";
 import verifyAccessJwt from "./middleware/verifyJwt";
 import connectToDb from "./utils/connectToDb.utils";
@@ -29,7 +29,7 @@ import {
   verifyIsSuperAdmin,
 } from "./middleware/verifyIsAdmin.middleware";
 import { authInit } from "./utils/auth/authInit";
-import corsOptions from "./config/corsConfig";
+// import corsOptions from "./config/corsConfig";
 
 // creating an express app
 const app: Application = express();
