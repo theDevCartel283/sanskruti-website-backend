@@ -63,7 +63,7 @@ export const handleAuthentication = async (
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "strict",
+        sameSite: "lax",
         path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
