@@ -6,8 +6,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 // imports
 import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
-// import cors from "cors";
-// import corsOptions from "./config/corsConfig";
+import cors from "cors";
 import verifyAccessJwt from "./middleware/verifyJwt";
 import connectToDb from "./utils/connectToDb.utils";
 import logger from "./utils/logger.utils";
@@ -29,14 +28,14 @@ import {
   verifyIsSuperAdmin,
 } from "./middleware/verifyIsAdmin.middleware";
 import { authInit } from "./utils/auth/authInit";
-// import corsOptions from "./config/corsConfig";
+import corsOptions from "./config/corsConfig";
 
 // creating an express app
 const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
 
 // Cors - Cross Origin Resource Sharing
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 // Middleware
 // handle url encoded data / form data
 app.use(express.urlencoded({ extended: true }));
