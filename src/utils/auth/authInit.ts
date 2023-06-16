@@ -2,7 +2,7 @@ import { Application } from "express";
 import session from "express-session";
 import { connectPassportGoogle } from "./googleAuth";
 import passport from "passport";
-import { connectPassportFacebook } from "./facebookAuth";
+// import { connectPassportFacebook } from "./facebookAuth";
 
 export const authInit = (app: Application) => {
   app.use(
@@ -21,5 +21,5 @@ export const authInit = (app: Application) => {
   app.use(passport.initialize());
   app.use(passport.session());
   connectPassportGoogle();
-  connectPassportFacebook();
+  // connectPassportFacebook();
 };
