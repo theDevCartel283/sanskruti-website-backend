@@ -1,3 +1,7 @@
+import {
+  handleForgotPasswordChange,
+  handleForgotPasswordRequest,
+} from "./forgotPassword.controller";
 import { handleRegister } from "./register.user.controller";
 import { handleAuthentication } from "./login.user.controller";
 import getAllUsers from "./getAll.user.controller";
@@ -12,13 +16,20 @@ import { addAddress } from "./addAddress.user.controller";
 import { updateAddress } from "./updateAddress.user.controller";
 import { handleDeleteAddress } from "./deleteAddress.user.controller";
 import { getAllAddress } from "./allAddress.user.controller";
-import { handleVerifyEmail } from "./verifyEmail.user.controller";
+import {
+  handleVerifyEmail,
+  handleVerifyEmailRequest,
+} from "./verifyEmail.user.controller";
 import deleteUserById from "./deletebyid.user.controller";
 import handleGetUserDetails from "./getalldetails.user.controller";
 
 export {
   handleRegister,
   handleAuthentication,
+  handleVerifyEmailRequest,
+  handleVerifyEmail,
+  handleForgotPasswordRequest,
+  handleForgotPasswordChange,
   // Protected
   handleGetUser,
   handleLogout,
@@ -32,5 +43,4 @@ export {
   deleteUserById,
   getAllUsers,
   handleGetUserDetails,
-  handleVerifyEmail,
 };

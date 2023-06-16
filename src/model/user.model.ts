@@ -11,6 +11,11 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: null,
   },
+  facebookId: {
+    type: Number,
+    required: false,
+    default: null,
+  },
   Mobile_No: {
     type: Number,
     default: null,

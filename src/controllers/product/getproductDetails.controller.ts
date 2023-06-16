@@ -4,20 +4,20 @@ import { Roles } from "../../config/roles.config";
 import ErrorHandler from "../../utils/errorHandler.utils";
 
 const getproductDetails = async (
-  req: Request,
+  req: Request<{}, {}, {}, { slug: string }>,
   res: Response,
   next: NextFunction
 ) => {
   const productAlreadyExists = await ProductModel.findOne({
-    name: req.query.name,
+    slug: req.query.slug,
   });
 
-  const arr = {
-    size: req.body.size,
-    color: req.body.color,
-    stock: req.body.stock,
-    price: req.body.price,
-  };
+  // const arr = {
+  //   size: req.body.size,
+  //   color: req.body.color,
+  //   stock: req.body.stock,
+  //   price: req.body.price,
+  // };
 
   if (productAlreadyExists) {
     res.status(200).json({

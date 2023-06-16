@@ -30,14 +30,14 @@ router.get(
     if (req.user) {
       const user: any = req.user;
       const userRole: any = user.role;
-      const userEmail: any = user.email;
+      const userUniqueIdentity: any = user._id;
       const provider: any = user.provider;
       const role: any = getRole(userRole);
 
       // create httpOnly cookie
       const accessToken = JWT.signToken(
         "ACCESS_TOKEN_PRIVATE",
-        userEmail,
+        userUniqueIdentity,
         provider,
         role
       );
@@ -67,7 +67,39 @@ router.get(
   "/auth/facebookRedirect",
   passport.authenticate("facebook"),
   (req, res, next) => {
-    res.send("logged in");
+    if (req.user) {
+      const user: any = req.user;
+      const userRole: any = user.role;
+      const userUniqueIdentity: any = user._id;
+      const provider: any = user.provider;
+      const role: any = getRole(userRole);
+
+      // create httpOnly cookie
+      const accessToken = JWT.signToken(
+        "ACCESS_TOKEN_PRIVATE",
+        userUniqueIdentity,
+        provider,
+        role
+      );
+
+      // create httpOnly cookie
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        path: "/",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      res.redirect(
+        302,
+        `${req.protocol}://${
+          req.hostname === "localhost" ? "localhost:3000" : req.hostname
+        }/`
+      );
+    } else {
+      res.redirect("/auth/login");
+    }
   }
 );
 

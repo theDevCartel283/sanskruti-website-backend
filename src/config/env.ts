@@ -18,6 +18,10 @@ export const env = envsafe({
   GOOGLE_CLIENT_ID: str(),
   GOOGLE_CLIENT_SECRET: str(),
 
+  // facebook auth
+  FACEBOOK_CLIENT_ID: str(),
+  FACEBOOK_CLIENT_SECRET: str(),
+
   // database
   DATABASE_DEV_URI: url(),
   DATABASE_PROD_URI: url(),

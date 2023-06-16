@@ -10,33 +10,23 @@ import {
   addressObject,
   auth,
   userDetails,
-  userEmailPwd,
   userMobileNoPwd,
   userUpdatePassword,
 } from "../schema/user.schema";
 import { reviewObject } from "../schema/review.schema";
 import { wishlistDetails } from "../schema/wishlist.schema";
 import { cartDetails, emailName } from "../schema/cart.schema";
-import { logout, myProfile } from "../controllers/auth/user";
 import { z } from "zod";
 
 const router = express.Router();
 
 router.get("/", userController.handleGetUser);
-router.put(
-  "/updateWishlist",
-  validateResources(blankSchema, wishlistDetails, blankSchema),
-  wishlistController.addToWishlist
-);
 
 router.post(
   "/update",
   validateResources(blankSchema, userDetails, blankSchema),
   userController.handleUpdateUser
 );
-
-router.get("/oauth/me", myProfile);
-router.get("/oauth/logout", logout);
 
 router.get("/logout", userController.handleLogout);
 
