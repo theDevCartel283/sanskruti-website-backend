@@ -7,7 +7,6 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-// import corsOptions from "./config/corsConfig";
 import verifyAccessJwt from "./middleware/verifyJwt";
 import connectToDb from "./utils/connectToDb.utils";
 import logger from "./utils/logger.utils";

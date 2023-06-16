@@ -7,7 +7,6 @@ export const handleLogout = async (
   req: VerifyRequest<null, TokenPayload, null>,
   res: Response
 ) => {
-
   const { userUniqueIdentity } = req.body;
 
   // username doesn't exist in jwt token
@@ -20,7 +19,8 @@ export const handleLogout = async (
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: false,
-    sameSite: "strict",
+    sameSite: "lax",
+    domain: ".app",
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
@@ -28,7 +28,7 @@ export const handleLogout = async (
   res.clearCookie("connect.sid", {
     httpOnly: true,
     secure: false,
-    sameSite: "none",
+    sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
@@ -37,5 +37,4 @@ export const handleLogout = async (
     type: "success",
     isAuthenticated: false,
   });
-
 };
