@@ -5,9 +5,9 @@ import { ReqProductObjectWithName } from "../../schema/product.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import multer from "multer";
 import path from "path";
-const directory = path.join(__dirname, "../../../public/images");
+// const directory = path.join(__dirname, "../../../public/images");
 
-var upload = multer({ dest: `${directory}` });
+// var upload = multer({ dest: `${directory}` });
 
 const addProduct = async (
   req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
@@ -19,7 +19,8 @@ const addProduct = async (
 
   if (productAlreadyNameExists)
     return res
-      .status(409).json({ type: "warning", message: "product name already exists" });
+      .status(409)
+      .json({ type: "warning", message: "product name already exists" });
 
   const productAlreadySlugExists = await ProductModel.findOne({
     slug: req.body.slug,
