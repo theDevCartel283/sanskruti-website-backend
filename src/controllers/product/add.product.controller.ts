@@ -43,9 +43,11 @@ const addProduct = async (
       });
 
       const product = await newProduct.save();
+      let _id = product._id;
       res.status(201).json({
         type: "success",
         message: "product added ",
+        _id,
       });
     } catch (error) {
       res.status(502).json({

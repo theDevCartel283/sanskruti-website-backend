@@ -14,9 +14,6 @@ const deleteCategory = async (req: Request, res: Response) => {
         message: "category not found",
       });
     } else {
-      if (category.Image) {
-        fs.unlinkSync(category.Image);
-      }
       await subCategoryModel.deleteMany({
         Category: category.Title,
       });

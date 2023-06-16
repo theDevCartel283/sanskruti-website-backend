@@ -10,9 +10,6 @@ const deleteProduct = async (req: Request<TokenPayload>, res: Response) => {
   });
 
   if (productAlreadyExists) {
-    productAlreadyExists.images.map((item) => {
-      fs.unlinkSync(item);
-    });
     await ProductModel.deleteOne({ _id: req.query.id });
     res.status(200).json({
       type: "success",
