@@ -2,7 +2,7 @@ import cors from "cors";
 import { env } from "./env";
 
 export const allowedOrigins = [
-  "https://sanskruti-website-frontend-black.vercel.app/",
+  "https://sanskruti-website-frontend-black.vercel.app",
   "https://sanskruti-admin.vercel.app",
   "http://localhost:3000",
   "http://localhost:3001",
