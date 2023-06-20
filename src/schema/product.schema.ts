@@ -36,6 +36,7 @@ export const ProductObject = z.object({
     required_error: "meta description is not defined",
   }),
   meta_keyword: z.string({ required_error: "meta keyword is not defined" }),
+  images: z.array(z.string()),
 });
 
 export const varientObject = z.object({

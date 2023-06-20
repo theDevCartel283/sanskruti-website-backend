@@ -42,7 +42,36 @@ const orderSchema = new mongoose.Schema({
       default: null,
     },
   },
-  paymentInfo: {},
+  paymentInfo: {
+    status: {
+      type: String,
+      required: true,
+    },
+    transactionId: {
+      type: String,
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    currency: {
+      type: String,
+      required: true,
+    },
+    timestamp: {
+      type: String,
+      required: true,
+    },
+    paymentStatus: {
+      type: String,
+      required: true,
+    },
+    referenceId: {
+      type: String,
+      required: true,
+    },
+  },
 });
 
 module.exports = mongoose.model("Order", orderSchema);

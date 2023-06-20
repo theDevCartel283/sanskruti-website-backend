@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import * as userController from "../controllers/user/index.user.controller";
 import * as productController from "../controllers/product/index.product.controller";
 import * as varientController from "../controllers/varient/index.varient.controller";
+import * as bannerController from "../controllers/Banner/index.banner.controller";
 import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -74,4 +75,6 @@ router.get("/subcategories", subCategoryController.getAllSubCategories);
 router.get("/getallProducts", productController.getallProducts);
 router.get("/product", productController.getproductDetails);
 router.get("/getVarients", varientController.getallVarients);
+
+router.get("/getAllBanners", bannerController.getallBanners);
 export default router;
