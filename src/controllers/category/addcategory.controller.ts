@@ -9,6 +9,7 @@ const addCategory = async (
   const Category = await categoryModel.findOne({
     Title: req.body.Title,
   });
+  console.log(req.body);
 
   if (Category) {
     res.status(200).json({
@@ -21,6 +22,7 @@ const addCategory = async (
       Slug: req.body.Slug,
       Meta_Title: req.body.Meta_Title,
       Meta_Description: req.body.Meta_Description,
+      Image: req.body.Image || "",
     });
 
     const category = await newCategory.save();

@@ -1,20 +1,24 @@
 import { Request, Response } from "express";
-import subCategoryModel from "../../model/subCategory.model";
+import categoryModel from "../../model/category.model";
+import ApiFeatures from "../../utils/apiFeatures.utils";
 
 const getSubCategory = async (req: Request, res: Response) => {
-  const id: any = req.query.id;
-  const subCategory: any = await subCategoryModel.findById({ _id: id });
-
-  if (!subCategory) {
-    return res.status(500).json({
-      type: "error",
-      message: "subCategory not found",
+  const resultperpage: number = 8;
+  const subCategoryCount: number = await categoryModel.countDocuments();
+  const apiFeatures = new ApiFeatures(categoryModel.find(), req.query)
+    .search()
+    .filter();
+  const subCategories = await apiFeatures.query;
+  if (!subCategories) {
+    res.status(401).json({
+      type: "success",
+      message: "no categories found",
     });
   } else {
-    const subCategory = await subCategoryModel.findById({ _id: id });
     res.status(200).json({
       type: "success",
-      subCategory,
+      subCategories,
+      subCategoryCount,
     });
   }
 };

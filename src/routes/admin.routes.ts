@@ -4,6 +4,7 @@ import * as productController from "../controllers/product/index.product.control
 import * as categoryController from "../controllers/category/index.category.controller";
 import * as varientController from "../controllers/varient/index.varient.controller";
 import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
+import * as bannerController from "../controllers/Banner/index.banner.controller";
 import * as userController from "../controllers/user/index.user.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
@@ -100,13 +101,11 @@ router.post(
 router.post("/deleteProductImage", productController.deleteProductImages);
 
 // ##category
-router.post(
-  "/addCategoryImage",
-  upload.single("image"),
-  asyncSingleMiddleware,
-  categoryController.addCategoryImage
-);
+router.post("/addCategoryImage", categoryController.addCategoryImage);
 
 router.post("/deleteCategoryImage", categoryController.deleteCategoryImage);
+
+// Banner
+router.post("/addBanner", bannerController.addBanner);
 
 export default router;
