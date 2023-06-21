@@ -7,6 +7,42 @@ class ApiFeatures {
     this.queryStr = queryStr;
   }
 
+  searchForBanner() {
+    const keyword: any = this.queryStr.keyword
+      ? {
+          $or: [
+            {
+              type: {
+                $regex: this.queryStr.keyword,
+                $options: "i",
+              },
+            },
+          ],
+        }
+      : {};
+
+    this.query = this.query.find({ ...keyword });
+    return this;
+  }
+
+  searchForVarient() {
+    const keyword: any = this.queryStr.keyword
+      ? {
+          $or: [
+            {
+              varientName: {
+                $regex: this.queryStr.keyword,
+                $options: "i",
+              },
+            },
+          ],
+        }
+      : {};
+
+    this.query = this.query.find({ ...keyword });
+    return this;
+  }
+
   search() {
     const keyword: any = this.queryStr.keyword
       ? {

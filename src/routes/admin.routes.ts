@@ -107,5 +107,7 @@ router.post("/deleteCategoryImage", categoryController.deleteCategoryImage);
 
 // Banner
 router.post("/addBanner", bannerController.addBanner);
+router.put("/updateBanner", bannerController.updateBanner);
+router.delete("/deleteBanner", bannerController.deleteBanner);
 
 export default router;
