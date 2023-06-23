@@ -5,7 +5,7 @@ const getProductsFromIds = async (list: Types.ObjectId[]) => {
   try {
     const array = await Promise.all(
       list.map(async (id) => {
-        const product = await ProductModel.findOne({ productId: id });
+        const product = await ProductModel.findById(id);
         return product;
       })
     );
