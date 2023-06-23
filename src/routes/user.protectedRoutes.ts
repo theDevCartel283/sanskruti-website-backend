@@ -70,6 +70,15 @@ router
     userController.handleDeleteAddress
   );
 
+router
+  .route("/wishlist")
+  .get(wishlistController.handleGetWishlist)
+  .post(
+    validateResources(blankSchema, wishlistDetails, blankSchema),
+    wishlistController.addToWishlist
+  )
+  .delete(wishlistController.handleRemoveFromWishlist);
+
 router.get(
   "/cartitems",
   validateResources(blankSchema, emailName, blankSchema),

@@ -2,42 +2,42 @@ import { Request, Response } from "express";
 import wishlistModel from "../../model/wishlist.model";
 import { ReqWishlistObject } from "../../schema/wishlist.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
+import ProductModel from "../../model/product.model";
 
 const addToWishlist = async (
   req: Request<{}, {}, ReqWishlistObject & TokenPayload>,
   res: Response
 ) => {
-  const { email, name, price } = req.body;
-  const user = await wishlistModel.findOne({ email });
+  const { userUniqueIdentity, productId } = req.body;
+  const user = await wishlistModel.findOne({ userId: userUniqueIdentity });
 
-  const fetched_product = {
-    name,
-    price,
-  };
+  const checkProductExists = await ProductModel.findById(productId);
+  if (!checkProductExists)
+    return res.status(200).json({
+      success: true,
+      ids: !!user ? user.products : [],
+    });
 
   if (user) {
-    user.listItems = user.listItems.filter(
-      (product, key) => product.name != name
-    );
-    user.listItems.push(fetched_product);
-
+    if (!user.products.includes(checkProductExists._id))
+      user.products.push(checkProductExists._id);
     const userWishlist = await user.save({ validateBeforeSave: false });
 
     res.status(200).json({
       success: true,
-      userWishlist,
+      ids: userWishlist.products,
     });
   } else {
     const newUserWishlist = new wishlistModel({
-      email,
-      listItems: fetched_product,
+      userId: userUniqueIdentity,
+      products: [checkProductExists._id],
     });
 
     const wishlist = await newUserWishlist.save();
 
     res.status(200).json({
       success: true,
-      wishlist,
+      ids: wishlist.products,
     });
   }
 };
