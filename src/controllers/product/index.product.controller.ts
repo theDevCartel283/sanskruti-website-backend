@@ -6,11 +6,13 @@ import updateProduct from "./update.product.controller";
 import addVariations from "./variations.product.controller";
 import addProductImages from "./add.productImage.controller";
 import deleteProductImages from "./delete.productImage.controller";
+import getallProductsFromFilters from "./getFilters.product.controller";
 
 export {
   addVariations,
   addProduct,
   getallProducts,
+  getallProductsFromFilters,
   deleteProduct,
   getproductDetails,
   updateProduct,

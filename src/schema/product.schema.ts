@@ -45,6 +45,16 @@ export const varientObject = z.object({
   price: z.number({ required_error: "price is not defined" }),
 });
 
+export const filters = z.object({
+  MainCategory: z
+    .string({ required_error: "main category not defined" })
+    .nullish(),
+  SubCategory: z
+    .string({ required_error: "sub category not defined" })
+    .nullish(),
+  page: z.number().nullish(),
+});
+
 const newProductObject = ProductObject.merge(userEmailPwd);
 const ProductObjectWithName = newProductObject.merge(nameObject);
 const updatedProductObject = ProductObjectWithName.merge(varientObject);
@@ -53,3 +63,4 @@ const updatedProductObject = ProductObjectWithName.merge(varientObject);
 export type ReqProductObject = z.infer<typeof ProductObject>;
 export type RequpdatedProductObject = z.infer<typeof updatedProductObject>;
 export type ReqProductObjectWithName = z.infer<typeof ProductObjectWithName>;
+export type ReqFilters = z.infer<typeof filters>;

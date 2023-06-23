@@ -16,6 +16,7 @@ import {
   auth,
 } from "../schema/user.schema";
 import * as categoryController from "../controllers/category/index.category.controller";
+import { filters } from "../schema/product.schema";
 
 const router = express.Router();
 
@@ -72,6 +73,10 @@ router.get("/categories", categoryController.getCategory);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
 
 router.get("/getallProducts", productController.getallProducts);
+router.get(
+  "/getallProductsFromFilters",
+  productController.getallProductsFromFilters
+);
 router.get("/product", productController.getproductDetails);
 router.get("/getVarients", varientController.getallVarients);
 export default router;
