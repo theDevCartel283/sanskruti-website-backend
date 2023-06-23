@@ -2,14 +2,26 @@ import cors from "cors";
 import { env } from "./env";
 
 export const allowedOrigins = [
-  "https://sanskruti-website-frontend-black.vercel.app",
-  "https://sanskruti-admin.vercel.app",
   "http://localhost:3000",
-  "http://localhost:3001",
+  "https://admin.sanskrutinx.in",
+  "https://sanskrutinx.in",
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    return callback(null, true);
+    // if development allow undefined
+    if (env.NODE_ENV === "development" && origin === undefined) {
+      return callback(null, true);
+    }
+
+    // else reject undefined
+    if (origin === undefined) return callback(new Error("not allowed by CORS"));
+
+    // check allowed
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("not allowed by CORS"));
+    }
   },
   credentials: true,
   optionsSuccessStatus: 200,

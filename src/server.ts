@@ -35,7 +35,7 @@ const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
 
 // Cors - Cross Origin Resource Sharing
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 // Middleware
 // handle url encoded data / form data
 app.use(express.urlencoded({ extended: true }));
