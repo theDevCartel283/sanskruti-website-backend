@@ -16,7 +16,10 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    varients: [{}],
+    varients: {
+      attributes: [],
+      variations: [],
+    },
     gst_price: {
       type: Number,
       required: true,
