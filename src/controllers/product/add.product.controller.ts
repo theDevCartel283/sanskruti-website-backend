@@ -16,6 +16,7 @@ const addProduct = async (
   const productAlreadyNameExists = await ProductModel.findOne({
     name: req.body.name,
   });
+  console.log(req.body);
 
   if (productAlreadyNameExists)
     return res
@@ -48,6 +49,7 @@ const addProduct = async (
       meta_description: req.body.meta_description,
       meta_keyword: req.body.meta_keyword,
       createdBy: req.body.userUniqueIdentity,
+      images: req.body.images || [],
     });
 
     const product = await newProduct.save();

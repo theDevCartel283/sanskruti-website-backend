@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import categoryModel from "../../model/category.model";
 
 const addCategoryImage = async (req: Request, res: Response) => {
-  const imagePath: any = req.body.imagePath;
+  const imagePath: any = req.body.Image;
   const categoryAlreadyExists = await categoryModel.findOne({
     _id: req.query._id,
   });
+  console.log(req.body);
 
   if (categoryAlreadyExists) {
     if (categoryAlreadyExists.Image === null) {

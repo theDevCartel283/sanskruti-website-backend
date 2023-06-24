@@ -33,7 +33,6 @@ import corsOptions from "./config/corsConfig";
 // creating an express app
 const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
-
 // Cors - Cross Origin Resource Sharing
 app.use(cors(corsOptions));
 // Middleware

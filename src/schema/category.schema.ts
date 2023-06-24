@@ -13,6 +13,9 @@ export const categoryDetails = z.object({
   Meta_Description: z.string({
     required_error: "meta_description is not defined",
   }),
+  Image: z.string({
+    required_error: "upload Image",
+  }),
 });
 
 export type ReqCategoryObject = z.infer<typeof categoryDetails>;
