@@ -10,10 +10,14 @@ const getProductsFromIds = async (list: Types.ObjectId[]) => {
       })
     );
 
-    const filteredArray = array.filter((product) => !!product);
-    return filteredArray;
+    const emptyArray: Types.ObjectId[] = [];
+    const filteredArray = array.filter((product, index) => {
+      if (!product) emptyArray.push(list[index]);
+      return !!product;
+    });
+    return { filteredArray, emptyArray };
   } catch (error) {
-    return [];
+    return {};
   }
 };
 

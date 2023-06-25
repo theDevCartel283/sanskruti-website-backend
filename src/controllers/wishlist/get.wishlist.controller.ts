@@ -13,10 +13,18 @@ const handleGetWishlist = async (
 
   if (!userWishlist) return res.send({ list: [] });
 
-  const productsList = await getProductsFromIds(userWishlist.products);
+  const { filteredArray, emptyArray } = await getProductsFromIds(
+    userWishlist.products
+  );
+  if (emptyArray && emptyArray.length !== 0) {
+    userWishlist.products = userWishlist.products.filter(
+      (product) => !emptyArray.includes(product._id)
+    );
+    await userWishlist.save();
+  }
   res.status(200).send({
     ids: userWishlist.products,
-    list: productsList,
+    list: filteredArray || [],
   });
 };
 
