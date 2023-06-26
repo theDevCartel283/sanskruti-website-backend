@@ -5,7 +5,7 @@ import subCategoryModel from "../../model/subCategory.model";
 const getAllSubCategories = async (req: Request, res: Response) => {
   const subCategoriesCount: number = await subCategoryModel.countDocuments();
   const apiFeatures = new ApiFeatures(subCategoryModel.find(), req.query)
-    .search()
+    .searchForSubCategory()
     .filter();
   const subCategories = await apiFeatures.query;
   if (!subCategories) {
