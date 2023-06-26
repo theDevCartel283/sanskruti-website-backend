@@ -7,9 +7,6 @@ export const subCategoryDetails = z.object({
   Category: z.string({
     required_error: "Category is not defined",
   }),
-  Slug: z.string({
-    required_error: "slug is not defined ",
-  }),
   Meta_Title: z.string({
     required_error: "meta_title is not defined ",
   }),

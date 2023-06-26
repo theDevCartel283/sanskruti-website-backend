@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { addressSchema } from "./user.model";
 
 const orderSchema = new mongoose.Schema({
   userInfo: {
@@ -22,15 +23,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
       },
       varient: {},
-      discount: {
-        type: Number,
-        required: true,
-      },
       gst: {
-        type: Number,
-        required: true,
-      },
-      price: {
         type: Number,
         required: true,
       },
@@ -66,51 +59,7 @@ const orderSchema = new mongoose.Schema({
       required: true,
     },
   },
-  shippingInfo: {
-    id: {
-      type: String,
-      required: true,
-    },
-    fullName: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    email: {
-      type: String,
-      required: true,
-    },
-    contactNo: {
-      type: Number,
-      required: true,
-      default: null,
-    },
-    pincode: {
-      type: Number,
-      required: true,
-      default: null,
-    },
-    nearBy: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    landmark: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    city: {
-      type: String,
-      required: true,
-      default: null,
-    },
-    state: {
-      type: String,
-      required: true,
-      default: null,
-    },
-  },
+  shippingInfo: addressSchema,
   paymentInfo: {
     status: {
       type: String,

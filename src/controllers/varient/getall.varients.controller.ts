@@ -1,13 +1,18 @@
 import { Request, Response } from "express";
+import categoryModel from "../../model/category.model";
+import ApiFeatures from "../../utils/apiFeatures.utils";
 import varientModel from "../../model/varients.model";
 
-const getallVarients = async (req: Request, res: Response) => {
-  const varients = await varientModel.find();
-  const varientsCount: number = await varientModel.countDocuments();
+const getAllVarients = async (req: Request, res: Response) => {
+  const resultperpage: number = 8;
+  const apiFeatures = new ApiFeatures(varientModel.find(), req.query)
+    .searchForVarient()
+    .filter();
+  const varients = await apiFeatures.query;
   if (!varients) {
     res.status(401).json({
-      type: "warning",
-      message: "no varient  found",
+      type: "success",
+      message: "no varients found",
     });
   } else {
     res.status(200).json({
@@ -17,4 +22,4 @@ const getallVarients = async (req: Request, res: Response) => {
   }
 };
 
-export default getallVarients;
+export default getAllVarients;
