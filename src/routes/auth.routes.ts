@@ -47,17 +47,11 @@ router.get(
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        domain: ".app",
         path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(
-        302,
-        `${req.protocol}://${
-          req.hostname === "localhost" ? "localhost:3000" : req.hostname
-        }/`
-      );
+      res.redirect(302, "https://sanskrutinx.in");
     } else {
       res.redirect("/auth/login");
     }
