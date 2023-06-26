@@ -1,5 +1,45 @@
 import mongoose from "mongoose";
-
+export const addressSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true,
+  },
+  fullName: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  contactNo: {
+    type: Number,
+    required: true,
+    default: null,
+  },
+  pincode: {
+    type: Number,
+    required: true,
+    default: null,
+  },
+  nearBy: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  landmark: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  city: {
+    type: String,
+    required: true,
+    default: null,
+  },
+  state: {
+    type: String,
+    required: true,
+    default: null,
+  },
+});
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -56,49 +96,7 @@ const userSchema = new mongoose.Schema({
     required: false,
     default: null,
   },
-  address: [
-    {
-      id: {
-        type: String,
-        required: true,
-      },
-      fullName: {
-        type: String,
-        required: true,
-        default: null,
-      },
-      contactNo: {
-        type: Number,
-        required: true,
-        default: null,
-      },
-      pincode: {
-        type: Number,
-        required: true,
-        default: null,
-      },
-      nearBy: {
-        type: String,
-        required: true,
-        default: null,
-      },
-      landmark: {
-        type: String,
-        required: true,
-        default: null,
-      },
-      city: {
-        type: String,
-        required: true,
-        default: null,
-      },
-      state: {
-        type: String,
-        required: true,
-        default: null,
-      },
-    },
-  ],
+  address: [addressSchema],
 });
 
 const UserModel = mongoose.model("User", userSchema);
