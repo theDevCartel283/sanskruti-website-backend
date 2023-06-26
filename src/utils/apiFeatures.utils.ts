@@ -43,6 +43,24 @@ class ApiFeatures {
     return this;
   }
 
+  searchForSubCategory() {
+    const keyword: any = this.queryStr.keyword
+      ? {
+          $or: [
+            {
+              Category: {
+                $regex: this.queryStr.keyword,
+                $options: "i",
+              },
+            },
+          ],
+        }
+      : {};
+
+    this.query = this.query.find({ ...keyword });
+    return this;
+  }
+
   search() {
     const keyword: any = this.queryStr.keyword
       ? {
