@@ -14,14 +14,10 @@ export const ProductObject = z.object({
   description: z.string({
     required_error: "product description is required",
   }),
-  gst_price: z.number({ required_error: "gst price is not defined" }),
-  sale_price: z
-    .number({ required_error: "sale price is not defined" })
-    .optional(),
+  gst_percent: z.number({ required_error: "gst price is not defined" }),
   MainCategory: z.string({ required_error: "main category not defined" }),
   SubCategory: z.string({ required_error: "sub category not defined" }),
   brand_name: z.string({ required_error: "brand name is  not defined" }),
-  slug: z.string({ required_error: "slug is  not defined" }),
   is_featured: z.boolean({
     required_error: "this product featured product or not ? (true/false) ",
   }),
@@ -37,6 +33,7 @@ export const ProductObject = z.object({
   }),
   meta_keyword: z.string({ required_error: "meta keyword is not defined" }),
   images: z.array(z.string()),
+  varients: z.object({}),
 });
 
 export const varientObject = z.object({

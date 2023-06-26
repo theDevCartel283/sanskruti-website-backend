@@ -20,12 +20,7 @@ const productSchema = new mongoose.Schema(
       attributes: [],
       variations: [],
     },
-    gst_price: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    sale_price: {
+    gst_percent: {
       type: Number,
       required: true,
       default: 0,
