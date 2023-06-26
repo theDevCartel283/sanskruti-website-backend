@@ -8,7 +8,7 @@ export const getForgotPasswordFormat = (
 ) => {
   const token = signToken("EMAIL_TOKEN_PRIVATE", id, provider, "USER");
 
-  const link = `http://localhost:3000/auth/forgotPassword/${token}`;
+  const link = `https://sanskrutinx.in/auth/forgotPassword/${token}`;
 
   return `
   <div style="max-width: 30rem; margin: auto">
