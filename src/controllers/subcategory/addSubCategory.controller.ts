@@ -15,7 +15,6 @@ const addSubCategory = async (
   } else {
     const newSubCategory = new subCategoryModel({
       Title: req.body.Title.trim().toLowerCase(),
-      Slug: req.body.Slug,
       Category: req.body.Category,
       Meta_Title: req.body.Meta_Title,
       Meta_Description: req.body.Meta_Description,

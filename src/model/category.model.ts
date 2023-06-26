@@ -11,10 +11,6 @@ const categorySchema = new mongoose.Schema(
       required: false,
       default: null,
     },
-    Slug: {
-      type: String,
-      required: true,
-    },
     Meta_Title: {
       type: String,
       required: true,

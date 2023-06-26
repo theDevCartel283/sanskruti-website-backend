@@ -10,10 +10,6 @@ const subCategorySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    Slug: {
-      type: String,
-      required: true,
-    },
     Meta_Title: {
       type: String,
       required: true,
