@@ -9,19 +9,19 @@ export const allowedOrigins = [
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     // if development allow undefined
-    if (env.NODE_ENV === "development" && origin === undefined) {
-      return callback(null, true);
-    }
+    // if (env.NODE_ENV === "development" && origin === undefined) {
+    // }
 
     // else reject undefined
-    if (origin === undefined) return callback(new Error("not allowed by CORS"));
+    // if (origin === undefined) return callback(new Error("not allowed by CORS"));
 
     // check allowed
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("not allowed by CORS"));
-    }
+    // if (allowedOrigins.includes(origin)) {
+    //   callback(null, true);
+    // } else {
+    //   callback(new Error("not allowed by CORS"));
+    // }
+    return callback(null, true);
   },
   credentials: true,
   optionsSuccessStatus: 200,

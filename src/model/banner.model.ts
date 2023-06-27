@@ -8,7 +8,11 @@ const bannerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  image: {
+  desktopImage: {
+    type: String,
+    default: null,
+  },
+  mobileImage: {
     type: String,
     default: null,
   },
