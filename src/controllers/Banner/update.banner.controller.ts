@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import ProductModel from "../../model/product.model";
-import { ReqProductObjectWithName } from "../../schema/product.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import bannerModel from "../../model/banner.model";
+import { ReqBannerObject } from "../../schema/banner.schema";
 
 const updateBanner = async (
-  req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
+  req: Request<{}, {}, ReqBannerObject & TokenPayload>,
   res: Response
 ) => {
   const id: any = req.query.id;

@@ -8,15 +8,6 @@ export const allowedOrigins = [
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
-    // if development allow undefined
-    // if (env.NODE_ENV === "development" && origin === undefined) {
-    //   return callback(null, true);
-    // }
-
-    // // else reject undefined
-    // if (origin === undefined) return callback(new Error("not allowed by CORS"));
-
-    // // check allowed
     // if (allowedOrigins.includes(origin)) {
     //   callback(null, true);
     // } else {

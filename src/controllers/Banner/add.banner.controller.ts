@@ -7,9 +7,9 @@ const addBanner = async (
   res: Response
 ) => {
   const newBanner = new bannerModel({
-    type: req.body.type,
     isPublished: req.body.isPublished,
-    image: req.body.image,
+    desktopImage: req.body.desktopImage,
+    mobileImage: req.body.mobileImage,
   });
 
   await newBanner.save();
