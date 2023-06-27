@@ -44,11 +44,10 @@ router.get(
 
       // create httpOnly cookie
       res.cookie("accessToken", accessToken, {
-        secure: true,
         httpOnly: true,
-        domain: "sanskrutinx.in",
-        path: "/",
+        secure: true,
         sameSite: "lax",
+        path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -80,11 +79,10 @@ router.get(
 
       // create httpOnly cookie
       res.cookie("accessToken", accessToken, {
-        secure: true,
         httpOnly: true,
-        domain: "sanskrutinx.in",
-        path: "/",
+        secure: true,
         sameSite: "lax",
+        path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
