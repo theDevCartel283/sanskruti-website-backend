@@ -44,10 +44,11 @@ router.get(
 
       // create httpOnly cookie
       res.cookie("accessToken", accessToken, {
+        secure: true,
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        domain: "sanskrutinx.in",
         path: "/",
+        sameSite: "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
@@ -79,19 +80,15 @@ router.get(
 
       // create httpOnly cookie
       res.cookie("accessToken", accessToken, {
+        secure: true,
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        domain: "sanskrutinx.in",
         path: "/",
+        sameSite: "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(
-        302,
-        `${req.protocol}://${
-          req.hostname === "localhost" ? "localhost:3000" : req.hostname
-        }/`
-      );
+      res.redirect(302, "https://sanskrutinx.in");
     } else {
       res.redirect("/auth/login");
     }

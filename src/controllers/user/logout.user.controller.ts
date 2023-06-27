@@ -17,10 +17,11 @@ export const handleLogout = async (
 
   // clear cookie
   res.clearCookie("accessToken", {
+    secure: true,
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    domain: "sanskrutinx.in",
     path: "/",
+    sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
