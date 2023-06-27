@@ -62,7 +62,7 @@ export const handleAuthentication = async (
       // create httpOnly cookie
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: "lax",
         path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000,
