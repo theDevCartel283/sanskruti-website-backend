@@ -1,4 +1,13 @@
 import addToCart from "./add.cart.controller";
-import removeFromCart from "./remove.cart.controller";
+import handleDeleteCart from "./remove.cart.controller";
+import handleUpdateCart from "./update.cart.controller";
 import cartItems from "./getall.cart.controller";
-export { addToCart, cartItems, removeFromCart };
+import handleUpdateCartQuantity from "./updateQuantity.cart.controller";
+
+export {
+  addToCart,
+  cartItems,
+  handleUpdateCart,
+  handleDeleteCart,
+  handleUpdateCartQuantity,
+};

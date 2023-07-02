@@ -3,8 +3,9 @@ import cartModel from "../../model/cart.model";
 import { TokenPayload } from "../../utils/jwt.utils";
 import { Types } from "mongoose";
 import ProductModel from "../../model/product.model";
+import logger from "../../utils/logger.utils";
 
-const getCartProductsFromIds = async (
+export const getCartProductsFromIds = async (
   cart: {
     productId: Types.ObjectId;
     variant: string[];
@@ -35,22 +36,31 @@ const getCartProductsFromIds = async (
 };
 
 const cartItems = async (req: Request<{}, {}, TokenPayload>, res: Response) => {
-  const user = await cartModel.findOne({ userId: req.body.userUniqueIdentity });
+  try {
+    const user = await cartModel.findOne({
+      userId: req.body.userUniqueIdentity,
+    });
+    if (!user) return res.status(200).send({ cart: [] });
 
-  if (!user) return res.send(200).send({ cart: [] });
+    let cart = user.product || [];
+    const { filteredArray, emptyArray } = await getCartProductsFromIds(cart);
 
-  let cart = user.product || [];
-  const { filteredArray, emptyArray } = await getCartProductsFromIds(cart);
-
-  if (emptyArray && emptyArray.length !== 0) {
-    user.product = user.product.filter(
-      (product) => !emptyArray.includes(product.productId)
-    );
-    await user.save();
+    if (emptyArray && emptyArray.length !== 0) {
+      user.product = user.product.filter(
+        (product) => !emptyArray.includes(product.productId)
+      );
+      await user.save();
+    }
+    return res.status(200).send({
+      cart: filteredArray,
+    });
+  } catch (error) {
+    logger.error("get cart " + error);
+    res.status(500).json({
+      type: "error",
+      message: "something went wrong",
+    });
   }
-  return res.send({
-    cart: filteredArray,
-  });
 };
 
 export default cartItems;

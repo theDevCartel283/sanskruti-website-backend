@@ -15,7 +15,7 @@ import {
 } from "../schema/user.schema";
 import { reviewObject } from "../schema/review.schema";
 import { wishlistDetails } from "../schema/wishlist.schema";
-import { cartDetails } from "../schema/cart.schema";
+import { cartDetails, delCart, updateCart } from "../schema/cart.schema";
 import { z } from "zod";
 
 const router = express.Router();
@@ -86,10 +86,19 @@ router
     validateResources(blankSchema, cartDetails, blankSchema),
     cartController.addToCart
   )
+  .put(
+    validateResources(blankSchema, updateCart, blankSchema),
+    cartController.handleUpdateCart
+  )
   .delete(
-    validateResources(blankSchema, cartDetails, blankSchema),
-    cartController.removeFromCart
+    validateResources(blankSchema, blankSchema, delCart),
+    cartController.handleDeleteCart
   );
+router.post(
+  "/cart/quantity",
+  validateResources(blankSchema, cartDetails, blankSchema),
+  cartController.handleUpdateCartQuantity
+);
 
 router.put(
   "/updateReview",
