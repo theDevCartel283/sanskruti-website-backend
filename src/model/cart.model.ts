@@ -1,44 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const cartSchema = new mongoose.Schema({
-  email: {
-    type: String,
+  userId: {
+    type: Schema.Types.ObjectId,
     required: true,
-    unique: true,
   },
   product: [
     {
-      id: {
-        type: String,
+      productId: {
+        type: Schema.Types.ObjectId,
         required: true,
       },
-      name: {
-        type: String,
-        required: true,
-      },
-      color: {
-        type: String,
-        required: true,
-      },
-      size: {
-        type: String,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
+      variant: [
+        {
+          type: String,
+        },
+      ],
       quantity: {
         type: Number,
         required: true,
-      },
-      gst_price: {
-        type: Number,
-        default: 0,
-      },
-      sale_price: {
-        type: Number,
-        default: 0,
       },
     },
   ],

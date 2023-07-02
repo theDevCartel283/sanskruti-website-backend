@@ -15,7 +15,7 @@ import {
 } from "../schema/user.schema";
 import { reviewObject } from "../schema/review.schema";
 import { wishlistDetails } from "../schema/wishlist.schema";
-import { cartDetails, emailName } from "../schema/cart.schema";
+import { cartDetails } from "../schema/cart.schema";
 import { z } from "zod";
 
 const router = express.Router();
@@ -79,23 +79,17 @@ router
   )
   .delete(wishlistController.handleRemoveFromWishlist);
 
-router.get(
-  "/cartitems",
-  validateResources(blankSchema, emailName, blankSchema),
-  cartController.cartItems
-);
-
-router.put(
-  "/addtocart",
-  validateResources(blankSchema, cartDetails, blankSchema),
-  cartController.addToCart
-);
-
-router.delete(
-  "/removecartitem",
-  validateResources(blankSchema, emailName, blankSchema),
-  cartController.removeFromCart
-);
+router
+  .route("/cart")
+  .get(cartController.cartItems)
+  .post(
+    validateResources(blankSchema, cartDetails, blankSchema),
+    cartController.addToCart
+  )
+  .delete(
+    validateResources(blankSchema, cartDetails, blankSchema),
+    cartController.removeFromCart
+  );
 
 router.put(
   "/updateReview",
