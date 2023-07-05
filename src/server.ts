@@ -29,12 +29,17 @@ import {
 } from "./middleware/verifyIsAdmin.middleware";
 import { authInit } from "./utils/auth/authInit";
 import corsOptions from "./config/corsConfig";
+import { credentials } from "./middleware/credentials";
 
 // creating an express app
 const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
+
 // Cors - Cross Origin Resource Sharing
 app.use(cors(corsOptions));
+// CORS - res headers credential
+app.use(credentials);
+
 // Middleware
 // handle url encoded data / form data
 app.use(express.urlencoded({ extended: true }));
