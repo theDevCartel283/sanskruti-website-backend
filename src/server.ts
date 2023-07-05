@@ -40,7 +40,9 @@ const PORT = Number(env.PORT) || 4000;
 app.use(
   cors({
     origin: "*", // Replace with your allowed origin or use '*' to allow all origins
+    credentials: true,
     allowedHeaders: "Content-Type,Authorization", // Specify the allowed headers for requests
+    methods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   })
 );
 // CORS - res headers credential
