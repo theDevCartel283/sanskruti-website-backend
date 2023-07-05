@@ -36,15 +36,7 @@ const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
 
 // Cors - Cross Origin Resource Sharing
-// app.use(cors(corsOptions));
-app.use(
-  cors({
-    origin: allowedOrigins, // Replace with your allowed origin or use '*' to allow all origins
-    credentials: true,
-    allowedHeaders: "Content-Type,Authorization", // Specify the allowed headers for requests
-    methods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  })
-);
+app.use(cors(corsOptions));
 // CORS - res headers credential
 app.use(credentials);
 
