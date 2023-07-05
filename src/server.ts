@@ -28,7 +28,7 @@ import {
   verifyIsSuperAdmin,
 } from "./middleware/verifyIsAdmin.middleware";
 import { authInit } from "./utils/auth/authInit";
-import corsOptions from "./config/corsConfig";
+import corsOptions, { allowedOrigins } from "./config/corsConfig";
 import { credentials } from "./middleware/credentials";
 
 // creating an express app
@@ -36,7 +36,13 @@ const app: Application = express();
 const PORT = Number(env.PORT) || 4000;
 
 // Cors - Cross Origin Resource Sharing
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "*", // Replace with your allowed origin or use '*' to allow all origins
+    allowedHeaders: "Content-Type,Authorization", // Specify the allowed headers for requests
+  })
+);
 // CORS - res headers credential
 app.use(credentials);
 
