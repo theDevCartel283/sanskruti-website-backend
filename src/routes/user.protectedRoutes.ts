@@ -109,8 +109,16 @@ router
     orderController.handlePlaceOrder
   );
 
-// router.get("/order/history")
-// router.get("/order/history/:id")
+router.get("/order/history", orderController.handleGetAllOrders);
+router.get(
+  "/order/history/:orderId",
+  validateResources(
+    z.object({ orderId: z.string() }),
+    blankSchema,
+    blankSchema
+  ),
+  orderController.handleGetOrder
+);
 
 router.put(
   "/updateReview",
