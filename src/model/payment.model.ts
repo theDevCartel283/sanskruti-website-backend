@@ -50,35 +50,25 @@ const paymentSchema = new mongoose.Schema({
   paymentInfo: {
     status: {
       type: String,
-      required: true,
     },
     transactionId: {
       type: String,
-      required: true,
     },
     amount: {
       type: Number,
-      required: true,
     },
     currency: {
       type: String,
-      required: true,
       default: "INR",
     },
     timestamp: {
       type: String,
-      required: true,
-    },
-    paymentStatus: {
-      type: String,
-      required: true,
     },
     referenceId: {
       type: String,
-      required: true,
     },
   },
 });
 
-const cartModel = mongoose.model("Payment", paymentSchema);
-export default cartModel;
+const PaymentModel = mongoose.model("Payment", paymentSchema);
+export default PaymentModel;

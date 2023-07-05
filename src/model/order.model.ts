@@ -31,9 +31,8 @@ const orderSchema = new mongoose.Schema({
     },
 
     Amount_refunded: {
-      type: Number,
+      type: Boolean,
       required: true,
-      default: 0,
     },
   },
   returnInfo: {
@@ -48,11 +47,11 @@ const orderSchema = new mongoose.Schema({
       default: null,
     },
     Amount_refunded: {
-      type: Number,
+      type: Boolean,
       required: true,
-      default: 0,
     },
   },
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+const orderModel = mongoose.model("Order", orderSchema);
+export default orderModel;

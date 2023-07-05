@@ -4,6 +4,7 @@ import * as userController from "../controllers/user/index.user.controller";
 import * as reviewController from "../controllers/product_review/index.review.controller";
 import * as wishlistController from "../controllers/wishlist/index.wishlist.controller";
 import * as cartController from "../controllers/cart/index.cart.controller";
+import * as orderController from "../controllers/order/index.order.controller";
 import validateResources from "../middleware/validateResources";
 import {
   Address,
@@ -17,6 +18,7 @@ import { reviewObject } from "../schema/review.schema";
 import { wishlistDetails } from "../schema/wishlist.schema";
 import { cartDetails, delCart, updateCart } from "../schema/cart.schema";
 import { z } from "zod";
+import { orderDetails } from "../schema/order.schema";
 
 const router = express.Router();
 
@@ -99,6 +101,16 @@ router.post(
   validateResources(blankSchema, cartDetails, blankSchema),
   cartController.handleUpdateCartQuantity
 );
+
+router
+  .route("/order")
+  .post(
+    validateResources(blankSchema, orderDetails, blankSchema),
+    orderController.handlePlaceOrder
+  );
+
+// router.get("/order/history")
+// router.get("/order/history/:id")
 
 router.put(
   "/updateReview",
