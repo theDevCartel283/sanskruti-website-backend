@@ -5,6 +5,7 @@ import * as categoryController from "../controllers/category/index.category.cont
 import * as varientController from "../controllers/varient/index.varient.controller";
 import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
 import * as bannerController from "../controllers/Banner/index.banner.controller";
+import * as subBannerController from "../controllers/SubBanner/index.subbanner.controller";
 import * as userController from "../controllers/user/index.user.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
@@ -109,5 +110,10 @@ router.post("/deleteCategoryImage", categoryController.deleteCategoryImage);
 router.post("/addBanner", bannerController.addBanner);
 router.put("/updateBanner", bannerController.updateBanner);
 router.delete("/deleteBanner", bannerController.deleteBanner);
+
+// Sub Banner
+router.post("/addSubBanner", subBannerController.addBanner);
+router.put("/updateSubBanner", subBannerController.updateBanner);
+router.delete("/deleteSubBanner", subBannerController.deleteBanner);
 
 export default router;
