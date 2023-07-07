@@ -3,6 +3,7 @@ import UserModel from "../../model/user.model";
 import { ReqAddressObject } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import { v4 as uuidV4 } from "uuid";
+import logger from "../../utils/logger.utils";
 
 export const addAddress = async (
   req: Request<{}, {}, TokenPayload & ReqAddressObject>,
@@ -71,8 +72,10 @@ export const addAddress = async (
       address: updatedUser.address,
     });
   } catch (error) {
-    res.status(502).json({
-      error,
+    logger.error("add address error " + error);
+    res.status(500).json({
+      type: "error",
+      message: "something went wrong",
     });
   }
 };

@@ -14,12 +14,51 @@ const orderSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    brand_name: {
+      type: String,
+      required: true,
+    },
+    images: [
+      {
+        type: String,
+        default: null,
+      },
+    ],
+    gst_percent: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     quantity: {
       type: Number,
       required: true,
     },
     varient: {
-      type: Array,
+      price: {
+        type: Number,
+        required: true,
+      },
+      variations: {},
+      discount: {
+        type: Number,
+      },
+    },
+  },
+  deliveryInfo: {
+    date: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: String,
       required: true,
     },
   },

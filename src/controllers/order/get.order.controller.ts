@@ -3,48 +3,34 @@ import { TokenPayload } from "../../utils/jwt.utils";
 import logger from "../../utils/logger.utils";
 import orderModel from "../../model/order.model";
 import PaymentModel from "../../model/payment.model";
-import ProductModel from "../../model/product.model";
 
 const handleGetOrder = async (
-  req: Request<{ orderId: string }, {}, TokenPayload>,
+  req: Request<{ id: string }, {}, TokenPayload>,
   res: Response
 ) => {
   const { userUniqueIdentity } = req.body;
-  const { orderId } = req.params;
+  const { id } = req.params;
 
   try {
-    const orderWithIds = await orderModel
-      .find({
-        userId: userUniqueIdentity,
-        orderId,
-      })
-      .lean();
-    const payment = await PaymentModel.findOne({
-      userId: userUniqueIdentity,
-      orderId,
-    });
+    const order = await orderModel.findById(id);
 
-    if (!orderWithIds || !payment)
+    if (!order)
       return res
         .status(200)
         .send({ message: "product not found", type: "error" });
 
-    const orders = await Promise.all(
-      orderWithIds.map(async (order) => {
-        const product = await ProductModel.findById(order.product?.id);
-        return {
-          ...order,
-          product: {
-            product,
-            quantity: order.product?.quantity,
-            varient: order.product?.varient,
-          },
-        };
-      })
-    );
+    const payment = await PaymentModel.findOne({
+      userId: userUniqueIdentity,
+      orderId: order.orderId,
+    });
+
+    if (!payment)
+      return res
+        .status(200)
+        .send({ message: "product not found", type: "error" });
 
     return res.status(200).send({
-      orders,
+      order,
       payment,
     });
   } catch (err) {

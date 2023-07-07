@@ -19,10 +19,6 @@ const paymentSchema = new mongoose.Schema({
       type: Date,
       required: true,
     },
-    status: {
-      type: String,
-      required: true,
-    },
     SubTotal: {
       type: Number,
       required: true,

@@ -111,12 +111,8 @@ router
 
 router.get("/order/history", orderController.handleGetAllOrders);
 router.get(
-  "/order/history/:orderId",
-  validateResources(
-    z.object({ orderId: z.string() }),
-    blankSchema,
-    blankSchema
-  ),
+  "/order/history/:id",
+  validateResources(z.object({ id: z.string() }), blankSchema, blankSchema),
   orderController.handleGetOrder
 );
 
