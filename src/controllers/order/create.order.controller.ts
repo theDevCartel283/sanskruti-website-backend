@@ -73,7 +73,7 @@ const handlePlaceOrder = async (
           },
           deliveryInfo: {
             status: "Pending",
-            date: Date.now(),
+            date: new Date(),
           },
           cancellationInfo: {
             isCancelled: false,
@@ -83,7 +83,7 @@ const handlePlaceOrder = async (
           returnInfo: {
             isReturned: false,
             Amount_refunded: false,
-            status: "Null",
+            status: "Pending",
           },
         });
         return await orderItem.save();

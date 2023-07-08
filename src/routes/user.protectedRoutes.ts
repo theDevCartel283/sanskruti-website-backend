@@ -115,6 +115,11 @@ router.get(
   validateResources(z.object({ id: z.string() }), blankSchema, blankSchema),
   orderController.handleGetOrder
 );
+router.get(
+  "/order/requestCancel/:id",
+  validateResources(z.object({ id: z.string() }), blankSchema, blankSchema),
+  orderController.handleCancellationRequest
+);
 
 router.put(
   "/updateReview",
