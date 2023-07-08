@@ -1,6 +1,44 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-const productSchema = new mongoose.Schema(
+interface ProductAttributes {
+  name: string;
+  images: string[];
+  description: string;
+  varients: {
+    attributes: {
+      name: string;
+      state: boolean;
+      childern: {
+        value: string;
+        state: boolean;
+      }[];
+    }[];
+    variations: {
+      quantity: number;
+      discount: number;
+      price: number;
+      combinationString: string[];
+    }[];
+  };
+  gst_percent: number;
+  MainCategory: string;
+  SubCategory: string;
+  slug: string;
+  brand_name: string;
+  is_featured: boolean;
+  is_new_arrival: boolean;
+  is_best_seller: boolean;
+  meta_tittle: string;
+  meta_description: string;
+  meta_keyword: string;
+  createdBy: any;
+}
+export interface ProductDocument extends Document, ProductAttributes {
+  created_at: Date;
+  updated_at: Date;
+}
+
+const productSchema = new mongoose.Schema<ProductDocument>(
   {
     name: {
       type: String,
