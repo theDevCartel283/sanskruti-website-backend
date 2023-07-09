@@ -17,7 +17,7 @@ interface Product {
 
 interface DeliveryInfo {
   date: Date;
-  status: "Pending" | "Confirmed" | "Out for deivery" | "Delivered";
+  status: "Pending" | "Confirmed" | "Out for delivery" | "Delivered";
 }
 
 interface CancellationInfo {
@@ -30,6 +30,7 @@ interface ReturnInfo {
   isReturned: boolean;
   date?: Date;
   status:
+    | "Null"
     | "Pending"
     | "Confirmed"
     | "Out for pickup"
