@@ -7,6 +7,7 @@ import * as subCategoryController from "../controllers/subcategory/index.subCate
 import * as bannerController from "../controllers/Banner/index.banner.controller";
 import * as subBannerController from "../controllers/SubBanner/index.subbanner.controller";
 import * as userController from "../controllers/user/index.user.controller";
+import * as orderController from "../controllers/order/index.order.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -115,5 +116,7 @@ router.delete("/deleteBanner", bannerController.deleteBanner);
 router.post("/addSubBanner", subBannerController.addBanner);
 router.put("/updateSubBanner", subBannerController.updateBanner);
 router.delete("/deleteSubBanner", subBannerController.deleteBanner);
+router.get("/allOrders", orderController.getOrder);
+router.get("/getOrderDetails", orderController.GetOrderDetails);
 
 export default router;
