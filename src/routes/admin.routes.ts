@@ -7,6 +7,7 @@ import * as subCategoryController from "../controllers/subcategory/index.subCate
 import * as bannerController from "../controllers/Banner/index.banner.controller";
 import * as subBannerController from "../controllers/SubBanner/index.subbanner.controller";
 import * as userController from "../controllers/user/index.user.controller";
+import * as orderController from "../controllers/order/index.order.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -19,6 +20,8 @@ import {
   asyncSingleMiddleware,
 } from "../middleware/middlware";
 import { subCategoryDetails } from "../schema/subcategory.schema";
+import { adminUpdateOrder } from "../schema/order.schema";
+import z from "zod";
 const router = express.Router();
 
 // user
@@ -115,5 +118,16 @@ router.delete("/deleteBanner", bannerController.deleteBanner);
 router.post("/addSubBanner", subBannerController.addBanner);
 router.put("/updateSubBanner", subBannerController.updateBanner);
 router.delete("/deleteSubBanner", subBannerController.deleteBanner);
+
+// order manipulation
+router.put(
+  "/updateOrderStatus",
+  validateResources(
+    blankSchema,
+    adminUpdateOrder,
+    z.object({ id: z.string() })
+  ),
+  orderController.handleUpdateOrderFromAdmin
+);
 
 export default router;

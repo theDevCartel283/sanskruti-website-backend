@@ -23,4 +23,22 @@ export const orderDetails = z.object({
   Amount: z.number(),
 });
 
+export const adminUpdateOrder = z.object({
+  deliveryStatus: z
+    .enum(["Pending", "Confirmed", "Out for deivery", "Delivered"])
+    .nullish(),
+  returnStatus: z
+    .enum([
+      "Pending",
+      "Confirmed",
+      "Out for pickup",
+      "Refund initiated",
+      "Refund credited",
+    ])
+    .nullish(),
+  cancelRefundStatus: z.boolean().nullish(),
+  returnRefundStatus: z.boolean().nullish(),
+});
+
 export type ReqOrderDetails = z.infer<typeof orderDetails>;
+export type ReqAdminUpdateOrder = z.infer<typeof adminUpdateOrder>;
