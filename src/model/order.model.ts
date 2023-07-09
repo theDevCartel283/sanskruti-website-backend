@@ -1,6 +1,53 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const orderSchema = new mongoose.Schema({
+interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  brand_name: string;
+  images: string[];
+  gst_percent: number;
+  quantity: number;
+  varient: {
+    price: number;
+    variations: Record<string, any>;
+    discount?: number;
+  };
+}
+
+interface DeliveryInfo {
+  date: Date;
+  status: "Pending" | "Confirmed" | "Out for deivery" | "Delivered";
+}
+
+interface CancellationInfo {
+  isCancelled: boolean;
+  date?: Date;
+  Amount_refunded: boolean;
+}
+
+interface ReturnInfo {
+  isReturned: boolean;
+  date?: Date;
+  status:
+    | "Pending"
+    | "Confirmed"
+    | "Out for pickup"
+    | "Refund initiated"
+    | "Refund credited";
+  Amount_refunded: boolean;
+}
+
+export interface Order extends Document {
+  userId: string;
+  orderId: string;
+  product: Product;
+  deliveryInfo: DeliveryInfo;
+  cancellationInfo: CancellationInfo;
+  returnInfo: ReturnInfo;
+}
+
+const orderSchema: Schema<Order> = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
@@ -68,7 +115,9 @@ const orderSchema = new mongoose.Schema({
       required: true,
       default: false,
     },
-
+    date: {
+      type: Date,
+    },
     Amount_refunded: {
       type: Boolean,
       required: true,
@@ -79,6 +128,9 @@ const orderSchema = new mongoose.Schema({
       type: Boolean,
       required: true,
       default: false,
+    },
+    date: {
+      type: Date,
     },
     status: {
       type: String,

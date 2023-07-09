@@ -20,6 +20,8 @@ import {
   asyncSingleMiddleware,
 } from "../middleware/middlware";
 import { subCategoryDetails } from "../schema/subcategory.schema";
+import { adminUpdateOrder } from "../schema/order.schema";
+import z from "zod";
 const router = express.Router();
 
 // user
@@ -118,5 +120,16 @@ router.put("/updateSubBanner", subBannerController.updateBanner);
 router.delete("/deleteSubBanner", subBannerController.deleteBanner);
 router.get("/allOrders", orderController.getOrder);
 router.get("/getOrderDetails", orderController.GetOrderDetails);
+
+// order manipulation
+router.put(
+  "/updateOrderStatus",
+  validateResources(
+    blankSchema,
+    adminUpdateOrder,
+    z.object({ id: z.string() })
+  ),
+  orderController.handleUpdateOrderFromAdmin
+);
 
 export default router;
