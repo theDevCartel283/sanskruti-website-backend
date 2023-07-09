@@ -118,6 +118,8 @@ router.delete("/deleteBanner", bannerController.deleteBanner);
 router.post("/addSubBanner", subBannerController.addBanner);
 router.put("/updateSubBanner", subBannerController.updateBanner);
 router.delete("/deleteSubBanner", subBannerController.deleteBanner);
+router.get("/allOrders", orderController.getOrder);
+router.get("/getOrderDetails", orderController.GetOrderDetails);
 
 // order manipulation
 router.put(
