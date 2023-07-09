@@ -23,7 +23,7 @@ const handleCancellationRequest = async (
       !order.returnInfo.isReturned
     ) {
       // check if cancelable
-      if (order.deliveryInfo.status === "Out for deivery") {
+      if (order.deliveryInfo.status === "Out for delivery") {
         return res.status(200).send({
           message: "Product is out for delivery",
           type: "success",

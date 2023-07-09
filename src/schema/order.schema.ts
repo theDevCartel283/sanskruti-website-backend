@@ -25,10 +25,11 @@ export const orderDetails = z.object({
 
 export const adminUpdateOrder = z.object({
   deliveryStatus: z
-    .enum(["Pending", "Confirmed", "Out for deivery", "Delivered"])
+    .enum(["Pending", "Confirmed", "Out for delivery", "Delivered"])
     .nullish(),
   returnStatus: z
     .enum([
+      "Null",
       "Pending",
       "Confirmed",
       "Out for pickup",
