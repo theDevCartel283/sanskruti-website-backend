@@ -29,7 +29,6 @@ export const adminUpdateOrder = z.object({
     .nullish(),
   returnStatus: z
     .enum([
-      "Null",
       "Pending",
       "Confirmed",
       "Out for pickup",

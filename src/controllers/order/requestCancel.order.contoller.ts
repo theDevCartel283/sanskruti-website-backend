@@ -26,9 +26,10 @@ const handleCancellationRequest = async (
       if (order.deliveryInfo.status === "Out for delivery") {
         return res.status(200).send({
           message: "Product is out for delivery",
-          type: "success",
+          type: "info",
           content:
             "Once product is out for delivery it is not cancellable. check our cancelation policy for more details.",
+          order,
         });
       }
 
@@ -74,9 +75,10 @@ const handleCancellationRequest = async (
       ) {
         return res.status(200).send({
           message: "Request is not cancellable",
-          type: "success",
+          type: "info",
           content:
             "Once return is out for pickup it is not cancellable. check our return policy for more details.",
+          order,
         });
       }
 
