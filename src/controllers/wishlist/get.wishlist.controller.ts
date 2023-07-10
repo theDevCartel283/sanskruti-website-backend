@@ -13,7 +13,7 @@ const handleGetWishlist = async (
       userId: req.body.userUniqueIdentity,
     });
 
-    if (!userWishlist) return res.send({ list: [] });
+    if (!userWishlist) return res.send({ ids: [], list: [] });
 
     const { filteredArray, emptyArray } = await getProductsFromIds(
       userWishlist.products
@@ -25,7 +25,7 @@ const handleGetWishlist = async (
       await userWishlist.save();
     }
     res.status(200).send({
-      ids: userWishlist.products,
+      ids: userWishlist.products || [],
       list: filteredArray || [],
     });
   } catch (err) {
