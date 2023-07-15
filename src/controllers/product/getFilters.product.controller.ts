@@ -48,7 +48,7 @@ export const getallProductsFromFilters = async (
   req: Request<{}, {}, {}, ReqFilters>,
   res: Response
 ) => {
-  const limit = 60;
+  const limit = 24;
   const page = Number(req.query.page) || 1;
 
   const skip = (page - 1) * limit;
