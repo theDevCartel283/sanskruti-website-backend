@@ -8,6 +8,7 @@ import * as bannerController from "../controllers/Banner/index.banner.controller
 import * as subBannerController from "../controllers/SubBanner/index.subbanner.controller";
 import * as userController from "../controllers/user/index.user.controller";
 import * as orderController from "../controllers/order/index.order.controller";
+import * as couponController from "../controllers/Coupons/index.coupon.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -22,6 +23,7 @@ import {
 import { subCategoryDetails } from "../schema/subcategory.schema";
 import { adminUpdateOrder } from "../schema/order.schema";
 import z from "zod";
+import { couponDetails } from "../schema/coupon.schema";
 const router = express.Router();
 
 // user
@@ -130,6 +132,13 @@ router.put(
     z.object({ id: z.string() })
   ),
   orderController.handleUpdateOrderFromAdmin
+);
+
+// coupon
+router.post(
+  "/addCoupon",
+  validateResources(blankSchema, couponDetails, blankSchema),
+  couponController.addCoupon
 );
 
 export default router;

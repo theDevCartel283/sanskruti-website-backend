@@ -5,6 +5,7 @@ import * as reviewController from "../controllers/product_review/index.review.co
 import * as wishlistController from "../controllers/wishlist/index.wishlist.controller";
 import * as cartController from "../controllers/cart/index.cart.controller";
 import * as orderController from "../controllers/order/index.order.controller";
+import * as couponController from "../controllers/Coupons/index.coupon.controller";
 import validateResources from "../middleware/validateResources";
 import {
   Address,
@@ -126,5 +127,7 @@ router.put(
   validateResources(blankSchema, reviewObject, blankSchema),
   reviewController.updateReview
 );
+
+router.get("/getAllCoupons", couponController.getallCoupons);
 
 export default router;
