@@ -13,6 +13,7 @@ export const env = envsafe({
 
   // endpoint
   ENDPOINT: url(),
+  CDN_ENDPOINT: url(),
 
   // google auth
   GOOGLE_CLIENT_ID: str(),
@@ -25,6 +26,11 @@ export const env = envsafe({
   // database
   DATABASE_DEV_URI: url(),
   DATABASE_PROD_URI: url(),
+
+  // payment integration
+  MERCHANT_ID: str(),
+  ACCESS_CODE: str(),
+  WORKING_KEY: str(),
 
   // access token
   ACCESS_TOKEN_PRIVATE: str(),

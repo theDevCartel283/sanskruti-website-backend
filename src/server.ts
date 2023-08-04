@@ -17,12 +17,13 @@ import errFunction from "./middleware/error.middleware";
 // Routers import
 import healthCheckRouter from "./routes/healthCheck.routes";
 import userRouter from "./routes/user.routes";
-import adminRouter from "./routes/admin.routes";
-import superAdminRouter from "./routes/superadmin.routes";
+import ccavRouter from "./routes/ccav.routes";
 import authRouter from "./routes/auth.routes";
 
 // Protected Router Imports
 import userProtectedRouter from "./routes/user.protectedRoutes";
+import adminRouter from "./routes/admin.routes";
+import superAdminRouter from "./routes/superadmin.routes";
 import {
   verifyIsAdmin,
   verifyIsSuperAdmin,
@@ -53,6 +54,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1/healthcheck", healthCheckRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/ccavResponseHandler", ccavRouter);
 
 // oauth2.0
 authInit(app);

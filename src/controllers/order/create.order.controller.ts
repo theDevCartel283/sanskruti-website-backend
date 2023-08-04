@@ -8,6 +8,9 @@ import orderModel from "../../model/order.model";
 import PaymentModel from "../../model/payment.model";
 import { getCartProductsFromIds } from "../cart/getall.cart.controller";
 import _ from "lodash";
+import crypto from "crypto";
+import { env } from "../../config/env";
+import { encrypt } from "../CCAV/utils/ccav.utils";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -24,19 +27,18 @@ const handlePlaceOrder = async (
     Amount,
   } = req.body;
   const orderId = uuid();
+
   try {
     const cartWithIds = await cartModel.findOne({ userId: userUniqueIdentity });
     if (!cartWithIds || !cartWithIds.product.length)
       return res
         .status(400)
         .send({ message: "something went wrong", type: "error" });
-
     const { filteredArray } = await getCartProductsFromIds(cartWithIds.product);
     if (!filteredArray || !filteredArray.length)
       return res
         .status(400)
         .send({ message: "something went wrong", type: "error" });
-
     // loop through cart
     const orders = Promise.all(
       filteredArray.map(async (prod) => {
@@ -47,7 +49,6 @@ const handlePlaceOrder = async (
               JSON.stringify(variation.combinationString) ===
               JSON.stringify(prod.variant)
           )! || prod.product?.varients?.variations[0]!;
-
         const varient = {
           price: combination.price,
           discount: combination.discount,
@@ -79,7 +80,6 @@ const handlePlaceOrder = async (
             isCancelled: false,
             Amount_refunded: false,
           },
-
           returnInfo: {
             isReturned: false,
             Amount_refunded: false,
@@ -89,17 +89,14 @@ const handlePlaceOrder = async (
         return await orderItem.save();
       })
     );
-
     // payment
     const date = Date.now();
     const payment = new PaymentModel({
       userId: userUniqueIdentity,
       orderId,
-
       // address
       shippingAddress,
       billingAddress,
-
       paymentMethod,
       orderInfo: {
         Date: date,
@@ -109,21 +106,45 @@ const handlePlaceOrder = async (
         TotalGST: gst,
         Amount,
       },
-
       paymentInfo: {
-        status: "Pending",
+        order_status: "Pending",
       },
     });
     await payment.save();
-
     // clear cart
     cartWithIds.product = [];
     await cartWithIds.save();
 
-    return res.status(200).send({
-      message: "Thank you for shopping at sanskrutinx.in",
-      type: "success",
-    });
+    if (paymentMethod === "PayZapp") {
+      const merchant_id = env.MERCHANT_ID;
+      const access_code = env.ACCESS_CODE;
+      const working_key = env.WORKING_KEY;
+
+      const redirect_url = `${env.ENDPOINT}/api/v1/ccavResponseHandler/payment`;
+      const cancel_url = `${env.ENDPOINT}/api/v1/ccavResponseHandler/cancel`;
+
+      //Generate Md5 hash for the key and then convert in base64 string
+      var md5 = crypto.createHash("md5").update(working_key).digest();
+      var keyBase64 = Buffer.from(md5).toString("base64");
+
+      //Initializing Vector and then convert in base64 string
+      var ivBase64 = Buffer.from([
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+        0x0c, 0x0d, 0x0e, 0x0f,
+      ]).toString("base64");
+
+      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=1.00&redirect_url=${redirect_url}&cancel_url=${cancel_url}`;
+      const encRequest = encrypt(encString, keyBase64, ivBase64);
+
+      return res.status(200).json({
+        link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
+      });
+    } else {
+      return res.status(200).send({
+        message: "Thank you for shopping at sanskrutinx.in",
+        type: "success",
+      });
+    }
   } catch (err) {
     logger.error("place order error" + err);
     res.status(500).send({ message: "something went wrong", type: "info" });
