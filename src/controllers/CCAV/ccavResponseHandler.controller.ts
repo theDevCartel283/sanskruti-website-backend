@@ -92,7 +92,7 @@ const handleCCAVResponse = async (
       await payment.save();
       return res
         .status(200)
-        .redirect("https://sanskrutinx.in/user/order/success");
+        .redirect("https://sanskrutinx.in/user/order/status?type=Success");
     } else {
       await PaymentModel.findOneAndDelete({ orderId: orderNo });
       const orders = await orderModel.find({ orderId: orderNo });
@@ -115,7 +115,9 @@ const handleCCAVResponse = async (
 
       return res
         .status(200)
-        .redirect("https://sanskrutinx.in/user/order/success");
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?type=${result.order_status}`
+        );
     }
   } catch (err) {
     logger.error("ccav response error " + err);
