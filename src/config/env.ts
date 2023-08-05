@@ -13,7 +13,6 @@ export const env = envsafe({
 
   // endpoint
   ENDPOINT: url(),
-  CDN_ENDPOINT: url(),
 
   // google auth
   GOOGLE_CLIENT_ID: str(),
