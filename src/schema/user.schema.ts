@@ -73,14 +73,16 @@ export const userDetails = z.object({
 });
 
 export const addressObject = z.object({
-  fullName: z.string({ required_error: "fullName is not Defined" }),
-  contactNo: z.number({ required_error: "fullName is not Defined" }),
-  pincode: z.number({ required_error: "fullName is not Defined" }),
-  nearBy: z.string({ required_error: "near by feild is empty" }),
-  landmark: z.string({ required_error: "landmark is not defined" }),
-  city: z.string({ required_error: "city is not Defined" }),
-  state: z.string({ required_error: "state is not Defined" }),
+  name: z.string(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  zip: z.string(),
+  country: z.string(),
+  tel: z.number(),
+  email: z.string().email(),
 });
+
 export const Address = z.object({
   newAddress: addressObject.merge(
     z.object({

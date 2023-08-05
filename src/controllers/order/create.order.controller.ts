@@ -133,7 +133,9 @@ const handlePlaceOrder = async (
         0x0c, 0x0d, 0x0e, 0x0f,
       ]).toString("base64");
 
-      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=1.00&redirect_url=${redirect_url}&cancel_url=${cancel_url}`;
+      const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
+      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
+      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=1.00&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
 
       return res.status(200).json({

@@ -1,30 +1,54 @@
-import mongoose from "mongoose";
-export const addressSchema = new mongoose.Schema({
+import { Document, Model, model, Schema } from "mongoose";
+
+export interface Address {
+  id: string;
+  name: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  country: string | null;
+  tel: number | null;
+  email: string | null;
+}
+
+export interface User extends Document {
+  username: string | null;
+  googleId: number | null;
+  facebookId: number | null;
+  Mobile_No: number | null;
+  Mobile_No_verified: boolean;
+  email: string | null;
+  email_verified: boolean;
+  password: string;
+  provider: string;
+  role: string;
+  is_Banned_User: boolean;
+  dob: Date | null;
+  address: Address[]; // Array of address sub-schemas
+}
+
+export const addressSchema = new Schema<Address>({
   id: {
     type: String,
     required: true,
   },
-  fullName: {
+  name: {
     type: String,
     required: true,
     default: null,
   },
-  contactNo: {
+  tel: {
     type: Number,
     required: true,
     default: null,
   },
-  pincode: {
-    type: Number,
-    required: true,
-    default: null,
-  },
-  nearBy: {
+  zip: {
     type: String,
     required: true,
     default: null,
   },
-  landmark: {
+  address: {
     type: String,
     required: true,
     default: null,
@@ -34,13 +58,24 @@ export const addressSchema = new mongoose.Schema({
     required: true,
     default: null,
   },
+  country: {
+    type: String,
+    required: true,
+    default: null,
+  },
   state: {
     type: String,
     required: true,
     default: null,
   },
+  email: {
+    type: String,
+    required: true,
+    default: null,
+  },
 });
-const userSchema = new mongoose.Schema({
+
+const userSchema = new Schema<User>({
   username: {
     type: String,
     required: false,
@@ -99,5 +134,5 @@ const userSchema = new mongoose.Schema({
   address: [addressSchema],
 });
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel: Model<User> = model<User>("User", userSchema);
 export default UserModel;

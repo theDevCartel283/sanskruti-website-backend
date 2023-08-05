@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserModel from "../../model/user.model";
+import UserModel, { Address } from "../../model/user.model";
 import { ReqAddressObject } from "../../schema/user.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import { v4 as uuidV4 } from "uuid";
@@ -12,13 +12,14 @@ export const addAddress = async (
   const {
     userUniqueIdentity,
     provider,
-    fullName,
-    contactNo,
-    pincode,
-    nearBy,
-    landmark,
-    city,
+    address,
+    country,
+    email,
+    name,
+    tel,
+    zip,
     state,
+    city,
   } = req.body;
 
   var user = await UserModel.findById(userUniqueIdentity);
@@ -31,15 +32,16 @@ export const addAddress = async (
   }
 
   let isExist = false;
-  user?.address.forEach((i: any) => {
+  user?.address.forEach((i: Address) => {
     if (
-      i.fullName === fullName &&
-      i.contactNo === contactNo &&
-      i.pincode === pincode &&
-      i.nearBy === nearBy &&
-      i.landmark === landmark &&
+      i.name === name &&
+      i.address === address &&
       i.city === city &&
-      i.state === state
+      i.state === state &&
+      i.zip === zip &&
+      i.country === country &&
+      i.tel === tel &&
+      i.email === email
     ) {
       isExist = true;
     }
@@ -53,15 +55,16 @@ export const addAddress = async (
   }
 
   try {
-    const newAddressObj = {
+    const newAddressObj: Address = {
       id: uuidV4(),
-      fullName,
-      contactNo,
-      pincode,
-      nearBy,
-      landmark,
+      name,
+      address,
       city,
+      country,
+      email,
       state,
+      tel,
+      zip,
     };
     user.address.push(newAddressObj);
 
