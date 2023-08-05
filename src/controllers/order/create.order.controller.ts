@@ -67,7 +67,7 @@ const handlePlaceOrder = async (
             slug: prod.product?.slug,
             name: prod.product?.name,
             brand_name: prod.product?.brand_name,
-            images: prod.product?.images,
+            images: [prod.product?.images[0]],
             gst_percent: prod.product?.gst_percent,
             quantity: prod.quantity,
             varient,
