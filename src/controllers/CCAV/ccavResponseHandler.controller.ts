@@ -64,12 +64,20 @@ const handleCCAVResponse = async (
 
     const result = await getObject(decrypt(encResp, keyBase64, ivBase64));
     if (!result)
-      return res.status(500).redirect("https://sanskrutinx.in/user/error");
+      return res
+        .status(500)
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?type=Failure&orderId=${orderNo}`
+        );
 
     if (result.order_status == "Success") {
       const payment = await PaymentModel.findOne({ orderId: result.order_id });
       if (!payment)
-        return res.status(500).redirect("https://sanskrutinx.in/user/error");
+        return res
+          .status(500)
+          .redirect(
+            `https://sanskrutinx.in/user/order/status?type=Failure&orderId=${orderNo}`
+          );
       if (
         !result.bank_ref_no ||
         !result.card_name ||
@@ -92,7 +100,9 @@ const handleCCAVResponse = async (
       await payment.save();
       return res
         .status(200)
-        .redirect("https://sanskrutinx.in/user/order/status?type=Success");
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?type=${result.order_status}&orderId=${orderNo}`
+        );
     } else {
       await PaymentModel.findOneAndDelete({ orderId: orderNo });
       const orders = await orderModel.find({ orderId: orderNo });
@@ -116,7 +126,7 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?type=${result.order_status}`
+          `https://sanskrutinx.in/user/order/status?type=${result.order_status}&orderId=${orderNo}`
         );
     }
   } catch (err) {
