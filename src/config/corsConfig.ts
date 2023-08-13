@@ -5,6 +5,7 @@ export const allowedOrigins = [
   "http://localhost:3000",
   "https://admin.sanskrutinx.in",
   "https://sanskrutinx.in",
+  "https://cdn.sanskrutinx.in",
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
