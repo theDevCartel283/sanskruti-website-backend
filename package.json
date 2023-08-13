@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/passport": "^1.0.12",
     "@types/passport-facebook": "^2.1.11",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "chalk": "^4.1.2",
