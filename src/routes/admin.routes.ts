@@ -104,6 +104,16 @@ router.post(
   asyncArrayMiddleware,
   productController.addProductImages
 );
+
+router.post(
+  "/addImagesInWebp",
+  upload.single("image"),
+  asyncSingleMiddleware,
+  imageController.addImage
+);
+
+router.delete("/deleteImage", imageController.delete_single_image);
+
 router.post("/deleteProductImage", productController.deleteProductImages);
 
 // ##category

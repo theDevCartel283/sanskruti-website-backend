@@ -21,15 +21,19 @@ export const asyncSingleMiddleware = (
   next: NextFunction
 ) => {
   const data1: any = req.file;
+  const imageName = req.file?.filename;
   const data = fs.readFileSync(data1.path);
+  const buf = Buffer.from(data);
 
   // Convert the image to base64 format
   const base64Image = data.toString("base64");
   const imageUrl = `data:${data1.mimetype};base64,${base64Image}`;
-  req.body.imagePath = imageUrl;
+  req.body.data = {
+    imageBuffer: buf,
+    imageName,
+  };
   // Remove the temporary file
   fs.unlinkSync(data1.path);
-  console.log(imageUrl);
   next();
 };
 
