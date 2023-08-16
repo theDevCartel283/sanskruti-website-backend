@@ -19,6 +19,7 @@ export const orderDetails = z.object({
   // calculation
   SubTotal: z.number(),
   discount: z.number().nullish(),
+  couponCode: z.string().nullish(),
   gst: z.number().nullish(),
   Amount: z.number(),
 });
