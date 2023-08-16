@@ -12,6 +12,7 @@ import crypto from "crypto";
 import { env } from "../../config/env";
 import { encrypt } from "../CCAV/utils/ccav.utils";
 import couponModel from "../../model/coupon.model";
+import { dateFormater } from "../../utils/dateFormater";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -58,6 +59,33 @@ const handlePlaceOrder = async (
         return res.status(403).send({
           message: "Cannot avail coupon",
           content: `User must shop for a minimum price of Rs.${coupon.minPurchase} to avail the coupon`,
+          type: "info",
+        });
+      }
+
+      // check used by user
+      const couponNotUsedByUser = !coupon.usedBy.includes(
+        userUniqueIdentity.toString()
+      );
+      if (!couponNotUsedByUser) {
+        return res.status(403).send({
+          message: "Coupon Is Used",
+          content: `Coupon has been used by user`,
+          type: "info",
+        });
+      }
+
+      // check expiry
+      const todayDate = new Date().getTime();
+      const expirationDate = coupon.expirationDate.getTime();
+      const couponNotExpired = expirationDate > todayDate;
+
+      if (!couponNotExpired) {
+        return res.status(403).send({
+          message: "Coupon expired",
+          content: `Coupon has expired on ${dateFormater(
+            coupon.expirationDate
+          )}`,
           type: "info",
         });
       }
