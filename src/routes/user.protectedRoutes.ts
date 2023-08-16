@@ -137,6 +137,9 @@ router
   .get(reviewController.handleFetchUsersReview)
   .delete(reviewController.handleDeleteReview);
 
-router.get("/getAllCoupons", couponController.getallCoupons);
+router
+  .route("/coupons")
+  .get(couponController.handleFetchCouponForUser)
+  .post(couponController.handleUseCoupon);
 
 export default router;
