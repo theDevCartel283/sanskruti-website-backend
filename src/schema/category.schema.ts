@@ -13,6 +13,9 @@ export const categoryDetails = z.object({
   Image: z.string({
     required_error: "upload Image",
   }),
+  imageName: z.string({
+    required_error: "upload Image",
+  }),
 });
 
 export type ReqCategoryObject = z.infer<typeof categoryDetails>;
