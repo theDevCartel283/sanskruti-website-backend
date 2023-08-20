@@ -3,6 +3,7 @@ import ProductModel from "../../model/product.model";
 import { ReqProductObjectWithName } from "../../schema/product.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import slugify from "slugify";
+import axios from "axios";
 const updateProduct = async (
   req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
   res: Response
@@ -28,6 +29,20 @@ const updateProduct = async (
           message: "product already exists !",
         });
       } else {
+        const img = req.body.images;
+        const response2 = await axios.post(
+          `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImages`,
+          img,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const urls = response2.data.urls;
+        console.log(urls.length);
+
         await ProductModel.findByIdAndUpdate(
           id,
           {
@@ -46,7 +61,7 @@ const updateProduct = async (
             meta_description: req.body.meta_description,
             meta_keyword: req.body.meta_keyword,
             createdBy: req.body.userUniqueIdentity,
-            images: req.body.images || [],
+            images: urls || [],
           },
           {
             new: true,
@@ -60,6 +75,19 @@ const updateProduct = async (
         });
       }
     } else {
+      const img = req.body.images;
+      const response2 = await axios.post(
+        `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImages`,
+        img,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const urls = response2.data.urls;
+      console.log(urls.length);
       const newCategory = await ProductModel.findByIdAndUpdate(
         id,
         {
@@ -78,7 +106,7 @@ const updateProduct = async (
           meta_description: req.body.meta_description,
           meta_keyword: req.body.meta_keyword,
           createdBy: req.body.userUniqueIdentity,
-          images: req.body.images || [],
+          images: urls || [],
         },
         {
           new: true,

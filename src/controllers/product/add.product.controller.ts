@@ -4,6 +4,8 @@ import { Roles } from "../../config/roles.config";
 import { ReqProductObjectWithName } from "../../schema/product.schema";
 import { TokenPayload } from "../../utils/jwt.utils";
 import slugify from "slugify";
+import axios from "axios";
+import { url } from "envsafe";
 const addProduct = async (
   req: Request<{}, {}, ReqProductObjectWithName & TokenPayload>,
   res: Response
@@ -18,6 +20,20 @@ const addProduct = async (
       .json({ type: "warning", message: "product name already exists" });
   }
   try {
+    const img = req.body.images;
+    const response2 = await axios.post(
+      `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImages`,
+      img,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const urls = response2.data.urls;
+    console.log(urls.length);
+
     const newProduct = new ProductModel({
       name: req.body.name,
       description: req.body.description,
@@ -34,7 +50,7 @@ const addProduct = async (
       meta_description: req.body.meta_description,
       meta_keyword: req.body.meta_keyword,
       createdBy: req.body.userUniqueIdentity,
-      images: req.body.images || [],
+      images: urls || [],
     });
 
     const product = await newProduct.save();
@@ -43,6 +59,7 @@ const addProduct = async (
       message: "product added ",
     });
   } catch (error) {
+    console.log(error);
     res.status(502).json({
       type: "error",
       message: "something went wrong",
