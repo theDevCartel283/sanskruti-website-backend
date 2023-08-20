@@ -146,10 +146,26 @@ router.put(
 );
 
 // coupon
-router.post(
-  "/addCoupon",
-  validateResources(blankSchema, couponDetails, blankSchema),
-  couponController.addCoupon
-);
+router
+  .route("/coupons")
+  .post(
+    // add coupon
+    validateResources(blankSchema, couponDetails, blankSchema),
+    couponController.addCoupon
+  )
+  .put(
+    // update coupon
+    validateResources(
+      blankSchema,
+      couponDetails.merge(z.object({ previousCode: z.string() })),
+      blankSchema
+    ),
+    couponController.handleUpdateCoupon
+  )
+  .delete(
+    // delete coupon
+    validateResources(blankSchema, blankSchema, z.object({ code: z.string() })),
+    couponController.handleDeleteCoupon
+  );
 
 export default router;

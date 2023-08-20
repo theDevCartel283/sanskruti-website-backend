@@ -11,6 +11,8 @@ import _ from "lodash";
 import crypto from "crypto";
 import { env } from "../../config/env";
 import { encrypt } from "../CCAV/utils/ccav.utils";
+import couponModel from "../../model/coupon.model";
+import { dateFormater } from "../../utils/dateFormater";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -25,6 +27,7 @@ const handlePlaceOrder = async (
     discount,
     gst,
     Amount,
+    couponCode,
   } = req.body;
   const orderId = uuid();
 
@@ -39,6 +42,67 @@ const handlePlaceOrder = async (
       return res
         .status(400)
         .send({ message: "something went wrong", type: "error" });
+
+    // check coupon validity
+    let couponDiscount = 0;
+    let finalValue = Amount;
+    if (couponCode) {
+      const coupon = await couponModel.findOne({ code: couponCode });
+
+      if (!coupon)
+        return res.status(404).send({
+          message: "Coupon doesn't exist",
+          type: "info",
+        });
+
+      if (coupon.minPurchase > Amount) {
+        return res.status(403).send({
+          message: "Cannot avail coupon",
+          content: `User must shop for a minimum price of Rs.${coupon.minPurchase} to avail the coupon`,
+          type: "info",
+        });
+      }
+
+      // check used by user
+      const couponNotUsedByUser = !coupon.usedBy.includes(
+        userUniqueIdentity.toString()
+      );
+      if (!couponNotUsedByUser) {
+        return res.status(403).send({
+          message: "Coupon Is Used",
+          content: `Coupon has been used by user`,
+          type: "info",
+        });
+      }
+
+      // check expiry
+      const todayDate = new Date().getTime();
+      const expirationDate = coupon.expirationDate.getTime();
+      const couponNotExpired = expirationDate > todayDate;
+
+      if (!couponNotExpired) {
+        return res.status(403).send({
+          message: "Coupon expired",
+          content: `Coupon has expired on ${dateFormater(
+            coupon.expirationDate
+          )}`,
+          type: "info",
+        });
+      }
+
+      couponDiscount =
+        coupon.discountType === "percentage"
+          ? Number(((coupon.value * Amount) / 100).toFixed(2))
+          : coupon.value;
+
+      finalValue -= couponDiscount;
+      coupon.usedBy.push(userUniqueIdentity.toString());
+      await coupon.save();
+      if (coupon.type === "oneTime") {
+        await coupon.deleteOne({ code: coupon.code });
+      }
+    }
+
     // loop through cart
     const orders = Promise.all(
       filteredArray.map(async (prod) => {
@@ -102,9 +166,11 @@ const handlePlaceOrder = async (
         Date: date,
         SubTotal,
         ShippingCost: 0,
+        CouponCode: couponCode,
+        CouponDiscount: couponDiscount,
         Totaldiscount: discount,
         TotalGST: gst,
-        Amount,
+        Amount: finalValue,
       },
       paymentInfo: {
         order_status: "Pending",

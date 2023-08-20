@@ -6,6 +6,8 @@ interface OrderInfo {
   Date: Date;
   SubTotal: number;
   ShippingCost: number;
+  CouponCode?: string;
+  CouponDiscount?: number;
   Totaldiscount: number;
   TotalGST: number;
   Amount: number;
@@ -60,6 +62,12 @@ const paymentSchema: Schema<PaymentDocument> = new mongoose.Schema({
     ShippingCost: {
       type: Number,
       required: true,
+    },
+    CouponCode: {
+      type: String,
+    },
+    CouponDiscount: {
+      type: Number,
     },
     Totaldiscount: {
       type: Number,

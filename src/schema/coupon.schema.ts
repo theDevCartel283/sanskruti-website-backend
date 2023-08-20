@@ -1,11 +1,15 @@
+import dayjs from "dayjs";
 import { z } from "zod";
 
 export const couponDetails = z.object({
-  title: z.string({ required_error: "title is missing" }),
-  is_published: z.boolean(),
-  discount: z.number({ required_error: "discount not defined" }),
-  code: z.string({ required_error: "coupon code is not defined" }),
-  expiry: z.string({ required_error: "date is not defined" }),
+  code: z.string().refine((code) => code.length <= 6),
+  type: z.union([z.literal("oneTime"), z.literal("multiple")]),
+  discountType: z.union([z.literal("percentage"), z.literal("price")]),
+  value: z.number(),
+  minPurchase: z.number(),
+  expirationDate: z.string().refine((value) => dayjs(value).isValid(), {
+    message: "Invalid date format",
+  }),
 });
 
 export type ReqCouponObject = z.infer<typeof couponDetails>;
