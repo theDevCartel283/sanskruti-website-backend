@@ -75,10 +75,20 @@ router
 router.get("/categories", categoryController.getCategory);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
 
+// search
 router.get("/getallProducts", productController.getallProducts);
 router.get(
   "/getallProductsFromFilters",
   productController.getallProductsFromFilters
+);
+router.get(
+  "/getallProductsFromSearchFilters",
+  validateResources(
+    blankSchema,
+    blankSchema,
+    filters.merge(z.object({ search: z.string().nullish() }))
+  ),
+  productController.getallProductsFromSearchFilters
 );
 router.get("/product", productController.getproductDetails);
 router.get("/getVarients", varientController.getallVarients);
