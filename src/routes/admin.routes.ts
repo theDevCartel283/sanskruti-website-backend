@@ -50,6 +50,7 @@ router.put(
   productController.addVariations
 );
 router.delete("/delete", productController.deleteProduct);
+router.delete("/deleteProductImage", productController.deleteProductImages);
 
 // categories
 
@@ -105,12 +106,7 @@ router.post(
   productController.addProductImages
 );
 
-router.post(
-  "/addImagesInWebp",
-  upload.single("image"),
-  asyncSingleMiddleware,
-  imageController.addImage
-);
+router.post("/addImagesInWebp", imageController.addImage);
 
 router.delete("/deleteImage", imageController.delete_single_image);
 
@@ -119,17 +115,22 @@ router.post("/deleteProductImage", productController.deleteProductImages);
 // ##category
 router.post("/addCategoryImage", categoryController.addCategoryImage);
 
-router.post("/deleteCategoryImage", categoryController.deleteCategoryImage);
+router.delete("/deleteCategoryImage", categoryController.deleteCategoryImage);
 
 // Banner
 router.post("/addBanner", bannerController.addBanner);
 router.put("/updateBanner", bannerController.updateBanner);
 router.delete("/deleteBanner", bannerController.deleteBanner);
+router.delete("/deleteBannerImage", bannerController.deleteBannerImage);
 
 // Sub Banner
 router.post("/addSubBanner", subBannerController.addBanner);
 router.put("/updateSubBanner", subBannerController.updateBanner);
 router.delete("/deleteSubBanner", subBannerController.deleteBanner);
+router.delete(
+  "/deleteSubBannerImage",
+  subBannerController.deleteSubBannerImage
+);
 router.get("/allOrders", orderController.getOrder);
 router.get("/getOrderDetails", orderController.GetOrderDetails);
 

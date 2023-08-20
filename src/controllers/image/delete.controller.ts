@@ -4,7 +4,7 @@ import axios from "axios";
 const delete_single_image = async (req: Request, res: Response) => {
   const url_params = req.query;
   const response = await axios.delete(
-    `http://localhost:4501/cdn/v1/images/deleteImage?name=${url_params.name}`,
+    `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${url_params.name}`,
     {
       headers: {
         "Content-Type": "application/json",

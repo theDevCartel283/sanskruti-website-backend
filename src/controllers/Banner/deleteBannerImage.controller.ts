@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import fs from "fs";
-import categoryModel from "../../model/category.model";
+import bannerModel from "../../model/banner.model";
 
-const deleteCategoryImage = async (req: Request, res: Response) => {
-  const categoryAlreadyExists = await categoryModel.findOne({
+const deleteBannerImage = async (req: Request, res: Response) => {
+  const bannerAlreadyExists = await bannerModel.findOne({
     _id: req.query._id,
   });
   console.log(req.query);
   const url_params = req.query;
+  const type = req.query.type;
   const response = await axios.delete(
     `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${url_params.name}`,
     {
@@ -20,22 +21,25 @@ const deleteCategoryImage = async (req: Request, res: Response) => {
 
   const data = response.data;
 
-  if (categoryAlreadyExists) {
-    categoryAlreadyExists.Image = "";
-    const category = await categoryAlreadyExists.save({
+  if (bannerAlreadyExists) {
+    if (type === "desktop") {
+      bannerAlreadyExists.desktopImage = "";
+    } else {
+      bannerAlreadyExists.mobileImage = "";
+    }
+    await bannerAlreadyExists.save({
       validateBeforeSave: false,
     });
     res.status(200).json({
       type: "success",
-      message: "category image deleted successfully",
-      // category,
+      message: "banner deleted successfully",
     });
   } else {
     res.status(500).json({
       type: "error",
-      message: "category does not exist",
+      message: "banner does not exist",
     });
   }
 };
 
-export default deleteCategoryImage;
+export default deleteBannerImage;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import categoryModel from "../../model/category.model";
 import fs from "fs";
 import subCategoryModel from "../../model/subCategory.model";
+import axios from "axios";
 
 const deleteCategory = async (req: Request, res: Response) => {
   const id: any = req.query.id;
@@ -17,6 +18,18 @@ const deleteCategory = async (req: Request, res: Response) => {
       await subCategoryModel.deleteMany({
         Category: category.Title,
       });
+      const url = category.Image;
+      const name = url.split(`${process.env.CDN_ENDPOINT}/`)[1];
+      if (url !== "") {
+        const response = await axios.delete(
+          `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${name}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
       await category.deleteOne(req.query);
       res.status(200).json({
         type: "success",
