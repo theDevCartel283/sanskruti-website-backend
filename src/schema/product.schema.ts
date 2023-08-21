@@ -35,7 +35,7 @@ export const ProductObject = z.object({
   images: z.array(
     z.object({
       image: z.string(),
-      imageName: z.string(),
+      imageName: z.string().nullish(),
     })
   ),
   varients: z.object({}),
