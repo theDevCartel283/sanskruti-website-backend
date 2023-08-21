@@ -32,6 +32,7 @@ const addProduct = async (
     );
 
     const urls = response2.data.urls;
+    console.log(typeof urls);
     console.log(urls.length);
 
     const newProduct = new ProductModel({
