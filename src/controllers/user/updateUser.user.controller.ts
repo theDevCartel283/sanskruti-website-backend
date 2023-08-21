@@ -35,18 +35,6 @@ export const handleUpdateUser = async (
       .json({ message: "mobile number already exists", type: "warning" }); // Unauthorized
 
   try {
-    // update user in db
-    await UserModel.findOneAndUpdate(
-      { email: foundUser.email },
-      {
-        username,
-        Mobile_No,
-        email,
-        email_verified:
-          foundUser.email !== email ? false : foundUser.email_verified,
-      }
-    );
-
     // Send Email verification
     if (foundUser.email !== email) {
       sendEmail({
@@ -60,9 +48,22 @@ export const handleUpdateUser = async (
       });
     }
 
+    // update user in db
+    foundUser.username = username;
+    foundUser.Mobile_No = Mobile_No;
+    foundUser.email_verified =
+      foundUser.email !== email ? false : foundUser.email_verified;
+    foundUser.email = email;
+    await foundUser.save();
+
     return res.status(200).json({
       message: `user was successfully updated`,
       type: "success",
+      username,
+      Mobile_No,
+      Mobile_No_verified: foundUser.Mobile_No_verified,
+      email,
+      email_verified: foundUser.email_verified,
     });
   } catch (err: any) {
     logger.error(`update user error\n${err}`);

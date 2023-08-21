@@ -30,7 +30,8 @@ const addToCart = async (
     const cart = await newCart.save();
     res.status(200).json({
       success: true,
-      message: "added to cart",
+      message: "Cart",
+      content: `"${product.name}" added to cart`,
       type: "success",
     });
   } else {
@@ -45,9 +46,11 @@ const addToCart = async (
     });
 
     if (isPresent)
-      return res
-        .status(200)
-        .send({ message: "added to cart", type: "success" });
+      return res.status(200).send({
+        message: "Cart",
+        content: `"${product.name}" added to cart`,
+        type: "success",
+      });
 
     user.product.push({
       productId: product._id,
@@ -58,7 +61,8 @@ const addToCart = async (
     await user.save({ validateBeforeSave: false });
     res.status(200).json({
       success: true,
-      message: "added to cart",
+      message: "Cart",
+      content: `"${product.name}" added to cart`,
       type: "success",
     });
   }

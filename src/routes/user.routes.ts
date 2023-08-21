@@ -6,6 +6,7 @@ import * as varientController from "../controllers/varient/index.varient.control
 import * as bannerController from "../controllers/Banner/index.banner.controller";
 import * as subBannerController from "../controllers/SubBanner/index.subbanner.controller";
 import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
+import * as reviewController from "../controllers/product_review/index.review.controller";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
 import {
@@ -74,14 +75,27 @@ router
 router.get("/categories", categoryController.getCategory);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
 
+// search
 router.get("/getallProducts", productController.getallProducts);
 router.get(
   "/getallProductsFromFilters",
   productController.getallProductsFromFilters
+);
+router.get(
+  "/getallProductsFromSearchFilters",
+  validateResources(
+    blankSchema,
+    blankSchema,
+    filters.merge(z.object({ search: z.string().nullish() }))
+  ),
+  productController.getallProductsFromSearchFilters
 );
 router.get("/product", productController.getproductDetails);
 router.get("/getVarients", varientController.getallVarients);
 
 router.get("/getAllBanners", bannerController.getallBanners);
 router.get("/getAllSubBanners", subBannerController.getallBanners);
+
+router.get("/reviews/:id", reviewController.handleReviewFetch);
+
 export default router;

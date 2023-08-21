@@ -122,12 +122,24 @@ router.get(
   orderController.handleCancellationRequest
 );
 
-router.put(
-  "/updateReview",
-  validateResources(blankSchema, reviewObject, blankSchema),
-  reviewController.updateReview
-);
+router
+  .route("/review")
+  .post(
+    validateResources(blankSchema, reviewObject, blankSchema),
+    reviewController.handleCreateReview
+  )
+  .put(
+    validateResources(blankSchema, reviewObject, blankSchema),
+    reviewController.updateReview
+  );
+router
+  .route("/userReview/:id")
+  .get(reviewController.handleFetchUsersReview)
+  .delete(reviewController.handleDeleteReview);
 
-router.get("/getAllCoupons", couponController.getallCoupons);
+router
+  .route("/coupons")
+  .get(couponController.handleFetchCouponForUser)
+  .post(couponController.handleUseCoupon);
 
 export default router;
