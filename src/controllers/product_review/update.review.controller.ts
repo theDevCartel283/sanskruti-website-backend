@@ -29,15 +29,6 @@ const updateReview = async (
     });
 
     await reviews.save();
-    const filteredReview = {
-      product_id,
-      ratingCounts: reviews.ratingCounts,
-      totalRatings: reviews.totalRatings,
-      reviews: reviews.reviews.filter(
-        (review) => review.id !== userUniqueIdentity.toString()
-      ),
-    };
-
     res.status(200).send({
       userReview: {
         id: userUniqueIdentity.toString(),
@@ -46,7 +37,6 @@ const updateReview = async (
         rating,
         comment,
       },
-      reviews: filteredReview,
     });
   } catch (err) {
     logger.error("update review error " + err);

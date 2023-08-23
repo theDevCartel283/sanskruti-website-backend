@@ -39,24 +39,9 @@ const handleCreateReview = async (
     reviews.totalRatings += 1;
 
     await reviews.save();
-    const filteredReview = {
-      product_id,
-      ratingCounts: reviews.ratingCounts,
-      totalRatings: reviews?.totalRatings,
-      reviews: reviews?.reviews.filter(
-        (review) => review.id !== userUniqueIdentity.toString()
-      ),
-    };
 
     res.status(200).send({
-      reviews: filteredReview,
-      userReview: {
-        id: userUniqueIdentity.toString(),
-        username,
-        title,
-        rating,
-        comment,
-      },
+      reviews,
     });
   } catch (err) {
     logger.error("create review error " + err);
