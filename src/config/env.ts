@@ -1,4 +1,4 @@
-import { str, envsafe, port, url } from "envsafe";
+import { str, envsafe, port, url, email } from "envsafe";
 
 export const env = envsafe({
   PORT: port({
@@ -30,6 +30,10 @@ export const env = envsafe({
   MERCHANT_ID: str(),
   ACCESS_CODE: str(),
   WORKING_KEY: str(),
+
+  // payment secret
+  PAYMENT_PRIVATE: str(),
+  PAYMENT_PUBLIC: str(),
 
   // access token
   ACCESS_TOKEN_PRIVATE: str(),

@@ -14,3 +14,12 @@ export const setSocial = socialId.merge(social);
 
 export type ReqSetSocial = z.infer<typeof social>;
 export type ReqUpdateSocial = z.infer<typeof setSocial>;
+
+// PayZapp
+export const payment = z.object({
+  merchant_id: z.string(),
+  working_key: z.string(),
+  access_code: z.string(),
+});
+
+export type ReqConfigPayment = z.infer<typeof payment>;
