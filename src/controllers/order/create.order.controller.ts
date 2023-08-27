@@ -229,6 +229,7 @@ const handlePlaceOrder = async (
           name: product.product?.name,
           quantity: product.quantity,
           price: combination.price,
+          variation: combination.combinationString,
         };
       });
       sendEmail({

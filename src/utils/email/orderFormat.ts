@@ -22,6 +22,7 @@ export const getOrderFormat = ({
     name: string | undefined;
     quantity: number;
     price: number;
+    variation: string[];
   }[];
   SubTotal: number;
   discount: number;
@@ -33,16 +34,23 @@ export const getOrderFormat = ({
   const productsHtml = products
     .map(
       (product) =>
-        `<tr>
-        <tdstyle="max-width: 10rem;">
-          <img src="${product.image}" style="width: 10rem;" alt="${product.name}" />
-        </td>
-        <td>
-          <span>${product.name}</span>
-          <p>Quantity: ${product.quantity}</p>
-        </td>
-        <td>Rs ${product.price}</td>
-      </tr>`
+        `<tr style="border-bottom: 1px solid #fb7185;">
+          <td style="width: 100%; padding: 10px; display: flex; justify-content: center; align-items: center;">
+            <img
+              src="${product.image}"
+              style="width: 100%;"
+              alt="${product.name}"
+            />
+          </td>
+          <td style="padding: 10px; width: 100%; overflow-wrap: break-word; text-align: center; align-items: center; justify-content: center;">
+            <span>${product.name}</span>
+            <p>${product.variation.join(", ")}</p>
+            <p>Quantity: ${product.quantity}</p>           
+          </td>
+          <td style="padding: 10px; width: 100%; align-items: center;">&#8377;${
+            product.price
+          }</td>
+        </tr>`
     )
     .join("");
 
@@ -102,9 +110,12 @@ export const getOrderFormat = ({
       td {
         width: 100%;
         border-collapse: collapse;
+        padding: 10px 0px;
+      }
+
+      th {
         border-top: 1px solid #fb7185;
         border-bottom: 1px solid #fb7185;
-        padding: 10px 0px;
       }
     </style>
   </head>
@@ -124,9 +135,9 @@ export const getOrderFormat = ({
       <table>
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Info</th>
-            <th>Price</th>
+            <th style="width: 33%;">Item</th>
+            <th style="width: 33%;">Info</th>
+            <th style="width: 33%;">Price</th>
           </tr>
         </thead>
         <tbody>
@@ -138,15 +149,15 @@ export const getOrderFormat = ({
       <table>
         <tr>
           <td>SubTotal</td>
-          <td>Rs${SubTotal}</td>
+          <td>&#8377;${SubTotal}</td>
         </tr>
         <tr>
           <td>Discount</td>
-          <td>Rs${discount}</td>
+          <td>&#8377;${discount}</td>
         </tr>
         <tr>
           <td>Total</td>
-          <td>Rs${TotalAmount}</td>
+          <td>&#8377;${TotalAmount}</td>
         </tr>
       </table>
 
@@ -179,13 +190,11 @@ export const getOrderFormat = ({
       <br />
       <br />
       <p>
-        Please note that this email serves as a confirmation of your order. On=
-        ce your order is shipped, you will receive a separate email with the
-        tracki= ng information.
+        Please note that this email serves as a confirmation of your order. Once your order is shipped, you will receive a separate email with the
+        tracking information.
       </p>
       <p>
-        Thank you for shopping with us. We appreciate your business and look f=
-        orward to serving you again in the future.
+        Thank you for shopping with us. We appreciate your business and look forward to serving you again in the future.
       </p>
       <p>Best regards,<br />The SanskrutiNx Team</p>
     </div>
