@@ -17,7 +17,10 @@ const handleGetPaymentStatus = async (
 
     res.status(200).send({
       orderId: payment.orderId,
-      status: payment.paymentInfo.order_status,
+      status:
+        payment.paymentMethod === "PayZapp"
+          ? payment.paymentInfo.order_status
+          : "Success",
       amount: payment.paymentInfo.amount,
     });
   } catch (err) {

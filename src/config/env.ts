@@ -51,4 +51,8 @@ export const env = envsafe({
   USER_ROLE: str(),
   ADMIN_ROLE: str(),
   SUPERADMIN_ROLE: str(),
+
+  // nodemailer
+  NODEMAILER_EMAIL: str(),
+  NODEMAILER_EMAIL_PASSWORD: str(),
 });

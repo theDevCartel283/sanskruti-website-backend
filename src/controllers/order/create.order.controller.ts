@@ -13,6 +13,9 @@ import { env } from "../../config/env";
 import { encrypt } from "../CCAV/utils/ccav.utils";
 import couponModel from "../../model/coupon.model";
 import { dateFormater } from "../../utils/dateFormater";
+import sendEmail from "../../utils/email/sendEmail";
+import UserModel from "../../model/user.model";
+import { getOrderFormat } from "../../utils/email/orderFormat";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -32,6 +35,12 @@ const handlePlaceOrder = async (
   const orderId = uuid();
 
   try {
+    const user = await UserModel.findById(userUniqueIdentity);
+    if (!user || !user.email)
+      return res
+        .status(400)
+        .send({ message: "something went wrong", type: "error" });
+
     const cartWithIds = await cartModel.findOne({ userId: userUniqueIdentity });
     if (!cartWithIds || !cartWithIds.product.length)
       return res
@@ -154,7 +163,7 @@ const handlePlaceOrder = async (
       })
     );
     // payment
-    const date = Date.now();
+    const date = new Date();
     const payment = new PaymentModel({
       userId: userUniqueIdentity,
       orderId,
@@ -201,16 +210,47 @@ const handlePlaceOrder = async (
 
       const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
       const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
-      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=1.00&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
+      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
 
       return res.status(200).json({
         link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
       });
     } else {
+      const productsArray = filteredArray.map((product) => {
+        const combination =
+          product.product?.varients?.variations.find(
+            (variation) =>
+              JSON.stringify(variation.combinationString) ===
+              JSON.stringify(product.variant)
+          )! || product.product?.varients?.variations[0]!;
+        return {
+          image: product.product?.images[0],
+          name: product.product?.name,
+          quantity: product.quantity,
+          price: combination.price,
+        };
+      });
+      sendEmail({
+        email: user.email,
+        subject: "Order Placed",
+        message: getOrderFormat({
+          username: user.username!,
+          orderId,
+          date,
+          SubTotal,
+          discount: discount || 0,
+          TotalAmount: finalValue,
+          paymentMethod,
+          products: productsArray,
+          shippingAddress,
+          billingAddress,
+        }),
+      });
       return res.status(200).send({
         message: "Thank you for shopping at sanskrutinx.in",
         type: "success",
+        orderId,
       });
     }
   } catch (err) {

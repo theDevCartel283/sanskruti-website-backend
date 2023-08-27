@@ -29,7 +29,7 @@ interface PaymentInfo {
 export interface PaymentDocument extends Document {
   userId: string;
   orderId: string;
-  paymentMethod: string;
+  paymentMethod: "COD" | "PayZapp";
   orderInfo: OrderInfo;
   shippingAddress: unknown; // Replace "unknown" with the actual address schema type
   billingAddress: unknown; // Replace "unknown" with the actual address schema type
