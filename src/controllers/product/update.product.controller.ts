@@ -31,7 +31,7 @@ const updateProduct = async (
       } else {
         const img = req.body.images;
         const response2 = await axios.post(
-          `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImages`,
+          `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImagesAndUpdate`,
           img,
           {
             headers: {
@@ -41,9 +41,8 @@ const updateProduct = async (
         );
 
         const urls = response2.data.urls;
-        console.log(urls.length);
 
-        await ProductModel.findByIdAndUpdate(
+        const newCategory = await ProductModel.findByIdAndUpdate(
           id,
           {
             name: req.body.name,
@@ -69,6 +68,7 @@ const updateProduct = async (
             useFindAndModify: false,
           }
         );
+
         res.status(200).json({
           type: "success",
           message: "product updated successfully",
@@ -77,7 +77,7 @@ const updateProduct = async (
     } else {
       const img = req.body.images;
       const response2 = await axios.post(
-        `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImages`,
+        `${process.env.CDN_ENDPOINT}/cdn/v1/images/takeMultipleImagesAndUpdate`,
         img,
         {
           headers: {
@@ -87,7 +87,6 @@ const updateProduct = async (
       );
 
       const urls = response2.data.urls;
-      console.log(urls.length);
       const newCategory = await ProductModel.findByIdAndUpdate(
         id,
         {
