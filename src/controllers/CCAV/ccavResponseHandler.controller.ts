@@ -48,9 +48,8 @@ const handleCCAVResponse = async (
   >,
   res: Response
 ) => {
+  const { encResp, orderNo, crossSellUrl } = req.body;
   try {
-    const { encResp, orderNo, crossSellUrl } = req.body;
-
     const working_key = env.WORKING_KEY;
     //Generate Md5 hash for the key and then convert in base64 string
     var md5 = crypto.createHash("md5").update(working_key).digest();
@@ -63,48 +62,52 @@ const handleCCAVResponse = async (
     ]).toString("base64");
 
     const result = await getObject(decrypt(encResp, keyBase64, ivBase64));
-    if (!result)
+    if (
+      !result ||
+      !result.bank_ref_no ||
+      !result.card_name ||
+      !result.payment_mode ||
+      !result.trans_date
+    ) {
+      logger.error("ccva enc responce err result: " + result);
       return res
         .status(500)
         .redirect(
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
+    }
 
+    const payment = await PaymentModel.findOne({ orderId: result.order_id });
+    if (!payment) {
+      logger.error(
+        "ccva enc responce payment not found order_id:" + result.order_id
+      );
+      return res
+        .status(500)
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
+        );
+    }
+
+    payment.paymentInfo = {
+      amount: Number(result.amount),
+      bank_ref_no: result.bank_ref_no,
+      card_name: result.card_name,
+      currency: result.currency,
+      order_status: result.order_status,
+      payment_mode: result.payment_mode,
+      tracking_id: result.tracking_id,
+      trans_date: result.trans_date,
+    };
+
+    await payment.save();
     if (result.order_status == "Success") {
-      const payment = await PaymentModel.findOne({ orderId: result.order_id });
-      if (!payment)
-        return res
-          .status(500)
-          .redirect(
-            `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
-          );
-      if (
-        !result.bank_ref_no ||
-        !result.card_name ||
-        !result.payment_mode ||
-        !result.trans_date
-      )
-        return;
-
-      payment.paymentInfo = {
-        amount: Number(result.amount),
-        bank_ref_no: result.bank_ref_no,
-        card_name: result.card_name,
-        currency: result.currency,
-        order_status: result.order_status,
-        payment_mode: result.payment_mode,
-        tracking_id: result.tracking_id,
-        trans_date: result.trans_date,
-      };
-
-      await payment.save();
       return res
         .status(200)
         .redirect(
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
     } else {
-      await PaymentModel.findOneAndDelete({ orderId: orderNo });
       const orders = await orderModel.find({ orderId: orderNo });
 
       const cart = await cartModel.findOne({ userId: orders[0].userId });
@@ -131,7 +134,9 @@ const handleCCAVResponse = async (
     }
   } catch (err) {
     logger.error("ccav response error " + err);
-    return res.sendStatus(500);
+    return res
+      .status(500)
+      .redirect(`https://sanskrutinx.in/user/order/status?orderId=${orderNo}`);
   }
 };
 
