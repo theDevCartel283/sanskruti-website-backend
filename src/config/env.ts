@@ -26,11 +26,6 @@ export const env = envsafe({
   DATABASE_DEV_URI: url(),
   DATABASE_PROD_URI: url(),
 
-  // payment integration
-  MERCHANT_ID: str(),
-  ACCESS_CODE: str(),
-  WORKING_KEY: str(),
-
   // payment secret
   PAYMENT_PRIVATE: str(),
   PAYMENT_PUBLIC: str(),

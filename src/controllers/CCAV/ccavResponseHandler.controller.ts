@@ -9,6 +9,7 @@ import logger from "../../utils/logger.utils";
 import orderModel from "../../model/order.model";
 import cartModel from "../../model/cart.model";
 import ProductModel from "../../model/product.model";
+import { getPayZappCredentials } from "../config/payzapp.config.controller";
 
 const resultSchema = z.object({
   order_id: z.string(),
@@ -50,7 +51,7 @@ const handleCCAVResponse = async (
 ) => {
   const { encResp, orderNo, crossSellUrl } = req.body;
   try {
-    const working_key = env.WORKING_KEY;
+    const { working_key } = await getPayZappCredentials();
     //Generate Md5 hash for the key and then convert in base64 string
     var md5 = crypto.createHash("md5").update(working_key).digest();
     var keyBase64 = Buffer.from(md5).toString("base64");

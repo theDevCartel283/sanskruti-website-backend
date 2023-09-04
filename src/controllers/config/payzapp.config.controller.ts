@@ -14,7 +14,22 @@ const encrypt = (value: string) => {
 
 const decrypt = (token: string) => {
   const value = jwt.verify(token, env.PAYMENT_PUBLIC);
-  return value;
+  return value.toString();
+};
+
+export const getPayZappCredentials = async () => {
+  let config = await ConfigModel.findOne({ type: "production" });
+  return {
+    merchant_id: config?.payZapp?.merchant_id
+      ? decrypt(config.payZapp?.merchant_id)
+      : "",
+    working_key: config?.payZapp?.working_key
+      ? decrypt(config.payZapp?.working_key)
+      : "",
+    access_code: config?.payZapp?.access_code
+      ? decrypt(config.payZapp?.access_code)
+      : "",
+  };
 };
 
 export const handleGetPayZApp = async (req: Request, res: Response) => {
@@ -29,13 +44,13 @@ export const handleGetPayZApp = async (req: Request, res: Response) => {
 
     return res.status(200).send({
       merchant_id: config.payZapp?.merchant_id
-        ? decrypt(config.payZapp?.merchant_id)
+        ? decrypt(config.payZapp?.merchant_id).slice(0, 4) + ".........."
         : "",
       working_key: config.payZapp?.working_key
-        ? decrypt(config.payZapp?.working_key)
+        ? decrypt(config.payZapp?.working_key).slice(0, 4) + ".........."
         : "",
       access_code: config.payZapp?.access_code
-        ? decrypt(config.payZapp?.access_code)
+        ? decrypt(config.payZapp?.access_code).slice(0, 4) + ".........."
         : "",
     });
   } catch (err) {

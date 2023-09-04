@@ -16,6 +16,7 @@ import { dateFormater } from "../../utils/dateFormater";
 import sendEmail from "../../utils/email/sendEmail";
 import UserModel from "../../model/user.model";
 import { getOrderFormat } from "../../utils/email/orderFormat";
+import { getPayZappCredentials } from "../config/payzapp.config.controller";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -191,9 +192,8 @@ const handlePlaceOrder = async (
     await cartWithIds.save();
 
     if (paymentMethod === "PayZapp") {
-      const merchant_id = env.MERCHANT_ID;
-      const access_code = env.ACCESS_CODE;
-      const working_key = env.WORKING_KEY;
+      const { merchant_id, access_code, working_key } =
+        await getPayZappCredentials();
 
       const redirect_url = `${env.ENDPOINT}/api/v1/ccavResponseHandler/payment`;
       const cancel_url = `${env.ENDPOINT}/api/v1/ccavResponseHandler/cancel`;
