@@ -14,15 +14,23 @@ const getOrder = async (req: Request, res: Response) => {
         .status(500)
         .send({ message: "something went wrong", type: "error" });
 
-    const orders = orderWithIds.map((order) => {
+    const apiFeatures = new ApiFeatures(
+      orderModel.find(),
+      req.query
+    ).orderFilter(orderWithIds, payments);
+    const result = await apiFeatures.query;
+    const orders = result.map((order: any) => {
       const payment = payments.find((pay) => pay.orderId === order.orderId);
       return {
         order,
         payment,
       };
     });
-
-    return res.status(200).send({ orders });
+    const orderCount = orders.length;
+    return res.status(200).json({
+      orders,
+      orderCount,
+    });
   } catch (err) {
     logger.error("get all orders error " + err);
     res.status(500).send({ message: "something went wrong", type: "error" });

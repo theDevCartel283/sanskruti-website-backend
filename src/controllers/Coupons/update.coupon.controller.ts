@@ -39,6 +39,7 @@ const handleUpdateCoupon = async (
       });
 
     // update coupone
+    coupon.name = req.body.name;
     coupon.code = req.body.code;
     coupon.value = req.body.value;
     coupon.type = req.body.type;

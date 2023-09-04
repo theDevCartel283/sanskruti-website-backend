@@ -26,8 +26,12 @@ const handleGetAllOrders = async (
         payment,
       };
     });
+    const orderCount = orders.length;
 
-    return res.status(200).send({ orders });
+    return res.status(200).json({
+      orders,
+      orderCount,
+    });
   } catch (err) {
     logger.error("get all orders error " + err);
     res.status(500).send({ message: "something went wrong", type: "error" });
