@@ -1,10 +1,12 @@
 import express from "express";
 import * as superadminController from "../controllers/superadmin/index.superadmin.controller";
+import * as configController from "../controllers/config/index.config.controller";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
 import { Admin } from "../schema/admin.schema";
 import { BanEmail } from "../schema/superadmin";
 import { BanAndRoleDetails } from "../schema/user.schema";
+import { payment, setSocial, social, socialId } from "../schema/config.schema";
 
 const router = express.Router();
 
@@ -27,5 +29,32 @@ router.post(
 );
 
 router.get("/getBannnedUser", superadminController.handleGetBannedUser);
+
+// Config
+router
+  .route("/config/social")
+  .get(configController.handleGetSocialConfig)
+  .post(
+    validateResources(blankSchema, social, blankSchema),
+    configController.handleSetSocialConfig
+  )
+  .put(
+    validateResources(blankSchema, setSocial, blankSchema),
+    configController.handleUpdateSocialConfig
+  )
+  .delete(
+    validateResources(blankSchema, blankSchema, socialId),
+    configController.handleDeleteSocialConfig
+  );
+
+// PayZApp
+router
+  .route("/config/payZaap")
+  .get(configController.handleGetPayZApp)
+  .post(
+    validateResources(blankSchema, payment, blankSchema),
+    configController.handleSetPayZApp
+  )
+  .delete(configController.handleDeletePayZApp);
 
 export default router;

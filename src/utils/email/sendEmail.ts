@@ -1,6 +1,7 @@
 import nodeMailer from "nodemailer";
 import { MailOptions } from "nodemailer/lib/sendmail-transport";
-import { getVerifyEmailFormat } from "./verifyEmailFormat";
+import logger from "../logger.utils";
+import { env } from "../../config/env";
 
 type Options = {
   email: string;
@@ -8,33 +9,37 @@ type Options = {
   message: string;
 };
 const sendEmail = async (options: Options) => {
-  const transporter = nodeMailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+  try {
+    const transporter = nodeMailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
 
-    service: process.env.SERVICE,
-    auth: {
-      user: "it.developer2002@gmail.com",
-      pass: "wyttogzcgrfhtadt",
-    },
-  });
-
-  const mailOptions: MailOptions = {
-    from: "it.developer2002@gmail.com",
-    to: options.email,
-    subject: options.subject,
-    html: options.message,
-    attachments: [
-      {
-        filename: "image.png",
-        path: "./src/utils/email/assets/sanskruti_banner.png",
-        cid: "it.developer2002@gmail.com",
+      service: "gmail",
+      auth: {
+        user: env.NODEMAILER_EMAIL,
+        pass: env.NODEMAILER_EMAIL_PASSWORD,
       },
-    ],
-  };
+    });
 
-  await transporter.sendMail(mailOptions);
+    const mailOptions: MailOptions = {
+      from: "it.developer2002@gmail.com",
+      to: options.email,
+      subject: options.subject,
+      html: options.message,
+      attachments: [
+        {
+          filename: "image.png",
+          path: "./src/utils/email/assets/sanskruti_banner.png",
+          cid: "it.developer2002@gmail.com",
+        },
+      ],
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    logger.error("send email failed " + err);
+  }
 };
 
 export default sendEmail;

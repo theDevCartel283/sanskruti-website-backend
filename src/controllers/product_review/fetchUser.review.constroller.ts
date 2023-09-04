@@ -33,17 +33,8 @@ const handleFetchUsersReview = async (
     const userReview = reviews?.reviews.find(
       (review) => review.id == userUniqueIdentity.toString()
     );
-    const filteredReview = {
-      product_id: id,
-      ratingCounts: reviews.ratingCounts,
-      totalRatings: reviews?.totalRatings,
-      reviews: reviews?.reviews.filter(
-        (review) => review.id !== userUniqueIdentity.toString()
-      ),
-    };
     res.status(200).send({
       userReview,
-      reviews: filteredReview,
     });
   } catch (err) {
     logger.error("fetch review error " + err);
