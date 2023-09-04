@@ -4,6 +4,7 @@ import handleFetchCouponForUser from "./fetchCoupon.controller";
 import handleUseCoupon from "./useCoupon.coupon.controller";
 import handleUpdateCoupon from "./update.coupon.controller";
 import handleDeleteCoupon from "./delete.coupon.controller";
+import GetCouponDetails from "./getDetail.coupon.controller";
 
 export {
   getallCoupons,
@@ -12,4 +13,5 @@ export {
   handleUseCoupon,
   handleUpdateCoupon,
   handleDeleteCoupon,
+  GetCouponDetails,
 };

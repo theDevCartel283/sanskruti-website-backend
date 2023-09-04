@@ -17,6 +17,7 @@ const addCoupon = async (
       });
     } else {
       const newCouponModel = new couponModel({
+        name: req.body.name,
         code: req.body.code,
         type: req.body.type,
         discountType: req.body.discountType,

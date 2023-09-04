@@ -25,6 +25,24 @@ class ApiFeatures {
     return this;
   }
 
+  searchForCoupon() {
+    const keyword: any = this.queryStr.keyword
+      ? {
+          $or: [
+            {
+              name: {
+                $regex: this.queryStr.keyword,
+                $options: "i",
+              },
+            },
+          ],
+        }
+      : {};
+
+    this.query = this.query.find({ ...keyword });
+    return this;
+  }
+
   searchForVarient() {
     const keyword: any = this.queryStr.keyword
       ? {
@@ -100,7 +118,7 @@ class ApiFeatures {
   filter() {
     const queryCopy = { ...this.queryStr };
     //Removing some fields for category
-    // console.log(queryCopy)
+    // console.log(queryCopy);
     const removeFields = ["keyword", "page", "limit"];
     removeFields.forEach((key) => delete queryCopy[key]);
     // console.log(queryCopy)
@@ -108,12 +126,54 @@ class ApiFeatures {
     //Filter for price and Rating
     // console.log("before: ",queryCopy);
     let queryStr = JSON.stringify(queryCopy);
-    // console.log("after: ",queryStr);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
     // console.log(this)
     return this;
+  }
+
+  orderFilter(orderArr: any, paymentArr: any) {
+    const queryCopy = { ...this.queryStr };
+    const removeFields = ["keyword", "page", "limit"];
+    removeFields.forEach((key) => delete queryCopy[key]);
+    const orders = orderArr.map((order: any) => {
+      const payment = paymentArr.find(
+        (pay: any) => pay.orderId === order.orderId
+      );
+      return {
+        order,
+        payment,
+      };
+    });
+    if (queryCopy.date === "" && queryCopy.status === "") {
+      return this;
+    } else if (queryCopy.date !== "" && queryCopy.status === "") {
+      const result = orders.filter((item: any) => {
+        return (
+          item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+          queryCopy.date
+        );
+      });
+      this.query = result;
+      return this;
+    } else if (queryCopy.date === "" && queryCopy.status !== "") {
+      const result = orders.filter((item: any) => {
+        return item.order.deliveryInfo.status === queryCopy.status;
+      });
+      this.query = result;
+      return this;
+    } else {
+      const result = orders.filter((item: any) => {
+        return (
+          item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+            queryCopy.date &&
+          item.order.deliveryInfo.status === queryCopy.status
+        );
+      });
+      this.query = result;
+      return this;
+    }
   }
 
   pagination(resultperpage: number) {

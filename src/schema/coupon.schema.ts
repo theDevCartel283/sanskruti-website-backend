@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { z } from "zod";
 
 export const couponDetails = z.object({
+  name: z.string(),
   code: z.string().refine((code) => code.length <= 6),
   type: z.union([z.literal("oneTime"), z.literal("multiple")]),
   discountType: z.union([z.literal("percentage"), z.literal("price")]),

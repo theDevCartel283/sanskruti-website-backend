@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface Coupon {
+  name: string;
   code: string;
   type: "oneTime" | "multiple";
   discountType: "percentage" | "price";
@@ -14,6 +15,11 @@ interface CouponDocument extends Document, Coupon {}
 
 const couponSchema: Schema<CouponDocument> =
   new mongoose.Schema<CouponDocument>({
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     code: {
       type: String,
       required: true,
