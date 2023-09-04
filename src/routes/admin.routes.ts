@@ -146,6 +146,8 @@ router.put(
 );
 
 // coupon
+router.get("/allCoupons", couponController.getallCoupons);
+router.get("/CouponDetail", couponController.GetCouponDetails);
 router
   .route("/coupons")
   .post(
