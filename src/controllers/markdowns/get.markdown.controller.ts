@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
 import markdownModel from "../../model/markdown.model";
 
-export const getMarkdown = async (req: Request, res: Response) => {
+export const getMarkdown = async (
+  req: Request<{}, {}, {}, { field: "returnPolicy" | "privacyPolicy" }>,
+  res: Response
+) => {
   const markdownobj = await markdownModel.findOne({ status: "present" });
-  const feild = req.query.feild;
+  const { field } = req.query;
   let str: string = "";
   if (!markdownobj) {
     res.status(401).json({
       message: "markdown not found",
     });
   } else {
-    if (feild === "returnPolicy") {
+    if (field === "returnPolicy") {
       str = markdownobj.returnPolicy || "";
-    } else if (feild === "privacyPolicy") {
+    } else if (field === "privacyPolicy") {
       str = markdownobj.privacyPolicy || "";
     } else {
       str = markdownobj.termsAndConditions || "";
