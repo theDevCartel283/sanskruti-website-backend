@@ -9,6 +9,11 @@ export type ConfigType = {
     working_key: string;
   };
 
+  paymentStatus: {
+    payZapp: boolean;
+    cashondelivery: boolean;
+  };
+
   social?: {
     id: string;
     media: "twitter" | "instagram" | "facebook" | "youtube";
@@ -40,6 +45,11 @@ const configSchema: Schema<ConfigDocument> = new Schema({
     merchant_id: String,
     access_code: String,
     working_key: String,
+  },
+
+  paymentStatus: {
+    payZapp: Boolean,
+    cashondelivery: Boolean,
   },
 
   social: [

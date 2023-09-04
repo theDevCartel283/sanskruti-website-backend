@@ -11,6 +11,14 @@ import {
   handleDeletePayZApp,
 } from "./payzapp.config.controller";
 
+import {
+  getPaymentStatus,
+  handleStartCashOnDelivery,
+  handleStartPayZapp,
+  handleStopCashOnDelivery,
+  handleStopPayZapp,
+} from "./paymentType.config.controller";
+
 export {
   // Social
   handleGetSocialConfig,
@@ -22,4 +30,11 @@ export {
   handleGetPayZApp,
   handleSetPayZApp,
   handleDeletePayZApp,
+
+  // Payment Status
+  getPaymentStatus,
+  handleStartCashOnDelivery,
+  handleStartPayZapp,
+  handleStopCashOnDelivery,
+  handleStopPayZapp,
 };

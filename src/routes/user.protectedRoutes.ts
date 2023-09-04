@@ -6,6 +6,7 @@ import * as wishlistController from "../controllers/wishlist/index.wishlist.cont
 import * as cartController from "../controllers/cart/index.cart.controller";
 import * as orderController from "../controllers/order/index.order.controller";
 import * as couponController from "../controllers/Coupons/index.coupon.controller";
+import * as configController from "../controllers/config/index.config.controller";
 import validateResources from "../middleware/validateResources";
 import {
   Address,
@@ -102,6 +103,8 @@ router.post(
   validateResources(blankSchema, cartDetails, blankSchema),
   cartController.handleUpdateCartQuantity
 );
+
+router.get("/config/paymentStatus", configController.getPaymentStatus);
 
 router
   .route("/order")

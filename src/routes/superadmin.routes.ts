@@ -57,4 +57,22 @@ router
   )
   .delete(configController.handleDeletePayZApp);
 
+// Payment Status
+router.get(
+  "/config/paymentStatus/payZapp/start",
+  configController.handleStartPayZapp
+);
+router.get(
+  "/config/paymentStatus/payZapp/stop",
+  configController.handleStopPayZapp
+);
+router.get(
+  "/config/paymentStatus/cashondelivery/start",
+  configController.handleStartCashOnDelivery
+);
+router.get(
+  "/config/paymentStatus/cashondelivery/stop",
+  configController.handleStopCashOnDelivery
+);
+
 export default router;
