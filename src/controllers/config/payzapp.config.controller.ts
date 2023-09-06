@@ -40,17 +40,18 @@ export const handleGetPayZApp = async (req: Request, res: Response) => {
       config = new ConfigModel({
         type: "production",
       });
+      await config.save();
     }
 
     return res.status(200).send({
       merchant_id: config.payZapp?.merchant_id
-        ? decrypt(config.payZapp?.merchant_id).slice(0, 4) + ".........."
+        ? decrypt(config.payZapp?.merchant_id).slice(0, 4) + "••••••••••"
         : "",
       working_key: config.payZapp?.working_key
-        ? decrypt(config.payZapp?.working_key).slice(0, 4) + ".........."
+        ? decrypt(config.payZapp?.working_key).slice(0, 4) + "••••••••••"
         : "",
       access_code: config.payZapp?.access_code
-        ? decrypt(config.payZapp?.access_code).slice(0, 4) + ".........."
+        ? decrypt(config.payZapp?.access_code).slice(0, 4) + "••••••••••"
         : "",
     });
   } catch (err) {
@@ -77,16 +78,22 @@ export const handleSetPayZApp = async (
     }
 
     config.payZapp = {
-      access_code: encrypt(access_code),
-      merchant_id: encrypt(merchant_id),
-      working_key: encrypt(working_key),
+      access_code: !!access_code
+        ? encrypt(access_code)
+        : config?.payZapp?.access_code,
+      merchant_id: !!merchant_id
+        ? encrypt(merchant_id)
+        : config?.payZapp?.merchant_id,
+      working_key: !!working_key
+        ? encrypt(working_key)
+        : config?.payZapp?.working_key,
     };
     await config.save();
 
     return res.status(200).send({
-      merchant_id: merchant_id || "",
-      working_key: working_key || "",
-      access_code: access_code || "",
+      merchant_id: merchant_id ? merchant_id.slice(0, 4) + "••••••••••" : "",
+      working_key: working_key ? working_key.slice(0, 4) + "••••••••••" : "",
+      access_code: access_code ? access_code.slice(0, 4) + "••••••••••" : "",
     });
   } catch (err) {
     logger.error("set payzapp " + err);

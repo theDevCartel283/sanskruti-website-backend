@@ -17,9 +17,9 @@ export type ReqUpdateSocial = z.infer<typeof setSocial>;
 
 // PayZapp
 export const payment = z.object({
-  merchant_id: z.string(),
-  working_key: z.string(),
-  access_code: z.string(),
+  merchant_id: z.string().nullish(),
+  working_key: z.string().nullish(),
+  access_code: z.string().nullish(),
 });
 
 export type ReqConfigPayment = z.infer<typeof payment>;

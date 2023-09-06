@@ -4,9 +4,9 @@ export type ConfigType = {
   type: "production" | "developement";
 
   payZapp?: {
-    merchant_id: string;
-    access_code: string;
-    working_key: string;
+    merchant_id?: string;
+    access_code?: string;
+    working_key?: string;
   };
 
   paymentStatus: {

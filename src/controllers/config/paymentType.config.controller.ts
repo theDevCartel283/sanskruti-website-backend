@@ -11,6 +11,7 @@ export const getPaymentStatus = async (req: Request, res: Response) => {
       config = new ConfigModel({
         type: "production",
       });
+      await config.save();
     }
 
     res.status(200).send({
@@ -50,6 +51,8 @@ export const handleStartPayZapp = async (req: Request, res: Response) => {
     res.status(200).send({
       message: "PayZapp activated",
       type: "success",
+      cashondelivery: config?.paymentStatus?.cashondelivery,
+      payZapp: config?.paymentStatus?.payZapp,
     });
   } catch (err) {
     logger.error("start payzapp failed " + err);
@@ -76,6 +79,8 @@ export const handleStopPayZapp = async (req: Request, res: Response) => {
     res.status(200).send({
       message: "PayZapp deactivated",
       type: "success",
+      cashondelivery: config?.paymentStatus?.cashondelivery,
+      payZapp: config?.paymentStatus?.payZapp,
     });
   } catch (err) {
     logger.error("stop payzapp failed " + err);
@@ -105,6 +110,8 @@ export const handleStartCashOnDelivery = async (
     res.status(200).send({
       message: "Cash on Delivery activated",
       type: "success",
+      cashondelivery: config?.paymentStatus?.cashondelivery,
+      payZapp: config?.paymentStatus?.payZapp,
     });
   } catch (err) {
     logger.error("start cod failed " + err);
@@ -131,6 +138,8 @@ export const handleStopCashOnDelivery = async (req: Request, res: Response) => {
     res.status(200).send({
       message: "Cash on Delivery deactivated",
       type: "success",
+      cashondelivery: config?.paymentStatus?.cashondelivery,
+      payZapp: config?.paymentStatus?.payZapp,
     });
   } catch (err) {
     logger.error("stop cod failed " + err);

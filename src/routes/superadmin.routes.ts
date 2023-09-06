@@ -49,7 +49,7 @@ router
 
 // PayZApp
 router
-  .route("/config/payZaap")
+  .route("/config/payZapp")
   .get(configController.handleGetPayZApp)
   .post(
     validateResources(blankSchema, payment, blankSchema),
