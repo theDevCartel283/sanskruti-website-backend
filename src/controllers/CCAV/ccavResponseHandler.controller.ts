@@ -116,7 +116,9 @@ const handleCCAVResponse = async (
       await Promise.all(
         orders.map(async (order) => {
           const product = await ProductModel.findOne({ _id: order.product.id });
-          const variant = Object.values(order.product.varient.variations);
+          const variant = Object.values(
+            order.product.varient.variations
+          ).filter((item) => item);
           cart?.product.push({
             productId: product?._id,
             quantity: order.product.quantity,
