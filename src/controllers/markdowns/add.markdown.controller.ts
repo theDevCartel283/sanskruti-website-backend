@@ -11,13 +11,6 @@ const addMarkdown = async (
 
   const markdownObj = await markdownModel.findOne({ status });
   if (markdownObj) {
-    // update
-    console.log(
-      req.body.status,
-      req.body.returnPolicy,
-      req.body.privacyPolicy,
-      req.body.termsAndConditions
-    );
     if (req.body.returnPolicy !== undefined) {
       await markdownModel.findOneAndUpdate(
         { status },
@@ -29,7 +22,7 @@ const addMarkdown = async (
         { $set: { termsAndConditions: req.body.termsAndConditions } }
       );
     } else {
-      markdownModel.findOneAndUpdate(
+      await markdownModel.findOneAndUpdate(
         { status },
         { $set: { privacyPolicy: req.body.privacyPolicy } }
       );
