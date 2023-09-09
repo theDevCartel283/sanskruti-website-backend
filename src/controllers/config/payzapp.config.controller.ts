@@ -125,12 +125,16 @@ export const handleDeletePayZApp = async (req: Request, res: Response) => {
       merchant_id: "",
       working_key: "",
     };
+
+    config.paymentStatus.payZapp = false;
     await config.save();
 
     return res.status(200).send({
       merchant_id: "",
       working_key: "",
       access_code: "",
+      cashondelivery: config.paymentStatus.cashondelivery,
+      payZapp: config.paymentStatus.payZapp,
     });
   } catch (err) {
     logger.error("set payzapp " + err);
