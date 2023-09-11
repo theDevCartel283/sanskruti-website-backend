@@ -50,6 +50,8 @@ const handleCCAVResponse = async (
   res: Response
 ) => {
   const { encResp, orderNo, crossSellUrl } = req.body;
+  console.log("hit");
+  console.log(orderNo);
   try {
     const { working_key } = await getPayZappCredentials();
     //Generate Md5 hash for the key and then convert in base64 string
