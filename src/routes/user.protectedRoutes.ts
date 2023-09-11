@@ -113,7 +113,7 @@ router
     orderController.handlePlaceOrder
   );
 
-router.route("/order/status/:id").get(orderController.handleGetPaymentStatus);
+router.route("/order/status").get(orderController.handleGetPaymentStatus);
 
 router.get("/order/history", orderController.handleGetAllOrders);
 router.get(

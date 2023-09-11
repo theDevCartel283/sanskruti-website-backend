@@ -3,12 +3,16 @@ import logger from "../../utils/logger.utils";
 import PaymentModel from "../../model/payment.model";
 
 const handleGetPaymentStatus = async (
-  req: Request<{ id: string }>,
+  req: Request<{}, {}, {}, { orderId: string; tracking_id: string }>,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
-    const payment = await PaymentModel.findOne({ orderId: id });
+    const { orderId, tracking_id } = req.query;
+
+    const payment = await PaymentModel.findOne({
+      "orderId": orderId,
+      "paymentInfo.tracking_id": tracking_id,
+    });
 
     if (!payment)
       return res
