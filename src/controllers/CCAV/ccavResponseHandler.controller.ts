@@ -23,6 +23,8 @@ const resultSchema = z.object({
   currency: z.string(),
   amount: z.string().refine((number) => !Number.isNaN(Number(number))),
   trans_date: z.string().nullish(),
+
+  merchant_param1: z.string().nullish(),
 });
 
 const getObject = async (query: string) => {
@@ -90,6 +92,13 @@ const handleCCAVResponse = async (
         );
     }
 
+    if (result.merchant_param1 !== payment.paymentInfo.secret)
+      return res
+        .status(500)
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+        );
+
     payment.paymentInfo = {
       amount: Number(result.amount),
       bank_ref_no: result.bank_ref_no,
@@ -99,6 +108,7 @@ const handleCCAVResponse = async (
       payment_mode: result.payment_mode,
       tracking_id: result.tracking_id,
       trans_date: result.trans_date,
+      secret: "",
     };
 
     await payment.save();

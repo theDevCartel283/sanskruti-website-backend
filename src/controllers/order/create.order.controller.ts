@@ -28,10 +28,6 @@ const handlePlaceOrder = async (
     paymentMethod,
     shippingAddress,
     billingAddress,
-    // SubTotal,
-    // discount,
-    // gst,
-    // Amount,
     couponCode,
   } = req.body;
   const orderId = uuid();
@@ -176,6 +172,7 @@ const handlePlaceOrder = async (
     );
     // payment
     const date = new Date();
+    const secret = uuid();
     const payment = new PaymentModel({
       userId: userUniqueIdentity,
       orderId,
@@ -195,6 +192,7 @@ const handlePlaceOrder = async (
       },
       paymentInfo: {
         order_status: "Pending",
+        secret,
       },
     });
     await payment.save();
@@ -220,7 +218,7 @@ const handlePlaceOrder = async (
       ]).toString("base64");
 
       const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
-      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
+      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}&merchant_param1=${secret}`;
       const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
 
