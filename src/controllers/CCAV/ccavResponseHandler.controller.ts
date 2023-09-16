@@ -23,6 +23,8 @@ const resultSchema = z.object({
   currency: z.string(),
   amount: z.string().refine((number) => !Number.isNaN(Number(number))),
   trans_date: z.string().nullish(),
+
+  merchant_param1: z.string().nullish(),
 });
 
 const getObject = async (query: string) => {
@@ -50,34 +52,34 @@ const handleCCAVResponse = async (
   res: Response
 ) => {
   const { encResp, orderNo, crossSellUrl } = req.body;
+
+  const { working_key } = await getPayZappCredentials();
+  //Generate Md5 hash for the key and then convert in base64 string
+  var md5 = crypto.createHash("md5").update(working_key).digest();
+  var keyBase64 = Buffer.from(md5).toString("base64");
+
+  //Initializing Vector and then convert in base64 string
+  var ivBase64 = Buffer.from([
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+    0x0c, 0x0d, 0x0e, 0x0f,
+  ]).toString("base64");
+
+  const result = await getObject(decrypt(encResp, keyBase64, ivBase64));
+  if (
+    !result ||
+    !result.bank_ref_no ||
+    !result.card_name ||
+    !result.payment_mode ||
+    !result.trans_date
+  ) {
+    logger.error("ccva enc responce err result: " + result);
+    return res
+      .status(500)
+      .redirect(
+        `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+      );
+  }
   try {
-    const { working_key } = await getPayZappCredentials();
-    //Generate Md5 hash for the key and then convert in base64 string
-    var md5 = crypto.createHash("md5").update(working_key).digest();
-    var keyBase64 = Buffer.from(md5).toString("base64");
-
-    //Initializing Vector and then convert in base64 string
-    var ivBase64 = Buffer.from([
-      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-      0x0c, 0x0d, 0x0e, 0x0f,
-    ]).toString("base64");
-
-    const result = await getObject(decrypt(encResp, keyBase64, ivBase64));
-    if (
-      !result ||
-      !result.bank_ref_no ||
-      !result.card_name ||
-      !result.payment_mode ||
-      !result.trans_date
-    ) {
-      logger.error("ccva enc responce err result: " + result);
-      return res
-        .status(500)
-        .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
-        );
-    }
-
     const payment = await PaymentModel.findOne({ orderId: result.order_id });
     if (!payment) {
       logger.error(
@@ -86,9 +88,16 @@ const handleCCAVResponse = async (
       return res
         .status(500)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
         );
     }
+
+    if (result.merchant_param1 !== payment.paymentInfo.secret)
+      return res
+        .status(500)
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+        );
 
     payment.paymentInfo = {
       amount: Number(result.amount),
@@ -99,6 +108,7 @@ const handleCCAVResponse = async (
       payment_mode: result.payment_mode,
       tracking_id: result.tracking_id,
       trans_date: result.trans_date,
+      secret: "",
     };
 
     await payment.save();
@@ -106,7 +116,7 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
         );
     } else {
       const orders = await orderModel.find({ orderId: orderNo });
@@ -116,7 +126,9 @@ const handleCCAVResponse = async (
       await Promise.all(
         orders.map(async (order) => {
           const product = await ProductModel.findOne({ _id: order.product.id });
-          const variant = Object.values(order.product.varient.variations);
+          const variant = Object.values(
+            order.product.varient.variations
+          ).filter((item) => item);
           cart?.product.push({
             productId: product?._id,
             quantity: order.product.quantity,
@@ -130,14 +142,16 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
         );
     }
   } catch (err) {
     logger.error("ccav response error " + err);
     return res
       .status(500)
-      .redirect(`https://sanskrutinx.in/user/order/status?orderId=${orderNo}`);
+      .redirect(
+        `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+      );
   }
 };
 

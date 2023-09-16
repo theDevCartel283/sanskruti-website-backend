@@ -17,6 +17,7 @@ import sendEmail from "../../utils/email/sendEmail";
 import UserModel from "../../model/user.model";
 import { getOrderFormat } from "../../utils/email/orderFormat";
 import { getPayZappCredentials } from "../config/payzapp.config.controller";
+import { getAmounts } from "../../utils/getAmount";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -27,10 +28,6 @@ const handlePlaceOrder = async (
     paymentMethod,
     shippingAddress,
     billingAddress,
-    SubTotal,
-    discount,
-    gst,
-    Amount,
     couponCode,
   } = req.body;
   const orderId = uuid();
@@ -47,15 +44,25 @@ const handlePlaceOrder = async (
       return res
         .status(400)
         .send({ message: "something went wrong", type: "error" });
-    const { filteredArray } = await getCartProductsFromIds(cartWithIds.product);
+    const { filteredArray, emptyArray } = await getCartProductsFromIds(
+      cartWithIds.product
+    );
     if (!filteredArray || !filteredArray.length)
       return res
         .status(400)
         .send({ message: "something went wrong", type: "error" });
 
+    if (emptyArray && emptyArray.length !== 0) {
+      cartWithIds.product = cartWithIds.product.filter(
+        (product) => !emptyArray.includes(product.productId)
+      );
+      await cartWithIds.save();
+    }
+
     // check coupon validity
     let couponDiscount = 0;
-    let finalValue = Amount;
+    let { finalValue, discount, gst, total } = getAmounts(filteredArray);
+
     if (couponCode) {
       const coupon = await couponModel.findOne({ code: couponCode });
 
@@ -65,7 +72,7 @@ const handlePlaceOrder = async (
           type: "info",
         });
 
-      if (coupon.minPurchase > Amount) {
+      if (coupon.minPurchase > finalValue) {
         return res.status(403).send({
           message: "Cannot avail coupon",
           content: `User must shop for a minimum price of Rs.${coupon.minPurchase} to avail the coupon`,
@@ -102,7 +109,7 @@ const handlePlaceOrder = async (
 
       couponDiscount =
         coupon.discountType === "percentage"
-          ? Number(((coupon.value * Amount) / 100).toFixed(2))
+          ? Number(((coupon.value * finalValue) / 100).toFixed(2))
           : coupon.value;
 
       finalValue -= couponDiscount;
@@ -165,6 +172,7 @@ const handlePlaceOrder = async (
     );
     // payment
     const date = new Date();
+    const secret = uuid();
     const payment = new PaymentModel({
       userId: userUniqueIdentity,
       orderId,
@@ -174,7 +182,7 @@ const handlePlaceOrder = async (
       paymentMethod,
       orderInfo: {
         Date: date,
-        SubTotal,
+        SubTotal: total,
         ShippingCost: 0,
         CouponCode: couponCode,
         CouponDiscount: couponDiscount,
@@ -184,6 +192,7 @@ const handlePlaceOrder = async (
       },
       paymentInfo: {
         order_status: "Pending",
+        secret,
       },
     });
     await payment.save();
@@ -209,7 +218,7 @@ const handlePlaceOrder = async (
       ]).toString("base64");
 
       const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
-      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
+      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}&merchant_param1=${secret}`;
       const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
 
@@ -239,7 +248,7 @@ const handlePlaceOrder = async (
           username: user.username!,
           orderId,
           date,
-          SubTotal,
+          SubTotal: total,
           discount: discount || 0,
           TotalAmount: finalValue,
           paymentMethod,

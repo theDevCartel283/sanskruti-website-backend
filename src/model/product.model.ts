@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface ProductAttributes {
+export interface ProductAttributes {
   name: string;
   images: string[];
   description: string;

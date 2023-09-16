@@ -23,6 +23,7 @@ interface PaymentInfo {
   currency?: string;
   trans_date?: string;
   amount?: number;
+  secret: string;
 }
 
 // Interface representing the "Payment" document
@@ -113,6 +114,9 @@ const paymentSchema: Schema<PaymentDocument> = new mongoose.Schema({
     },
     amount: {
       type: Number,
+    },
+    secret: {
+      type: String,
     },
   },
 });

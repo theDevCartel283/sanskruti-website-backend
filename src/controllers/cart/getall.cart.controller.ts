@@ -4,6 +4,7 @@ import { TokenPayload } from "../../utils/jwt.utils";
 import { Types } from "mongoose";
 import ProductModel from "../../model/product.model";
 import logger from "../../utils/logger.utils";
+import { GetAmountCart } from "../../utils/getAmount";
 
 export const getCartProductsFromIds = async (
   cart: {
@@ -13,22 +14,29 @@ export const getCartProductsFromIds = async (
   }[]
 ) => {
   try {
-    const array = await Promise.all(
-      cart.map(async (cartItem) => {
-        const product = await ProductModel.findById(cartItem.productId);
-        return {
+    let emptyArray: Types.ObjectId[] = [];
+    let filteredArray: GetAmountCart[] = [];
+
+    for (const cartItem of cart) {
+      const product = await ProductModel.findById(cartItem.productId);
+      const doesVariationExist = product?.varients.variations.filter(
+        (variant) => {
+          return (
+            JSON.stringify(variant.combinationString) ===
+            JSON.stringify(cartItem.variant)
+          );
+        }
+      );
+      if (product && doesVariationExist?.length) {
+        filteredArray.push({
           product,
           variant: cartItem.variant,
           quantity: cartItem.quantity,
-        };
-      })
-    );
-
-    const emptyArray: Types.ObjectId[] = [];
-    const filteredArray = array.filter((cartItem, index) => {
-      if (!cartItem.product) emptyArray.push(cart[index].productId);
-      return !!cartItem;
-    });
+        });
+      } else {
+        emptyArray.push(cartItem.productId);
+      }
+    }
     return { filteredArray, emptyArray };
   } catch (error) {
     return {};
