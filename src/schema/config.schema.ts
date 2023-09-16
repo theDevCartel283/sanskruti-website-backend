@@ -2,8 +2,9 @@ import z from "zod";
 
 // Social
 export const social = z.object({
-  media: z.enum(["twitter", "instagram", "facebook", "youtube"]),
-  link: z.string(),
+  media: z.string(),
+  Image: z.string(),
+  imageName: z.string(),
 });
 
 export const socialId = z.object({

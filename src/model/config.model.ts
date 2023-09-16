@@ -16,7 +16,7 @@ export type ConfigType = {
 
   social?: {
     id: string;
-    media: "twitter" | "instagram" | "facebook" | "youtube";
+    media: string;
     link: string;
   }[];
 
