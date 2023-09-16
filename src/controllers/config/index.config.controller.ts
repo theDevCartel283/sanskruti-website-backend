@@ -3,6 +3,7 @@ import {
   handleSetSocialConfig,
   handleUpdateSocialConfig,
   handleDeleteSocialConfig,
+  GetAllSocialConfig,
 } from "./social.config.controller";
 
 import {
@@ -25,6 +26,7 @@ export {
   handleSetSocialConfig,
   handleUpdateSocialConfig,
   handleDeleteSocialConfig,
+  GetAllSocialConfig,
 
   // PayZApp
   handleGetPayZApp,

@@ -147,6 +147,10 @@ class ApiFeatures {
       };
     });
     if (queryCopy.date === "" && queryCopy.status === "") {
+      const result = orders.filter((item: any) => {
+        return true;
+      });
+      this.query = result;
       return this;
     } else if (queryCopy.date !== "" && queryCopy.status === "") {
       const result = orders.filter((item: any) => {

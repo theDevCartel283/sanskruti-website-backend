@@ -33,7 +33,6 @@ router.get("/getBannnedUser", superadminController.handleGetBannedUser);
 // Config
 router
   .route("/config/social")
-  .get(configController.handleGetSocialConfig)
   .post(
     validateResources(blankSchema, social, blankSchema),
     configController.handleSetSocialConfig
