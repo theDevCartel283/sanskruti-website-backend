@@ -6,6 +6,7 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 // imports
 import express, { Application, Request, Response } from "express";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import cors from "cors";
 import verifyAccessJwt from "./middleware/verifyJwt";
 import connectToDb from "./utils/connectToDb.utils";
@@ -47,6 +48,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // parse json
 app.use(express.json({ limit: "50mb" }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    parameterLimit: 100000,
+    limit: "50mb",
+  })
+);
 
 // middleware for cookies
 app.use(cookieParser());
