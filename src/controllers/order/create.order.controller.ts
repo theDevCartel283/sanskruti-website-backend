@@ -1,3 +1,4 @@
+import { payment } from "./../../schema/config.schema";
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
 import { ReqOrderDetails } from "../../schema/order.schema";
@@ -5,12 +6,12 @@ import { TokenPayload } from "../../utils/jwt.utils";
 import cartModel from "../../model/cart.model";
 import { v4 as uuid } from "uuid";
 import orderModel from "../../model/order.model";
-import PaymentModel from "../../model/payment.model";
+import PaymentModel, { CCAveneueResponse } from "../../model/payment.model";
 import { getCartProductsFromIds } from "../cart/getall.cart.controller";
 import _ from "lodash";
 import crypto from "crypto";
 import { env } from "../../config/env";
-import { encrypt } from "../CCAV/utils/ccav.utils";
+import { decrypt, encrypt } from "../CCAV/utils/ccav.utils";
 import couponModel from "../../model/coupon.model";
 import { dateFormater } from "../../utils/dateFormater";
 import sendEmail from "../../utils/email/sendEmail";
@@ -18,6 +19,7 @@ import UserModel from "../../model/user.model";
 import { getOrderFormat } from "../../utils/email/orderFormat";
 import { getPayZappCredentials } from "../config/payzapp.config.controller";
 import { getAmounts } from "../../utils/getAmount";
+import axios from "axios";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -190,10 +192,8 @@ const handlePlaceOrder = async (
         TotalGST: gst,
         Amount: finalValue,
       },
-      paymentInfo: {
-        order_status: "Pending",
-        secret,
-      },
+      secret,
+      paymentInfo: [],
     });
     await payment.save();
     // clear cart
@@ -221,6 +221,8 @@ const handlePlaceOrder = async (
       const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}&merchant_param1=${secret}`;
       const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
+
+      checkIfPending(orderId);
 
       return res.status(200).json({
         link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
@@ -257,6 +259,16 @@ const handlePlaceOrder = async (
           billingAddress,
         }),
       });
+
+      payment.paymentInfo.push({
+        amount: finalValue,
+        currency: "INR",
+        order_status: "Pending",
+        trans_date: new Date().toString(),
+      });
+
+      await payment.save();
+
       return res.status(200).send({
         message: "Thank you for shopping at sanskrutinx.in",
         type: "success",
@@ -267,6 +279,111 @@ const handlePlaceOrder = async (
     logger.error("place order error" + err);
     res.status(500).send({ message: "something went wrong", type: "info" });
   }
+};
+
+// "Success" | "Failure" | "Aborted" | "Invalid" | "Timeout"
+
+const checkIfPending = (orderId: string) => {
+  setTimeout(async () => {
+    try {
+      console.log("check");
+      const payment = await PaymentModel.findOne({ orderId });
+      if (!payment) {
+        logger.error("payment not found when checking orderId:" + orderId);
+        return;
+      }
+
+      if (!payment.paymentInfo.length) {
+        const { working_key, access_code } = await getPayZappCredentials();
+        //Generate Md5 hash for the key and then convert in base64 string
+        var md5 = crypto.createHash("md5").update(working_key).digest();
+        var keyBase64 = Buffer.from(md5).toString("base64");
+
+        //Initializing Vector and then convert in base64 string
+        var ivBase64 = Buffer.from([
+          0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
+          0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        ]).toString("base64");
+        const encString = JSON.stringify({
+          fromDate: "01-01-2023",
+          order_no: orderId,
+        });
+        const encRequest = encrypt(encString, keyBase64, ivBase64);
+        axios
+          .post(
+            `https://apitest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=${encRequest}&access_code=${access_code}&request_type=JSON&command=orderLookup&version=1.2`
+          )
+          .then(async (res) => {
+            const response = new URLSearchParams(String(res.data)).get(
+              "enc_response"
+            ) as string;
+            const value = JSON.parse(
+              decrypt(response, keyBase64, ivBase64)
+            ) as {
+              order_Status_List: CCAveneueResponse[];
+              total_records: number;
+            };
+            if (!value.total_records || !value.order_Status_List[0])
+              return logger.error(
+                "check payment error record not found for order " + orderId
+              );
+
+            await Promise.all(
+              value.order_Status_List.map(async (order) => {
+                let amount = order.order_amt;
+                let tracking_id = order.reference_no.toString();
+                let bank_ref_no = order.order_bank_ref_no;
+                let card_name = order.order_card_name;
+                let payment_mode = order.payment_mode;
+                let currency = order.order_currncy;
+                let trans_date = order.order_status_date_time;
+
+                let order_status = "" as
+                  | "Success"
+                  | "Failure"
+                  | "Aborted"
+                  | "Invalid"
+                  | "Timeout"
+                  | "Pending";
+                switch (order.order_status) {
+                  case "Shipped":
+                    order_status = "Success";
+                    break;
+                  case "Unsuccessful":
+                    order_status = "Failure";
+                    break;
+                  case "Aborted":
+                    order_status = "Aborted";
+                    break;
+                  case "Invalid":
+                    order_status = "Invalid";
+                    break;
+                  case "Initiated":
+                    order_status = "Timeout";
+                    break;
+                  default:
+                    order_status = order.order_status;
+                }
+                payment.paymentInfo.push({
+                  amount,
+                  order_status,
+                  tracking_id,
+                  bank_ref_no,
+                  card_name,
+                  payment_mode,
+                  currency,
+                  trans_date,
+                });
+              })
+            );
+            await payment.save();
+          });
+      }
+    } catch (err) {
+      logger.error("check payment for order " + orderId + " \nerror " + err);
+    }
+  }, 20 * 60 * 1000);
+  return;
 };
 
 export default handlePlaceOrder;

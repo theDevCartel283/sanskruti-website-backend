@@ -21,9 +21,17 @@ const handleGetAllOrders = async (
 
     const orders = orderWithIds.map((order) => {
       const payment = payments.find((pay) => pay.orderId === order.orderId);
+      const latestOrder = payment?.paymentInfo.sort((a, b) => {
+        const dataB = new Date(b.trans_date || "").getTime();
+        const dataA = new Date(a.trans_date || "").getTime();
+        return dataB - dataA;
+      })[0];
       return {
         order,
-        payment,
+        payment: {
+          ...payment,
+          paymentInfo: latestOrder,
+        },
       };
     });
     const orderCount = orders.length;

@@ -19,13 +19,17 @@ const handleGetPaymentStatus = async (
         .status(404)
         .send({ message: "Order not found", type: "warning" });
 
+    const order = payment.paymentInfo.sort((a, b) => {
+      const dataB = new Date(b.trans_date || "").getTime();
+      const dataA = new Date(a.trans_date || "").getTime();
+      return dataB - dataA;
+    })[0];
+
     res.status(200).send({
       orderId: payment.orderId,
       status:
-        payment.paymentMethod === "PayZapp"
-          ? payment.paymentInfo.order_status
-          : "Success",
-      amount: payment.paymentInfo.amount,
+        payment.paymentMethod === "PayZapp" ? order.order_status : "Success",
+      amount: order.amount,
     });
   } catch (err) {
     logger.error("get status error " + err);

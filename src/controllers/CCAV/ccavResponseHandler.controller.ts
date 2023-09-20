@@ -1,7 +1,5 @@
-import { ObjectId } from "bson";
 import { Request, Response } from "express";
 import { decrypt } from "./utils/ccav.utils";
-import { env } from "../../config/env";
 import crypto from "crypto";
 import z from "zod";
 import PaymentModel from "../../model/payment.model";
@@ -91,15 +89,15 @@ const handleCCAVResponse = async (
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
         );
     }
-
-    if (result.merchant_param1 !== payment.paymentInfo.secret)
+    console.log("1");
+    if (result.merchant_param1 !== payment.secret)
       return res
         .status(500)
         .redirect(
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
         );
-
-    payment.paymentInfo = {
+    console.log("2");
+    payment.paymentInfo.push({
       amount: Number(result.amount),
       bank_ref_no: result.bank_ref_no,
       card_name: result.card_name,
@@ -108,8 +106,7 @@ const handleCCAVResponse = async (
       payment_mode: result.payment_mode,
       tracking_id: result.tracking_id,
       trans_date: result.trans_date,
-      secret: "",
-    };
+    });
 
     await payment.save();
     if (result.order_status == "Success") {

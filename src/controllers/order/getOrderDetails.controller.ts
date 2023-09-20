@@ -20,9 +20,17 @@ const GetOrderDetails = async (
     const payment = payments.find(
       (pay) => pay.orderId === orderWithIds.orderId
     );
+    const latestOrder = payment?.paymentInfo.sort((a, b) => {
+      const dataB = new Date(b.trans_date || "").getTime();
+      const dataA = new Date(a.trans_date || "").getTime();
+      return dataB - dataA;
+    })[0];
     const order = {
       order: orderWithIds,
-      payment,
+      payment: {
+        ...payment,
+        paymentInfo: latestOrder,
+      },
     };
 
     return res.status(200).send({ order });
