@@ -42,7 +42,7 @@ const addProduct = async (
       MainCategory: req.body.MainCategory,
       SubCategory: req.body.SubCategory,
       slug: slugify(req.body.name),
-      varients: {},
+      varients: req.body.varients,
       brand_name: req.body.brand_name,
       is_featured: req.body.is_featured,
       is_new_arrival: req.body.is_new_arrival,
