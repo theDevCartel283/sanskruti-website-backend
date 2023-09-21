@@ -74,7 +74,7 @@ const handlePlaceOrder = async (
           type: "info",
         });
 
-      if (coupon.minPurchase > finalValue) {
+      if (coupon.minPurchase > total) {
         return res.status(403).send({
           message: "Cannot avail coupon",
           content: `User must shop for a minimum price of Rs.${coupon.minPurchase} to avail the coupon`,
@@ -88,7 +88,7 @@ const handlePlaceOrder = async (
       );
       if (!couponNotUsedByUser) {
         return res.status(403).send({
-          message: "Coupon Is Used",
+          message: "Coupon is used",
           content: `Coupon has been used by user`,
           type: "info",
         });
@@ -323,10 +323,15 @@ const checkIfPending = (orderId: string) => {
               order_Status_List: CCAveneueResponse[];
               total_records: number;
             };
-            if (!value.total_records || !value.order_Status_List[0])
-              return logger.error(
-                "check payment error record not found for order " + orderId
-              );
+            if (!value.total_records || !value.order_Status_List.length) {
+              payment.paymentInfo.push({
+                order_status: "Timeout",
+                payment_mode: "PayZapp",
+                trans_date: new Date().toString(),
+              });
+              await payment.save();
+              return;
+            }
 
             await Promise.all(
               value.order_Status_List.map(async (order) => {
