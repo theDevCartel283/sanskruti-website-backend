@@ -259,11 +259,13 @@ const handlePlaceOrder = async (
         }),
       });
 
+      const tracking_id = uuid();
       payment.paymentInfo.push({
         amount: finalValue,
         currency: "INR",
         order_status: "Pending",
         trans_date: new Date().toString(),
+        tracking_id,
       });
 
       await payment.save();
@@ -272,6 +274,7 @@ const handlePlaceOrder = async (
         message: "Thank you for shopping at sanskrutinx.in",
         type: "success",
         orderId,
+        tracking_id,
       });
     }
   } catch (err) {
