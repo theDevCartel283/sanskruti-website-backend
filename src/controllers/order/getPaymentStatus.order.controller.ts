@@ -3,11 +3,11 @@ import logger from "../../utils/logger.utils";
 import PaymentModel from "../../model/payment.model";
 
 const handleGetPaymentStatus = async (
-  req: Request<{}, {}, {}, { orderId: string }>,
+  req: Request<{}, {}, {}, { orderId: string; tracking_id: string }>,
   res: Response
 ) => {
   try {
-    const { orderId } = req.query;
+    const { orderId, tracking_id } = req.query;
 
     const payment = await PaymentModel.findOne({
       orderId: orderId,
@@ -18,18 +18,15 @@ const handleGetPaymentStatus = async (
         .status(404)
         .send({ message: "Order not found", type: "warning" });
 
-    const order = payment.paymentInfo.sort((a, b) => {
-      const dataB = new Date(b.trans_date || "").getTime();
-      const dataA = new Date(a.trans_date || "").getTime();
-      console.log(a.trans_date, b.trans_date);
-      return dataB - dataA;
-    })[0];
+    const order = payment.paymentInfo.find(
+      (payment) => payment.tracking_id === tracking_id
+    );
 
     res.status(200).send({
       orderId: payment.orderId,
       status:
-        payment.paymentMethod === "PayZapp" ? order.order_status : "Success",
-      amount: order.amount,
+        payment.paymentMethod === "PayZapp" ? order?.order_status : "Success",
+      amount: order?.amount,
     });
   } catch (err) {
     logger.error("get status error " + err);
