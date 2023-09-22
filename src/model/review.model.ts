@@ -6,6 +6,7 @@ export interface Reviews {
   title: string;
   rating: number;
   comment: string;
+  status: "Under review" | "Accepted";
 }
 
 export interface ProductRating extends Document {
@@ -27,6 +28,7 @@ const reviewSchema = new Schema<ProductRating>({
       title: String,
       rating: Number,
       comment: String,
+      status: String,
     },
   ],
   ratingCounts: {

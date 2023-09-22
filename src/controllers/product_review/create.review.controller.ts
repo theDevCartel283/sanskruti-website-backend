@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ReqReviewObject } from "../../schema/review.schema";
 import logger from "../../utils/logger.utils";
-import reviewModel from "../../model/review.model";
+import reviewModel, { Reviews } from "../../model/review.model";
 import { TokenPayload } from "../../utils/jwt.utils";
 
 const handleCreateReview = async (
@@ -27,13 +27,15 @@ const handleCreateReview = async (
         },
       });
     }
-    reviews.reviews.push({
+    const userReview: Reviews = {
       id: userUniqueIdentity.toString(),
+      status: "Under review",
       username,
       title,
       rating,
       comment,
-    });
+    };
+    reviews.reviews.push(userReview);
 
     reviews.ratingCounts[rating] += 1;
     reviews.totalRatings += 1;
@@ -41,12 +43,16 @@ const handleCreateReview = async (
     await reviews.save();
 
     res.status(200).send({
-      reviews,
+      userReview,
+      message: "Review posted!!",
+      content: "Your product review is currently under review",
+      type: "success",
     });
   } catch (err) {
     logger.error("create review error " + err);
     res.status(500).send({
       message: "something went wrong",
+      type: "info",
     });
   }
 };

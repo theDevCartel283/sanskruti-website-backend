@@ -10,6 +10,10 @@ const handleReviewFetch = async (
     const { id } = req.params;
 
     const reviews = await reviewModel.findOne({ product_id: id });
+    if (reviews) {
+      reviews.reviews =
+        reviews?.reviews.filter((review) => review.status === "Accepted") || [];
+    }
     res.status(200).send({
       reviews,
     });
