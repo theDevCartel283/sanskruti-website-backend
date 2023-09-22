@@ -1,4 +1,3 @@
-import { payment } from "./../../schema/config.schema";
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
 import { ReqOrderDetails } from "../../schema/order.schema";
@@ -283,7 +282,7 @@ const handlePlaceOrder = async (
 
 // "Success" | "Failure" | "Aborted" | "Invalid" | "Timeout"
 
-const checkIfPending = (orderId: string) => {
+export const checkIfPending = (orderId: string) => {
   setTimeout(async () => {
     try {
       console.log("check");

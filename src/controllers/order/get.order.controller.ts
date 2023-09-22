@@ -24,14 +24,29 @@ const handleGetOrder = async (
       orderId: order.orderId,
     });
 
-    if (!payment)
+    const allOrders = await orderModel.find({ orderId: order.orderId });
+
+    if (!payment || !allOrders)
       return res
         .status(200)
         .send({ message: "product not found", type: "error" });
+    const latestOrder = payment?.paymentInfo.sort((a, b) => {
+      const dataB = new Date(b.trans_date || "").getTime();
+      const dataA = new Date(a.trans_date || "").getTime();
+      return dataB - dataA;
+    })[0];
 
     return res.status(200).send({
-      order,
-      payment,
+      order: {
+        order,
+        payment: {
+          ...payment.toJSON(),
+          paymentInfo: latestOrder || {
+            order_status: "Pending",
+          },
+        },
+      },
+      allOrders,
     });
   } catch (err) {
     logger.error("get order error " + err);

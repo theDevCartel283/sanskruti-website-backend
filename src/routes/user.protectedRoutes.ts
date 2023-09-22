@@ -112,6 +112,16 @@ router
     validateResources(blankSchema, orderDetails, blankSchema),
     orderController.handlePlaceOrder
   );
+router
+  .route("/order/repay")
+  .post(
+    validateResources(
+      blankSchema,
+      z.object({ orderId: z.string() }),
+      blankSchema
+    ),
+    orderController.handleRepay
+  );
 
 router.route("/order/status").get(orderController.handleGetPaymentStatus);
 

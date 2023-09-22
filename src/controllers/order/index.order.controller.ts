@@ -7,6 +7,7 @@ import GetOrderDetails from "./getOrderDetails.controller";
 import handleCancellationRequest from "./requestCancel.order.contoller";
 import handleUpdateOrderFromAdmin from "./update.order.controller";
 import handleGetPaymentStatus from "./getPaymentStatus.order.controller";
+import handleRepay from "./repay.order.controller";
 
 export {
   handlePlaceOrder,
@@ -17,4 +18,5 @@ export {
   handleCancellationRequest,
   handleUpdateOrderFromAdmin,
   handleGetPaymentStatus,
+  handleRepay,
 };

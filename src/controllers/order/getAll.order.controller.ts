@@ -12,7 +12,9 @@ const handleGetAllOrders = async (
 
   try {
     const orderWithIds = await orderModel.find({ userId: userUniqueIdentity });
-    const payments = await PaymentModel.find({ userId: userUniqueIdentity });
+    const payments = await PaymentModel.find({
+      userId: userUniqueIdentity,
+    }).lean();
 
     if (!orderWithIds || !payments)
       return res
@@ -30,7 +32,9 @@ const handleGetAllOrders = async (
         order,
         payment: {
           ...payment,
-          paymentInfo: latestOrder,
+          paymentInfo: latestOrder || {
+            order_status: "Pending",
+          },
         },
       };
     });

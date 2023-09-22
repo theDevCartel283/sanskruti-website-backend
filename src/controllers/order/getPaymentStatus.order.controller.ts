@@ -3,15 +3,14 @@ import logger from "../../utils/logger.utils";
 import PaymentModel from "../../model/payment.model";
 
 const handleGetPaymentStatus = async (
-  req: Request<{}, {}, {}, { orderId: string; tracking_id: string }>,
+  req: Request<{}, {}, {}, { orderId: string }>,
   res: Response
 ) => {
   try {
-    const { orderId, tracking_id } = req.query;
+    const { orderId } = req.query;
 
     const payment = await PaymentModel.findOne({
-      "orderId": orderId,
-      "paymentInfo.tracking_id": tracking_id,
+      orderId: orderId,
     });
 
     if (!payment)
@@ -22,6 +21,7 @@ const handleGetPaymentStatus = async (
     const order = payment.paymentInfo.sort((a, b) => {
       const dataB = new Date(b.trans_date || "").getTime();
       const dataA = new Date(a.trans_date || "").getTime();
+      console.log(a.trans_date, b.trans_date);
       return dataB - dataA;
     })[0];
 

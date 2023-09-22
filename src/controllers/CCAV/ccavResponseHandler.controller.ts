@@ -73,9 +73,7 @@ const handleCCAVResponse = async (
     logger.error("ccva enc responce err result: " + result);
     return res
       .status(500)
-      .redirect(
-        `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
-      );
+      .redirect(`https://sanskrutinx.in/user/order/status?orderId=${orderNo}`);
   }
   try {
     const payment = await PaymentModel.findOne({ orderId: result.order_id });
@@ -86,17 +84,33 @@ const handleCCAVResponse = async (
       return res
         .status(500)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
     }
-    console.log("1");
     if (result.merchant_param1 !== payment.secret)
       return res
         .status(500)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
-    console.log("2");
+
+    const dateString = result.trans_date;
+    const [datePart, timePart] = dateString.split(" ");
+
+    const [day, month, year] = datePart.split("/").map((val) => Number(val));
+    const [hours, minutes, seconds] = timePart
+      .split(":")
+      .map((val) => Number(val));
+
+    const validDate = new Date(
+      year,
+      month - 1,
+      day,
+      hours,
+      minutes,
+      seconds
+    ).toString();
+
     payment.paymentInfo.push({
       amount: Number(result.amount),
       bank_ref_no: result.bank_ref_no,
@@ -105,7 +119,7 @@ const handleCCAVResponse = async (
       order_status: result.order_status,
       payment_mode: result.payment_mode,
       tracking_id: result.tracking_id,
-      trans_date: result.trans_date,
+      trans_date: validDate,
     });
 
     await payment.save();
@@ -113,7 +127,7 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
     } else {
       const orders = await orderModel.find({ orderId: orderNo });
@@ -134,21 +148,18 @@ const handleCCAVResponse = async (
         })
       );
       await cart?.save();
-      await orderModel.deleteMany({ orderId: orderNo });
 
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}`
         );
     }
   } catch (err) {
     logger.error("ccav response error " + err);
     return res
       .status(500)
-      .redirect(
-        `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result?.tracking_id}`
-      );
+      .redirect(`https://sanskrutinx.in/user/order/status?orderId=${orderNo}`);
   }
 };
 
