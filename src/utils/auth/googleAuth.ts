@@ -3,13 +3,16 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import UserModel from "../../model/user.model";
 import { env } from "../../config/env";
 import { Roles } from "../../config/roles.config";
+import { getGoogleAuthKeys } from "../../controllers/config/auth.config.controllers";
 
-export const connectPassportGoogle = () => {
+export const connectPassportGoogle = async () => {
+  const { clientId, secret } = await getGoogleAuthKeys();
+  if (!clientId || !secret) return;
   passport.use(
     new GoogleStrategy(
       {
-        clientID: env.GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
+        clientID: clientId,
+        clientSecret: secret,
         callbackURL: `${env.ENDPOINT}/api/v1/auth/googleRedirect`,
       },
       async function (accessToken, refreshToken, profile, done) {

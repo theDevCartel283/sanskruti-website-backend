@@ -20,6 +20,26 @@ import {
   handleStopPayZapp,
 } from "./paymentType.config.controller";
 
+import {
+  handleSetGoogleAnalytics,
+  handleGetGoogleAnalytics,
+  handleDeleteGoogleAnalytics,
+} from "./analytics.config.controller";
+
+import {
+  handleGetAuthStatus,
+  handleGetGoogleAuth,
+  handleSetGoogleAuth,
+  handleClearGoogleAuth,
+  handleStartGoogleAuth,
+  handleStopGoogleAuth,
+  handleGetFacebookAuth,
+  handleSetFacebookAuth,
+  handleClearFacebookAuth,
+  handleStartFacebookAuth,
+  handleStopFacebookAuth,
+} from "./auth.config.controllers";
+
 export {
   // Social
   handleGetSocialConfig,
@@ -39,4 +59,24 @@ export {
   handleStartPayZapp,
   handleStopCashOnDelivery,
   handleStopPayZapp,
+
+  // Google analytics
+  handleSetGoogleAnalytics,
+  handleGetGoogleAnalytics,
+  handleDeleteGoogleAnalytics,
+
+  // Auth
+  handleGetAuthStatus,
+  // Google Auth
+  handleGetGoogleAuth,
+  handleSetGoogleAuth,
+  handleClearGoogleAuth,
+  handleStartGoogleAuth,
+  handleStopGoogleAuth,
+  // Facebook Auth
+  handleGetFacebookAuth,
+  handleSetFacebookAuth,
+  handleClearFacebookAuth,
+  handleStartFacebookAuth,
+  handleStopFacebookAuth,
 };

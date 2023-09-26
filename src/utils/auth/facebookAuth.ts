@@ -3,13 +3,16 @@ import { Strategy as FacebookStrategy } from "passport-facebook";
 import { env } from "../../config/env";
 import UserModel from "../../model/user.model";
 import { Roles } from "../../config/roles.config";
+import { getFacebookAuthKeys } from "../../controllers/config/auth.config.controllers";
 
-export const connectPassportFacebook = () => {
+export const connectPassportFacebook = async () => {
+  const { clientId, secret } = await getFacebookAuthKeys();
+  if (!clientId || !secret) return;
   passport.use(
     new FacebookStrategy(
       {
-        clientID: env.FACEBOOK_CLIENT_ID,
-        clientSecret: env.FACEBOOK_CLIENT_SECRET,
+        clientID: clientId,
+        clientSecret: secret,
         callbackURL: `${env.ENDPOINT}/api/v1/auth/facebookRedirect`,
       },
       async function (accessToken, refreshToken, profile, done) {
