@@ -12,6 +12,7 @@ export const connectPassportFacebook = async () => {
     clientSecret: secret || "",
     callbackURL: `${env.ENDPOINT}/api/v1/auth/facebookRedirect`,
   };
+  if (!clientId || !secret) return;
   passport.use(
     new FacebookStrategy(facebookConfig, async function (
       accessToken,
