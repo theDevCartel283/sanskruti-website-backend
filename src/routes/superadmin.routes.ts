@@ -6,7 +6,14 @@ import { blankSchema } from "../schema/blank.schema";
 import { Admin } from "../schema/admin.schema";
 import { BanEmail } from "../schema/superadmin";
 import { BanAndRoleDetails } from "../schema/user.schema";
-import { payment, setSocial, social, socialId } from "../schema/config.schema";
+import {
+  authSchema,
+  payment,
+  setSocial,
+  social,
+  socialId,
+} from "../schema/config.schema";
+import { z } from "zod";
 
 const router = express.Router();
 
@@ -73,5 +80,46 @@ router.get(
   "/config/paymentStatus/cashondelivery/stop",
   configController.handleStopCashOnDelivery
 );
+
+// google analytics
+router
+  .route("/config/analytics/google")
+  .get(configController.handleGetGoogleAnalytics)
+  .post(
+    validateResources(blankSchema, z.object({ code: z.string() }), blankSchema),
+    configController.handleSetGoogleAnalytics
+  )
+  .delete(configController.handleDeleteGoogleAnalytics);
+
+// auth
+router.get("/config/auth", configController.handleGetAuthStatus);
+
+router.get("/config/auth/google/start", configController.handleStartGoogleAuth);
+router.get("/config/auth/google/stop", configController.handleStopGoogleAuth);
+router
+  .route("/config/auth/google")
+  .get(configController.handleGetGoogleAuth)
+  .post(
+    validateResources(blankSchema, authSchema, blankSchema),
+    configController.handleSetGoogleAuth
+  )
+  .delete(configController.handleClearGoogleAuth);
+
+router.get(
+  "/config/auth/facebook/start",
+  configController.handleStartFacebookAuth
+);
+router.get(
+  "/config/auth/facebook/stop",
+  configController.handleStopFacebookAuth
+);
+router
+  .route("/config/auth/facebook")
+  .get(configController.handleGetFacebookAuth)
+  .post(
+    validateResources(blankSchema, authSchema, blankSchema),
+    configController.handleSetFacebookAuth
+  )
+  .delete(configController.handleClearFacebookAuth);
 
 export default router;

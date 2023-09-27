@@ -8,7 +8,7 @@ import * as subBannerController from "../controllers/SubBanner/index.subbanner.c
 import * as subCategoryController from "../controllers/subcategory/index.subCategory.controller";
 import * as reviewController from "../controllers/product_review/index.review.controller";
 import validateResources from "../middleware/validateResources";
-import * as configController from "../controllers/config/social.config.controller";
+import * as configController from "../controllers/config/index.config.controller";
 import * as markdownController from "../controllers/markdowns/index.markdown.controller";
 import { blankSchema } from "../schema/blank.schema";
 import {
@@ -102,5 +102,8 @@ router.get("/reviews/:id", reviewController.handleReviewFetch);
 
 router.get("/getMarkdown", markdownController.getMarkdown);
 router.get("/getSocials", configController.GetAllSocialConfig);
+
+router.get("/analytics/google", configController.handleGetGoogleAnalytics);
+router.get("/auth/status", configController.handleGetAuthStatus);
 
 export default router;

@@ -32,7 +32,12 @@ const handleDeleteCart = async (
 
     if (emptyArray && emptyArray.length !== 0) {
       cart.product = cart.product.filter(
-        (product) => !emptyArray.includes(product.productId)
+        (product) =>
+          !emptyArray.find(
+            (emp) =>
+              product.productId === emp.productId &&
+              JSON.stringify(product.variant) === JSON.stringify(emp.variant)
+          )
       );
       await cart.save();
     }

@@ -25,6 +25,7 @@ const updateReview = async (
         rev.rating = rating;
         rev.title = title;
         rev.comment = comment;
+        rev.status = "Under review";
       }
     });
 
@@ -37,6 +38,9 @@ const updateReview = async (
         rating,
         comment,
       },
+      message: "Review updated!!",
+      content: "Your product review is currently under review",
+      type: "success",
     });
   } catch (err) {
     logger.error("update review error " + err);

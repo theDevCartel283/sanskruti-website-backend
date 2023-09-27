@@ -12,24 +12,6 @@ const handleFetchUsersReview = async (
     const { userUniqueIdentity } = req.body;
 
     const reviews = await reviewModel.findOne({ product_id: id });
-    if (!reviews) {
-      return {
-        userReview: undefined,
-        reviews: {
-          product_id: id,
-          totalRatings: 0,
-          ratings: [],
-          ratingCounts: {
-            1: 0,
-            2: 0,
-            3: 0,
-            4: 0,
-            5: 0,
-          },
-        },
-      };
-    }
-
     const userReview = reviews?.reviews.find(
       (review) => review.id == userUniqueIdentity.toString()
     );

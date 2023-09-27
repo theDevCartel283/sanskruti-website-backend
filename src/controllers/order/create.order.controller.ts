@@ -1,4 +1,3 @@
-import { payment } from "./../../schema/config.schema";
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
 import { ReqOrderDetails } from "../../schema/order.schema";
@@ -20,6 +19,8 @@ import { getOrderFormat } from "../../utils/email/orderFormat";
 import { getPayZappCredentials } from "../config/payzapp.config.controller";
 import { getAmounts } from "../../utils/getAmount";
 import axios from "axios";
+import { getValidDate } from "../../utils/getValidDate";
+import ProductModel from "../../model/product.model";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -56,7 +57,12 @@ const handlePlaceOrder = async (
 
     if (emptyArray && emptyArray.length !== 0) {
       cartWithIds.product = cartWithIds.product.filter(
-        (product) => !emptyArray.includes(product.productId)
+        (product) =>
+          !emptyArray.find(
+            (emp) =>
+              product.productId === emp.productId &&
+              JSON.stringify(product.variant) === JSON.stringify(emp.variant)
+          )
       );
       await cartWithIds.save();
     }
@@ -121,17 +127,24 @@ const handlePlaceOrder = async (
         await coupon.deleteOne({ code: coupon.code });
       }
     }
+    // error
+    const errMessage: string[] = [];
 
     // loop through cart
-    const orders = Promise.all(
+    const orders = await Promise.all(
       filteredArray.map(async (prod) => {
-        if (!prod) return;
+        const foundProd = await ProductModel.findById(prod.product.id);
+        if (!foundProd) {
+          errMessage.push(`product ${prod.product.name} not found`);
+          return;
+        }
         const combination =
-          prod.product?.varients?.variations.find(
+          foundProd?.varients?.variations.find(
             (variation) =>
               JSON.stringify(variation.combinationString) ===
               JSON.stringify(prod.variant)
-          )! || prod.product?.varients?.variations[0]!;
+          )! || foundProd?.varients?.variations[0]!;
+
         const varient = {
           price: combination.price,
           discount: combination.discount,
@@ -146,12 +159,12 @@ const handlePlaceOrder = async (
           orderId,
           userId: userUniqueIdentity,
           product: {
-            id: prod.product?._id,
-            slug: prod.product?.slug,
-            name: prod.product?.name,
-            brand_name: prod.product?.brand_name,
-            images: [prod.product?.images[0]],
-            gst_percent: prod.product?.gst_percent,
+            id: foundProd?._id,
+            slug: foundProd?.slug,
+            name: foundProd?.name,
+            brand_name: foundProd?.brand_name,
+            images: [foundProd?.images[0]],
+            gst_percent: foundProd?.gst_percent,
             quantity: prod.quantity,
             varient,
           },
@@ -169,12 +182,56 @@ const handlePlaceOrder = async (
             status: "Pending",
           },
         });
-        return await orderItem.save();
+
+        foundProd.varients.variations.map((varie) => {
+          if (
+            JSON.stringify(varie.combinationString) ===
+            JSON.stringify(combination.combinationString)
+          ) {
+            if (varie.quantity - prod.quantity < 0) {
+              errMessage.push(`product ${foundProd.name} out of stock`);
+            }
+          }
+        });
+        return { orderItem, combination };
       })
     );
+
+    // check for err
+    if (!!errMessage.length) {
+      return res.status(400).send({
+        message: "Failure",
+        content: errMessage.join(", "),
+        type: "error",
+      });
+    } else {
+      await Promise.all(
+        orders.map(async (or) => {
+          if (!or) return false;
+          await or.orderItem.save();
+          const foundProd = await ProductModel.findById(
+            or.orderItem.product.id
+          );
+          foundProd?.varients.variations.map((varie) => {
+            if (
+              JSON.stringify(varie.combinationString) ===
+              JSON.stringify(or.combination.combinationString)
+            ) {
+              varie.quantity -= or.orderItem.product.quantity;
+              console.log(varie.quantity);
+            }
+          });
+          console.log(JSON.stringify(foundProd?.varients.variations));
+          await foundProd?.save();
+          return true;
+        })
+      );
+    }
+
     // payment
     const date = new Date();
     const secret = uuid();
+    const tracking_id = uuid();
     const payment = new PaymentModel({
       userId: userUniqueIdentity,
       orderId,
@@ -193,7 +250,15 @@ const handlePlaceOrder = async (
         Amount: finalValue,
       },
       secret,
-      paymentInfo: [],
+      paymentInfo: [
+        {
+          amount: finalValue,
+          currency: "INR",
+          order_status: "Pending",
+          trans_date: new Date().toString(),
+          tracking_id,
+        },
+      ],
     });
     await payment.save();
     // clear cart
@@ -218,11 +283,12 @@ const handlePlaceOrder = async (
       ]).toString("base64");
 
       const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
-      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}&merchant_param1=${secret}`;
-      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
+      const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
+      const merchantParams = `merchant_param1=${secret}&merchant_param2=${tracking_id}`;
+      const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${finalValue}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}&${merchantParams}`;
       const encRequest = encrypt(encString, keyBase64, ivBase64);
 
-      checkIfPending(orderId);
+      checkIfPending(orderId, tracking_id);
 
       return res.status(200).json({
         link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
@@ -260,19 +326,11 @@ const handlePlaceOrder = async (
         }),
       });
 
-      payment.paymentInfo.push({
-        amount: finalValue,
-        currency: "INR",
-        order_status: "Pending",
-        trans_date: new Date().toString(),
-      });
-
-      await payment.save();
-
       return res.status(200).send({
         message: "Thank you for shopping at sanskrutinx.in",
         type: "success",
         orderId,
+        tracking_id,
       });
     }
   } catch (err) {
@@ -283,7 +341,7 @@ const handlePlaceOrder = async (
 
 // "Success" | "Failure" | "Aborted" | "Invalid" | "Timeout"
 
-const checkIfPending = (orderId: string) => {
+export const checkIfPending = (orderId: string, tracking_id: string) => {
   setTimeout(async () => {
     try {
       console.log("check");
@@ -293,7 +351,10 @@ const checkIfPending = (orderId: string) => {
         return;
       }
 
-      if (!payment.paymentInfo.length) {
+      const findTransaction = payment.paymentInfo.find(
+        (trans) => trans.tracking_id === tracking_id
+      );
+      if (findTransaction && findTransaction.order_status === "Pending") {
         const { working_key, access_code } = await getPayZappCredentials();
         //Generate Md5 hash for the key and then convert in base64 string
         var md5 = crypto.createHash("md5").update(working_key).digest();
@@ -324,65 +385,87 @@ const checkIfPending = (orderId: string) => {
               total_records: number;
             };
             if (!value.total_records || !value.order_Status_List.length) {
-              payment.paymentInfo.push({
-                order_status: "Timeout",
-                payment_mode: "PayZapp",
-                trans_date: new Date().toString(),
-              });
+              payment.paymentInfo.map((val) =>
+                val.tracking_id === tracking_id
+                  ? (val.order_status = "Timeout")
+                  : val
+              );
               await payment.save();
               return;
             }
 
-            await Promise.all(
-              value.order_Status_List.map(async (order) => {
-                let amount = order.order_amt;
-                let tracking_id = order.reference_no.toString();
-                let bank_ref_no = order.order_bank_ref_no;
-                let card_name = order.order_card_name;
-                let payment_mode = order.payment_mode;
-                let currency = order.order_currncy;
-                let trans_date = order.order_status_date_time;
-
-                let order_status = "" as
-                  | "Success"
-                  | "Failure"
-                  | "Aborted"
-                  | "Invalid"
-                  | "Timeout"
-                  | "Pending";
-                switch (order.order_status) {
-                  case "Shipped":
-                    order_status = "Success";
-                    break;
-                  case "Unsuccessful":
-                    order_status = "Failure";
-                    break;
-                  case "Aborted":
-                    order_status = "Aborted";
-                    break;
-                  case "Invalid":
-                    order_status = "Invalid";
-                    break;
-                  case "Initiated":
-                    order_status = "Timeout";
-                    break;
-                  default:
-                    order_status = order.order_status;
-                }
-                payment.paymentInfo.push({
-                  amount,
-                  order_status,
-                  tracking_id,
-                  bank_ref_no,
-                  card_name,
-                  payment_mode,
-                  currency,
-                  trans_date,
-                });
-              })
+            const findTransInVal = value.order_Status_List.find(
+              (trans) => trans.merchant_param2 === tracking_id
             );
-            await payment.save();
+            if (!findTransInVal) {
+              payment.paymentInfo.map((val) =>
+                val.tracking_id === tracking_id
+                  ? (val.order_status = "Timeout")
+                  : val
+              );
+              await payment.save();
+              return;
+            }
+            if (findTransInVal.order_amt != findTransaction.amount) {
+              findTransaction.tracking_id =
+                findTransInVal.reference_no.toString();
+              findTransaction.bank_ref_no = findTransInVal.order_bank_ref_no;
+              findTransaction.card_name = findTransInVal.order_card_name;
+              findTransaction.payment_mode = findTransInVal.payment_mode;
+              findTransaction.currency = findTransInVal.order_currncy;
+              findTransaction.trans_date = Number.isNaN(
+                new Date(findTransInVal.order_status_date_time).getTime()
+              )
+                ? getValidDate(findTransInVal.order_status_date_time)
+                : findTransInVal.order_status_date_time;
+              findTransaction.order_status = "Failure";
+              findTransaction.errStack?.push(
+                `recieved amount ${findTransInVal.order_amt} does match database amount ${findTransaction.amount}`
+              );
+            } else {
+              findTransaction.amount = findTransInVal.order_amt;
+              findTransaction.tracking_id =
+                findTransInVal.reference_no.toString();
+              findTransaction.bank_ref_no = findTransInVal.order_bank_ref_no;
+              findTransaction.card_name = findTransInVal.order_card_name;
+              findTransaction.payment_mode = findTransInVal.payment_mode;
+              findTransaction.currency = findTransInVal.order_currncy;
+              findTransaction.trans_date = Number.isNaN(
+                new Date(findTransInVal.order_status_date_time).getTime()
+              )
+                ? getValidDate(findTransInVal.order_status_date_time)
+                : findTransInVal.order_status_date_time;
+
+              let order_status = "" as
+                | "Success"
+                | "Failure"
+                | "Aborted"
+                | "Invalid"
+                | "Timeout"
+                | "Pending";
+              switch (findTransInVal.order_status) {
+                case "Shipped":
+                  order_status = "Success";
+                  break;
+                case "Unsuccessful":
+                  order_status = "Failure";
+                  break;
+                case "Aborted":
+                  order_status = "Aborted";
+                  break;
+                case "Invalid":
+                  order_status = "Invalid";
+                  break;
+                case "Initiated":
+                  order_status = "Timeout";
+                  break;
+                default:
+                  order_status = findTransInVal.order_status;
+              }
+              findTransaction.order_status = order_status;
+            }
           });
+        await payment.save();
       }
     } catch (err) {
       logger.error("check payment for order " + orderId + " \nerror " + err);

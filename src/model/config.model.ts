@@ -20,7 +20,7 @@ export type ConfigType = {
     link: string;
   }[];
 
-  auth?: {
+  auth: {
     google?: {
       clientId: string;
       secret: string;
@@ -30,9 +30,14 @@ export type ConfigType = {
       clientId: string;
       secret: string;
     };
+
+    status?: {
+      google: boolean;
+      facebook: boolean;
+    };
   };
 
-  analytics?: {
+  analytics: {
     google: string;
   };
 };
@@ -68,6 +73,10 @@ const configSchema: Schema<ConfigDocument> = new Schema({
     facebook: {
       clientId: String,
       secret: String,
+    },
+    status: {
+      google: Boolean,
+      facebook: Boolean,
     },
   },
 

@@ -24,3 +24,11 @@ export const payment = z.object({
 });
 
 export type ReqConfigPayment = z.infer<typeof payment>;
+
+// Auth
+export const authSchema = z.object({
+  secret: z.string(),
+  clientId: z.string(),
+});
+
+export type ReqConfigAuth = z.infer<typeof authSchema>;
