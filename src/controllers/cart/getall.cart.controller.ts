@@ -14,12 +14,12 @@ export const getCartProductsFromIds = async (
   }[]
 ) => {
   try {
-    let emptyArray: Types.ObjectId[] = [];
+    let emptyArray: { productId: Types.ObjectId; variant: string[] }[] = [];
     let filteredArray: GetAmountCart[] = [];
 
     for (const cartItem of cart) {
       const product = await ProductModel.findById(cartItem.productId);
-      const doesVariationExist = product?.varients.variations.filter(
+      const doesVariationExist = product?.varients.variations.find(
         (variant) => {
           return (
             JSON.stringify(variant.combinationString) ===
@@ -27,14 +27,22 @@ export const getCartProductsFromIds = async (
           );
         }
       );
-      if (product && doesVariationExist?.length) {
+
+      if (
+        product &&
+        doesVariationExist &&
+        doesVariationExist?.quantity - 1 >= 0
+      ) {
         filteredArray.push({
           product,
           variant: cartItem.variant,
           quantity: cartItem.quantity,
         });
       } else {
-        emptyArray.push(cartItem.productId);
+        emptyArray.push({
+          productId: cartItem.productId,
+          variant: cartItem.variant,
+        });
       }
     }
     return { filteredArray, emptyArray };
@@ -55,7 +63,12 @@ const cartItems = async (req: Request<{}, {}, TokenPayload>, res: Response) => {
 
     if (emptyArray && emptyArray.length !== 0) {
       user.product = user.product.filter(
-        (product) => !emptyArray.includes(product.productId)
+        (product) =>
+          !emptyArray.find(
+            (emp) =>
+              product.productId === emp.productId &&
+              JSON.stringify(product.variant) === JSON.stringify(emp.variant)
+          )
       );
       await user.save();
     }

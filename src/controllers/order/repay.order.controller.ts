@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { encrypt } from "../CCAV/utils/ccav.utils";
 import PaymentModel from "../../model/payment.model";
 import { checkIfPending } from "./create.order.controller";
+import { v4 as uuid } from "uuid";
 
 const handleRepay = async (
   req: Request<{}, {}, { orderId: string }>,
@@ -22,6 +23,7 @@ const handleRepay = async (
     const { billingAddress, shippingAddress, orderId, orderInfo, secret } =
       payment;
     const { Amount } = orderInfo;
+    const tracking_id = uuid();
 
     const { merchant_id, access_code, working_key } =
       await getPayZappCredentials();
@@ -40,11 +42,12 @@ const handleRepay = async (
     ]).toString("base64");
 
     const billingAddressQuery = `billing_name=${billingAddress.name}&billing_address=${billingAddress.address}&billing_city=${billingAddress.city}&billing_state=${billingAddress.state}&billing_zip=${billingAddress.zip}&billing_country=${billingAddress.country}&billing_tel=${billingAddress.tel}&billing_email=${billingAddress.email}`;
-    const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}&merchant_param1=${secret}`;
-    const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${Amount}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}`;
+    const ShippingAddressQuery = `delivery_name=${shippingAddress.name}&delivery_address=${shippingAddress.address}&delivery_city=${shippingAddress.city}&delivery_state=${shippingAddress.state}&delivery_zip=${shippingAddress.zip}&delivery_country=${shippingAddress.country}&delivery_tel=${shippingAddress.tel}`;
+    const merchantParams = `merchant_param1=${secret}&merchant_param2=${tracking_id}`;
+    const encString = `merchant_id=${merchant_id}&order_id=${orderId}&currency=INR&amount=${Amount}&redirect_url=${redirect_url}&cancel_url=${cancel_url}&${billingAddressQuery}&${ShippingAddressQuery}&${merchantParams}`;
     const encRequest = encrypt(encString, keyBase64, ivBase64);
 
-    checkIfPending(orderId);
+    checkIfPending(orderId, tracking_id);
 
     return res.status(200).json({
       link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,

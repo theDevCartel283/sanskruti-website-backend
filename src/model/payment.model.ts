@@ -29,6 +29,7 @@ interface PaymentInfo {
   currency?: string;
   trans_date?: string;
   amount?: number;
+  errStack?: string[];
 }
 
 export interface CCAveneueResponse {
@@ -192,6 +193,11 @@ const paymentSchema: Schema<PaymentDocument> = new mongoose.Schema({
       amount: {
         type: Number,
       },
+      errStack: [
+        {
+          type: String,
+        },
+      ],
     },
   ],
 });
