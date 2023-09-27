@@ -193,7 +193,7 @@ const handlePlaceOrder = async (
             }
           }
         });
-        return { orderItem, combination };
+        return { orderItem };
       })
     );
 
@@ -209,20 +209,6 @@ const handlePlaceOrder = async (
         orders.map(async (or) => {
           if (!or) return false;
           await or.orderItem.save();
-          const foundProd = await ProductModel.findById(
-            or.orderItem.product.id
-          );
-          foundProd?.varients.variations.map((varie) => {
-            if (
-              JSON.stringify(varie.combinationString) ===
-              JSON.stringify(or.combination.combinationString)
-            ) {
-              varie.quantity -= or.orderItem.product.quantity;
-              console.log(varie.quantity);
-            }
-          });
-          console.log(JSON.stringify(foundProd?.varients.variations));
-          await foundProd?.save();
           return true;
         })
       );
