@@ -147,6 +147,8 @@ router.put(
   orderController.handleUpdateOrderFromAdmin
 );
 
+router.put("/updatecod", orderController.handleUpdatePayStatus);
+
 // coupon
 router.get("/allCoupons", couponController.getallCoupons);
 router.get("/CouponDetail", couponController.GetCouponDetails);

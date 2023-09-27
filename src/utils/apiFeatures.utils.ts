@@ -135,6 +135,7 @@ class ApiFeatures {
 
   orderFilter(orderArr: any, paymentArr: any) {
     const queryCopy = { ...this.queryStr };
+    console.log(queryCopy);
     const removeFields = ["keyword", "page", "limit"];
     removeFields.forEach((key) => delete queryCopy[key]);
     const orders = orderArr.map((order: any) => {
@@ -162,21 +163,145 @@ class ApiFeatures {
       this.query = result;
       return this;
     } else if (queryCopy.date === "" && queryCopy.status !== "") {
-      const result = orders.filter((item: any) => {
-        return item.order.deliveryInfo.status === queryCopy.status;
-      });
-      this.query = result;
-      return this;
+      let result;
+      if (queryCopy.status === "On delivery") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return item.order.deliveryInfo.status === queryCopy.type;
+          });
+          this.query = result;
+          return this;
+        } else {
+          const result = orders.filter((item: any) => {
+            return true;
+          });
+          this.query = result;
+          return this;
+        }
+      } else if (queryCopy.status === "On return") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.returnInfo.isReturned.toString() === "true" &&
+              item.order.returnInfo.status === queryCopy.type
+            );
+          });
+          this.query = result;
+          return this;
+        } else {
+          result = orders.filter((item: any) => {
+            return item.order.returnInfo.isReturned.toString() === "true";
+          });
+          this.query = result;
+          return this;
+        }
+      } else if (queryCopy.status === "Cancelled") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.cancellationInfo.isCancelled.toString() === "true" &&
+              item.order.cancellationInfo.Amount_refunded.toString() ===
+                queryCopy.type
+            );
+          });
+          this.query = result;
+          return this;
+        } else {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.cancellationInfo.isCancelled.toString() === "true"
+            );
+          });
+          this.query = result;
+          return this;
+        }
+      } else {
+        const result = orders.filter((item: any) => {
+          return true;
+        });
+        this.query = result;
+        return this;
+      }
     } else {
-      const result = orders.filter((item: any) => {
-        return (
-          item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
-            queryCopy.date &&
-          item.order.deliveryInfo.status === queryCopy.status
-        );
-      });
-      this.query = result;
-      return this;
+      let result;
+      if (queryCopy.status === "On delivery") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.deliveryInfo.status === queryCopy.type &&
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+                queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        } else {
+          const result = orders.filter((item: any) => {
+            return (
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+              queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        }
+      } else if (queryCopy.status === "On return") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.returnInfo.isReturned.toString() === "true" &&
+              item.order.returnInfo.status === queryCopy.type &&
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+                queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        } else {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.returnInfo.isReturned.toString() === "true" &&
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+                queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        }
+      } else if (queryCopy.status === "Cancelled") {
+        if (queryCopy.type !== "") {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.cancellationInfo.isCancelled.toString() === "true" &&
+              item.order.cancellationInfo.Amount_refunded.toString() ===
+                queryCopy.type &&
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+                queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        } else {
+          result = orders.filter((item: any) => {
+            return (
+              item.order.cancellationInfo.isCancelled.toString() === "true" &&
+              item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+                queryCopy.date
+            );
+          });
+          this.query = result;
+          return this;
+        }
+      } else {
+        const result = orders.filter((item: any) => {
+          return (
+            item.payment?.orderInfo.Date.toISOString().substring(0, 10) ===
+            queryCopy.date
+          );
+        });
+        this.query = result;
+        return this;
+      }
     }
   }
 

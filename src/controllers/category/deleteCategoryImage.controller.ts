@@ -27,7 +27,6 @@ const deleteCategoryImage = async (req: Request, res: Response) => {
     });
     res.status(200).json({
       type: "success",
-      message: "category image deleted successfully",
       // category,
     });
   } else {
