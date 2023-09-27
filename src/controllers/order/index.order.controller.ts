@@ -8,7 +8,7 @@ import handleCancellationRequest from "./requestCancel.order.contoller";
 import handleUpdateOrderFromAdmin from "./update.order.controller";
 import handleGetPaymentStatus from "./getPaymentStatus.order.controller";
 
-import handleUpdatePayStatus from "./codStatus.order.controller"
+import handleUpdatePayStatus from "./codStatus.order.controller";
 import handleRepay from "./repay.order.controller";
 
 export {
@@ -20,9 +20,6 @@ export {
   handleCancellationRequest,
   handleUpdateOrderFromAdmin,
   handleGetPaymentStatus,
-<<<<<<< HEAD
   handleUpdatePayStatus,
-=======
   handleRepay,
->>>>>>> c829b681e70384f530af0a6f91b45c9c1c13d159
 };
