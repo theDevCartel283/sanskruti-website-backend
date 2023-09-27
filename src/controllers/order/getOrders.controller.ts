@@ -27,6 +27,7 @@ const getOrder = async (req: Request, res: Response) => {
       };
     });
     const orderCount = orders.length;
+    console.log(orderCount);
     return res.status(200).json({
       orders,
       orderCount,
