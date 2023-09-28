@@ -340,21 +340,26 @@ export const getOrderFormat = ({
                                                             bankDetails?.payment_mode
                                                           }
                                                       </td>
-                                                      ${
-                                                        bankDetails?.card_name
-                                                          ? `
-                                                          <td style="width: 45%; font-size: 14px; line-height: 18px; color: #666666;">
-                                                              Card Name: ${bankDetails?.card_name}
-                                                          </td>`
-                                                          : ""
-                                                      }
                                                   </tr>
+                                              ${
+                                                bankDetails?.card_name
+                                                  ? `
+                                                  <tr>
+                                                      <td style="width: 45%; font-size: 14px; line-height: 18px; color: #666666;">
+                                                          Card Name: ${bankDetails?.card_name}
+                                                      </td>
+                                                  </tr>
+                                                  `
+                                                  : ""
+                                              }
                                                   <tr>
                                                       <td style="width: 55%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;">
                                                           Currency: ${
                                                             bankDetails?.currency
                                                           }
                                                       </td>
+                                                  </tr>
+                                                  <tr>
                                                       <td style="width: 45%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;">
                                                           Amount: ${
                                                             bankDetails?.amount
