@@ -15,7 +15,6 @@ export const getOrderFormat = ({
   bankDetails,
 }: {
   username: string;
-
   orderId: string;
   date: Date;
   products: {
@@ -31,7 +30,7 @@ export const getOrderFormat = ({
   paymentMethod: string;
   shippingAddress: Address;
   billingAddress: Address;
-  bankDetails: {
+  bankDetails?: {
     bank_ref_no: string | null;
     payment_mode: string | null;
     card_name: string | null;
@@ -331,21 +330,21 @@ export const getOrderFormat = ({
                                                   <tr>
                                                       <td style="width: 100%; font-size: 14px; line-height: 18px; color: #666666;">
                                                           Bank Reference Number: ${
-                                                            bankDetails.bank_ref_no
+                                                            bankDetails?.bank_ref_no
                                                           }
                                                       </td>
                                                   </tr>
                                                   <tr>
                                                       <td style="width: 55%; font-size: 14px; line-height: 18px; color: #666666;">
                                                           Payment mode: ${
-                                                            bankDetails.payment_mode
+                                                            bankDetails?.payment_mode
                                                           }
                                                       </td>
                                                       ${
-                                                        bankDetails.card_name
+                                                        bankDetails?.card_name
                                                           ? `
                                                           <td style="width: 45%; font-size: 14px; line-height: 18px; color: #666666;">
-                                                              Card Name: ${bankDetails.card_name}
+                                                              Card Name: ${bankDetails?.card_name}
                                                           </td>`
                                                           : ""
                                                       }
@@ -353,12 +352,12 @@ export const getOrderFormat = ({
                                                   <tr>
                                                       <td style="width: 55%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;">
                                                           Currency: ${
-                                                            bankDetails.currency
+                                                            bankDetails?.currency
                                                           }
                                                       </td>
                                                       <td style="width: 45%; font-size: 14px; line-height: 18px; color: #666666; padding-bottom: 10px;">
                                                           Amount: ${
-                                                            bankDetails.amount
+                                                            bankDetails?.amount
                                                           }
                                                       </td>
                                                   </tr>
