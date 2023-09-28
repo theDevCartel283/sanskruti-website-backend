@@ -287,12 +287,22 @@ const handlePlaceOrder = async (
               JSON.stringify(variation.combinationString) ===
               JSON.stringify(product.variant)
           )! || product.product?.varients?.variations[0]!;
+        const variants = _.omit(combination, [
+          "price",
+          "discount",
+          "combinationString",
+          "quantity",
+        ]);
+        const values = Object.values(variants) as string[];
+        const variation = Object.keys(variants)
+          .map((key, index) => ({ key, value: values[index] }))
+          .filter((val) => !!val.value && !!val.key);
         return {
           image: product.product?.images[0],
           name: product.product?.name,
           quantity: product.quantity,
           price: combination.price,
-          variation: combination.combinationString,
+          variation,
         };
       });
       sendEmail({
