@@ -112,6 +112,7 @@ const handleCCAVResponse = async (
 
     for (const pay of payment.paymentInfo) {
       if (pay.tracking_id === result.merchant_param2) {
+        pay.changes = (pay.changes || 0) + 1;
         if (result.merchant_param1 !== payment.secret) {
           pay.order_status = "Failure";
           pay.errStack?.push(
