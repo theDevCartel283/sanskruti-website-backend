@@ -24,6 +24,14 @@ const handleRepay = async (
       payment;
     const { Amount } = orderInfo;
     const tracking_id = uuid();
+    payment.paymentInfo.push({
+      amount: Amount,
+      currency: "INR",
+      order_status: "Pending",
+      trans_date: new Date().toString(),
+      tracking_id,
+    });
+    await payment.save();
 
     const { merchant_id, access_code, working_key } =
       await getPayZappCredentials();
