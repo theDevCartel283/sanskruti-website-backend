@@ -96,12 +96,6 @@ const handleCCAVResponse = async (
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
     }
-    if (result.merchant_param1 !== payment.secret)
-      return res
-        .status(500)
-        .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
-        );
 
     const user = await UserModel.findById(payment.userId);
     if (!user) {
@@ -116,8 +110,20 @@ const handleCCAVResponse = async (
       ? getValidDate(result.trans_date)
       : result.trans_date;
 
-    payment.paymentInfo.map((pay) => {
+    for (const pay of payment.paymentInfo) {
       if (pay.tracking_id === result.merchant_param2) {
+        if (result.merchant_param1 !== payment.secret) {
+          pay.order_status = "Failure";
+          pay.errStack?.push(
+            `secrets don't match responce: ${JSON.stringify(result)}`
+          );
+          await payment.save();
+          return res
+            .status(500)
+            .redirect(
+              `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+            );
+        }
         if (Number(pay.amount?.toString()) !== Number(result.amount)) {
           pay.order_status = "Failure";
           pay.errStack?.push(
@@ -135,7 +141,7 @@ const handleCCAVResponse = async (
         pay.tracking_id = result.tracking_id;
         pay.trans_date = validDate;
       }
-    });
+    }
 
     await payment.save();
     if (result.order_status == "Success") {
