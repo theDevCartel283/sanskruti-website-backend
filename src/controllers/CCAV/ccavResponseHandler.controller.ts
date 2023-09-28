@@ -167,6 +167,13 @@ const handleCCAVResponse = async (
           products: productsArray,
           shippingAddress: payment.shippingAddress,
           billingAddress: payment.billingAddress,
+          bankDetails: {
+            amount: result.amount,
+            payment_mode: result.payment_mode,
+            card_name: result.card_name,
+            bank_ref_no: result.bank_ref_no,
+            currency: result.currency,
+          },
         }),
       });
       return res
