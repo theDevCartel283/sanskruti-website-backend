@@ -9,6 +9,9 @@ import cartModel from "../../model/cart.model";
 import ProductModel from "../../model/product.model";
 import { getPayZappCredentials } from "../config/payzapp.config.controller";
 import { getValidDate } from "../../utils/getValidDate";
+import UserModel from "../../model/user.model";
+import { getOrderFormat } from "../../utils/email/orderFormat";
+import sendEmail from "../../utils/email/sendEmail";
 
 const resultSchema = z.object({
   order_id: z.string(),
@@ -81,9 +84,11 @@ const handleCCAVResponse = async (
   }
   try {
     const payment = await PaymentModel.findOne({ orderId: result.order_id });
-    if (!payment) {
+    const orders = await orderModel.find({ orderId: result.order_id });
+    if (!payment || !orders) {
       logger.error(
-        "ccva enc responce payment not found order_id:" + result.order_id
+        "ccva enc responce payment or orders not found not found for order_id:" +
+          result.order_id
       );
       return res
         .status(500)
@@ -98,6 +103,15 @@ const handleCCAVResponse = async (
           `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
 
+    const user = await UserModel.findById(payment.userId);
+    if (!user) {
+      logger.error("user not found for order id: " + result.order_id);
+      return res
+        .status(500)
+        .redirect(
+          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+        );
+    }
     const validDate = Number.isNaN(new Date(result.trans_date).getTime())
       ? getValidDate(result.trans_date)
       : result.trans_date;
@@ -125,6 +139,36 @@ const handleCCAVResponse = async (
 
     await payment.save();
     if (result.order_status == "Success") {
+      const productsArray = orders.map(({ product }) => {
+        const variants = product.varient?.variations;
+        const values = Object.values(variants) as string[];
+        const variation = Object.keys(variants)
+          .map((key, index) => ({ key, value: values[index] }))
+          .filter((val) => !!val.value && !!val.key);
+        return {
+          image: product.images[0],
+          name: product.name,
+          quantity: product.quantity,
+          price: product.varient.price,
+          variation,
+        };
+      });
+      sendEmail({
+        email: user.email!,
+        subject: "Order Placed",
+        message: getOrderFormat({
+          username: user.username!,
+          orderId: payment.orderId,
+          date: payment.orderInfo.Date,
+          SubTotal: payment.orderInfo.SubTotal,
+          discount: payment.orderInfo.Totaldiscount || 0,
+          TotalAmount: payment.orderInfo.Amount,
+          paymentMethod: payment.paymentMethod,
+          products: productsArray,
+          shippingAddress: payment.shippingAddress,
+          billingAddress: payment.billingAddress,
+        }),
+      });
       return res
         .status(200)
         .redirect(
