@@ -6,6 +6,9 @@ export const allowedOrigins = [
   "https://admin.sanskrutinx.in",
   "https://sanskrutinx.in",
   "https://cdn.sanskrutinx.in",
+  "https://admin.sanskrutinx.com",
+  "https://sanskrutinx.com",
+  "https://cdn.sanskrutinx.com",
 ];
 const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {

@@ -51,7 +51,7 @@ router.get(
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(302, "https://sanskrutinx.in");
+      res.redirect(302, "https://sanskrutinx.com");
     } else {
       res.redirect("/auth/login");
     }
@@ -86,7 +86,7 @@ router.get(
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect(302, "https://sanskrutinx.in");
+      res.redirect(302, "https://sanskrutinx.com");
     } else {
       res.redirect("/auth/login");
     }

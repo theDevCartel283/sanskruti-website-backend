@@ -8,7 +8,7 @@ export const getVerifyEmailFormat = (
 ) => {
   const token = signToken("EMAIL_TOKEN_PRIVATE", id, provider, "USER");
 
-  const link = `https://sanskrutinx.in/auth/verifyEmail?token=${token}`;
+  const link = `https://sanskrutinx.com/auth/verifyEmail?token=${token}`;
 
   return `
   <div style="max-width: 30rem; margin: auto">

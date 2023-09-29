@@ -80,7 +80,7 @@ const handleCCAVResponse = async (
     logger.error("ccva enc responce err result: " + JSON.stringify(result));
     return res
       .status(500)
-      .redirect(`https://sanskrutinx.in/user/order/status?orderId=${orderNo}`);
+      .redirect(`https://sanskrutinx.com/user/order/status?orderId=${orderNo}`);
   }
   try {
     const payment = await PaymentModel.findOne({ orderId: result.order_id });
@@ -93,7 +93,7 @@ const handleCCAVResponse = async (
       return res
         .status(500)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+          `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
     }
 
@@ -103,7 +103,7 @@ const handleCCAVResponse = async (
       return res
         .status(500)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+          `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
     }
     const validDate = Number.isNaN(new Date(result.trans_date).getTime())
@@ -122,7 +122,7 @@ const handleCCAVResponse = async (
           return res
             .status(500)
             .redirect(
-              `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+              `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
             );
         }
         if (Number(pay.amount?.toString()) !== Number(result.amount)) {
@@ -186,7 +186,7 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+          `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
     } else {
       const orders = await orderModel.find({ orderId: orderNo });
@@ -220,7 +220,7 @@ const handleCCAVResponse = async (
       return res
         .status(200)
         .redirect(
-          `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+          `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
         );
     }
   } catch (err) {
@@ -228,7 +228,7 @@ const handleCCAVResponse = async (
     return res
       .status(500)
       .redirect(
-        `https://sanskrutinx.in/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
+        `https://sanskrutinx.com/user/order/status?orderId=${orderNo}&tracking_id=${result.tracking_id}`
       );
   }
 };

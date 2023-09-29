@@ -323,7 +323,7 @@ const handlePlaceOrder = async (
       });
 
       return res.status(200).send({
-        message: "Thank you for shopping at sanskrutinx.in",
+        message: "Thank you for shopping at sanskrutinx.com",
         type: "success",
         orderId,
         tracking_id,

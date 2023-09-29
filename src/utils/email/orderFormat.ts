@@ -137,10 +137,10 @@ export const getOrderFormat = ({
                                               <tbody>
                                                   <tr>
                                                     <td style="padding-bottom: 10px">
-                                                      <a href="https://sanskrutinx.in/" width="250"
+                                                      <a href="https://sanskrutinx.com/" width="250"
                                                         ><img
                                                           width="250"
-                                                          src="https://sanskrutinx.in/assets/sanskruti-logo.png"
+                                                          src="https://sanskrutinx.com/assets/sanskruti-logo.png"
                                                           alt="SanskrutiNx"
                                                       /></a>
                                                     </td>
