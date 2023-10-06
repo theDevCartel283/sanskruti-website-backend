@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
 import { TokenPayload } from "../../utils/jwt.utils";
-import orderModel from "../../model/order.model";
+import orderModel, { Order } from "../../model/order.model";
+import ProductModel from "../../model/product.model";
+import { string } from "zod";
 
 const handleCancellationRequest = async (
   req: Request<{ id: string }, {}, TokenPayload>,
@@ -33,6 +35,10 @@ const handleCancellationRequest = async (
         });
       }
 
+      const { message, type } = await addProductQuantityBack(order);
+      if (message && type)
+        return res.status(400).send({ message, type, order });
+
       order.cancellationInfo.isCancelled = true;
       order.cancellationInfo.date = new Date();
       const newOrder = await order.save({ validateBeforeSave: true });
@@ -51,6 +57,10 @@ const handleCancellationRequest = async (
       !order.cancellationInfo.isCancelled &&
       !order.returnInfo.isReturned
     ) {
+      const { message, type } = await addProductQuantityBack(order);
+      if (message && type)
+        return res.status(400).send({ message, type, order });
+
       order.returnInfo.isReturned = true;
       order.returnInfo.status = "Pending";
       order.returnInfo.date = new Date();
@@ -82,6 +92,10 @@ const handleCancellationRequest = async (
         });
       }
 
+      const { message, type } = await removeProductQuantityBack(order);
+      if (message && type)
+        return res.status(400).send({ message, type, order });
+
       order.cancellationInfo.isCancelled = true;
       order.cancellationInfo.date = new Date();
       const newOrder = await order.save({ validateBeforeSave: true });
@@ -107,3 +121,53 @@ const handleCancellationRequest = async (
 };
 
 export default handleCancellationRequest;
+
+export const addProductQuantityBack = async (order: Order) => {
+  const product = await ProductModel.findById(order.product.id);
+
+  if (!product)
+    return {
+      message: "something went wrong",
+      type: "error",
+    };
+
+  const variant = Object.values(order.product.varient.variations).filter(
+    (item) => item
+  ) as string[];
+  product.varients = {
+    attributes: product.varients.attributes,
+    variations: product.varients.variations.map((varie) => {
+      if (JSON.stringify(varie.combinationString) === JSON.stringify(variant)) {
+        varie.quantity = varie.quantity + order.product.quantity;
+      }
+      return varie;
+    }),
+  };
+  await product.save();
+  return {};
+};
+
+export const removeProductQuantityBack = async (order: Order) => {
+  const product = await ProductModel.findById(order.product.id);
+
+  if (!product)
+    return {
+      message: "something went wrong",
+      type: "error",
+    };
+
+  const variant = Object.values(order.product.varient.variations).filter(
+    (item) => item
+  ) as string[];
+  product.varients = {
+    attributes: product.varients.attributes,
+    variations: product.varients.variations.map((varie) => {
+      if (JSON.stringify(varie.combinationString) === JSON.stringify(variant)) {
+        varie.quantity = varie.quantity - order.product.quantity;
+      }
+      return varie;
+    }),
+  };
+  await product.save();
+  return {};
+};
