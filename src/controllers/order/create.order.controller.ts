@@ -183,17 +183,23 @@ const handlePlaceOrder = async (
           },
         });
 
-        foundProd.varients.variations.map((varie) => {
-          if (
-            JSON.stringify(varie.combinationString) ===
-            JSON.stringify(combination.combinationString)
-          ) {
-            if (varie.quantity - prod.quantity < 0) {
-              errMessage.push(`product ${foundProd.name} out of stock`);
+        foundProd.varients = {
+          attributes: foundProd.varients.attributes,
+          variations: foundProd.varients.variations.map((varie) => {
+            if (
+              JSON.stringify(varie.combinationString) ===
+              JSON.stringify(combination.combinationString)
+            ) {
+              if (varie.quantity - prod.quantity < 0) {
+                errMessage.push(`product ${foundProd.name} out of stock`);
+              } else {
+                varie.quantity = varie.quantity - prod.quantity;
+              }
             }
-          }
-        });
-        return { orderItem };
+            return varie;
+          }),
+        };
+        return { orderItem, foundProd };
       })
     );
 
@@ -209,6 +215,7 @@ const handlePlaceOrder = async (
         orders.map(async (or) => {
           if (!or) return false;
           await or.orderItem.save();
+          await or.foundProd.save();
           return true;
         })
       );
