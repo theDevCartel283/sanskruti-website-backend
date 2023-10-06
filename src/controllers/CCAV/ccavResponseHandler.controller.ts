@@ -12,6 +12,7 @@ import { getValidDate } from "../../utils/getValidDate";
 import UserModel from "../../model/user.model";
 import { getOrderFormat } from "../../utils/email/orderFormat";
 import sendEmail from "../../utils/email/sendEmail";
+import { addProductQuantityBack } from "../order/requestCancel.order.contoller";
 
 const resultSchema = z.object({
   order_id: z.string(),
@@ -196,18 +197,11 @@ const handleCCAVResponse = async (
       await Promise.all(
         orders.map(async (order) => {
           const product = await ProductModel.findOne({ _id: order.product.id });
+          if (!product) return;
           const variant = Object.values(
             order.product.varient.variations
           ).filter((item) => item);
-          product?.varients.variations.map((varie) => {
-            if (
-              JSON.stringify(varie.combinationString) ===
-              JSON.stringify(variant)
-            ) {
-              varie.quantity += order.product.quantity;
-            }
-          });
-          product?.save();
+          await addProductQuantityBack(order);
           cart?.product.push({
             productId: product?._id,
             quantity: order.product.quantity,
