@@ -213,7 +213,6 @@ const handleCCAVResponse = async (
           const variant = Object.values(
             order.product.varient.variations
           ).filter((item) => item);
-          await addProductQuantityBack(order);
           cart?.product.push({
             productId: product?._id,
             quantity: order.product.quantity,
