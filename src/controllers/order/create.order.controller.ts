@@ -21,6 +21,7 @@ import { getAmounts } from "../../utils/getAmount";
 import axios from "axios";
 import { getValidDate } from "../../utils/getValidDate";
 import ProductModel from "../../model/product.model";
+import { removeProductQuantity } from "./requestCancel.order.contoller";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -199,7 +200,7 @@ const handlePlaceOrder = async (
             return varie;
           }),
         };
-        return { orderItem, foundProd };
+        return orderItem;
       })
     );
 
@@ -212,10 +213,9 @@ const handlePlaceOrder = async (
       });
     } else {
       await Promise.all(
-        orders.map(async (or) => {
-          if (!or) return false;
-          await or.orderItem.save();
-          await or.foundProd.save();
+        orders.map(async (order) => {
+          if (!order) return false;
+          await order.save();
           return true;
         })
       );
@@ -329,6 +329,13 @@ const handlePlaceOrder = async (
         }),
       });
 
+      await Promise.all(
+        orders.map(async (order) => {
+          if (!order) return false;
+          await removeProductQuantity(order);
+          return true;
+        })
+      );
       return res.status(200).send({
         message: "Thank you for shopping at sanskrutinx.com",
         type: "success",

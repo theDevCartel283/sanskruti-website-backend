@@ -12,7 +12,10 @@ import { getValidDate } from "../../utils/getValidDate";
 import UserModel from "../../model/user.model";
 import { getOrderFormat } from "../../utils/email/orderFormat";
 import sendEmail from "../../utils/email/sendEmail";
-import { addProductQuantityBack } from "../order/requestCancel.order.contoller";
+import {
+  addProductQuantityBack,
+  removeProductQuantity,
+} from "../order/requestCancel.order.contoller";
 
 const resultSchema = z.object({
   order_id: z.string(),
@@ -184,6 +187,15 @@ const handleCCAVResponse = async (
           },
         }),
       });
+
+      await Promise.all(
+        orders.map(async (order) => {
+          if (!order) return false;
+          await removeProductQuantity(order);
+          return true;
+        })
+      );
+
       return res
         .status(200)
         .redirect(

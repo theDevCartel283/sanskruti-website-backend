@@ -92,7 +92,7 @@ const handleCancellationRequest = async (
         });
       }
 
-      const { message, type } = await removeProductQuantityBack(order);
+      const { message, type } = await removeProductQuantity(order);
       if (message && type)
         return res.status(400).send({ message, type, order });
 
@@ -147,7 +147,7 @@ export const addProductQuantityBack = async (order: Order) => {
   return {};
 };
 
-export const removeProductQuantityBack = async (order: Order) => {
+export const removeProductQuantity = async (order: Order) => {
   const product = await ProductModel.findById(order.product.id);
 
   if (!product)
