@@ -40,6 +40,12 @@ import {
   handleStopFacebookAuth,
 } from "./auth.config.controllers";
 
+import {
+  handleDeleteWhatsappNumber,
+  handleGetWhatsappNumber,
+  handleSetWhatsappNumber,
+} from "./whatsapp.config.controller";
+
 export {
   // Social
   handleGetSocialConfig,
@@ -79,4 +85,9 @@ export {
   handleClearFacebookAuth,
   handleStartFacebookAuth,
   handleStopFacebookAuth,
+
+  // whatsapp
+  handleDeleteWhatsappNumber,
+  handleGetWhatsappNumber,
+  handleSetWhatsappNumber,
 };

@@ -40,6 +40,8 @@ export type ConfigType = {
   analytics: {
     google: string;
   };
+
+  whatsapp?: number;
 };
 
 interface ConfigDocument extends Document, ConfigType {}
@@ -83,6 +85,8 @@ const configSchema: Schema<ConfigDocument> = new Schema({
   analytics: {
     google: String,
   },
+
+  whatsapp: { type: Number },
 });
 
 const ConfigModel = model("Config", configSchema);

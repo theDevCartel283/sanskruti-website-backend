@@ -122,4 +122,17 @@ router
   )
   .delete(configController.handleClearFacebookAuth);
 
+router
+  .route("/config/whatsappNumber")
+  .get(configController.handleGetWhatsappNumber)
+  .post(
+    validateResources(
+      blankSchema,
+      z.object({ number: z.number() }),
+      blankSchema
+    ),
+    configController.handleSetWhatsappNumber
+  )
+  .delete(configController.handleDeleteWhatsappNumber);
+
 export default router;
