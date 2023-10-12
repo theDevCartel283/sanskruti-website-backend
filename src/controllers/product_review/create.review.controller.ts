@@ -1,8 +1,14 @@
 import { Request, Response } from "express";
 import { ReqReviewObject } from "../../schema/review.schema";
 import logger from "../../utils/logger.utils";
-import reviewModel, { Reviews } from "../../model/review.model";
+import {
+  ReviewDocument,
+  Reviews,
+  productRatingModel,
+  reviewModel,
+} from "../../model/review.model";
 import { TokenPayload } from "../../utils/jwt.utils";
+import ProductModel from "../../model/product.model";
 
 const handleCreateReview = async (
   req: Request<{}, {}, ReqReviewObject & TokenPayload>,
@@ -12,9 +18,9 @@ const handleCreateReview = async (
     req.body;
 
   try {
-    let reviews = await reviewModel.findOne({ product_id });
-    if (!reviews) {
-      reviews = new reviewModel({
+    let productRating = await productRatingModel.findOne({ product_id });
+    if (!productRating) {
+      productRating = new productRatingModel({
         product_id,
         totalRatings: 0,
         ratings: [],
@@ -27,20 +33,25 @@ const handleCreateReview = async (
         },
       });
     }
-    const userReview: Reviews = {
+    const product = await ProductModel.findById(product_id);
+    const userReview = new reviewModel({
       id: userUniqueIdentity.toString(),
+      product_id,
+      product_name: product?.name || "undefined",
+      product_image: product?.images[0] || "undefined",
       status: "Under review",
       username,
       title,
       rating,
       comment,
-    };
-    reviews.reviews.push(userReview);
+      notify: true,
+    });
 
-    reviews.ratingCounts[rating] += 1;
-    reviews.totalRatings += 1;
+    productRating.ratingCounts[rating] += 1;
+    productRating.totalRatings += 1;
 
-    await reviews.save();
+    await userReview.save();
+    await productRating.save();
 
     res.status(200).send({
       userReview,

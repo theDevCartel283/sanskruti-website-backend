@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import reviewModel from "../../model/review.model";
+import { reviewModel, productRatingModel } from "../../model/review.model";
 import { ReqReviewObject } from "../../schema/review.schema";
 import logger from "../../utils/logger.utils";
 import handleCreateReview from "./create.review.controller";
@@ -12,24 +12,42 @@ const updateReview = async (
   const { product_id, username, title, comment, rating, userUniqueIdentity } =
     req.body;
   try {
-    const reviews = await reviewModel.findOne({ product_id });
-
-    if (!reviews) {
-      return handleCreateReview(req, res);
+    const review = await reviewModel.findOne({
+      product_id,
+      id: userUniqueIdentity.toString(),
+    });
+    let productRating = await productRatingModel.findOne({ product_id });
+    if (!productRating) {
+      productRating = new productRatingModel({
+        product_id,
+        totalRatings: 0,
+        ratings: [],
+        ratingCounts: {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0,
+        },
+      });
     }
 
-    reviews.reviews.map((rev) => {
-      if (rev.id === userUniqueIdentity.toString()) {
-        reviews.ratingCounts[rev.rating] -= 1;
-        reviews.ratingCounts[rating] += 1;
-        rev.rating = rating;
-        rev.title = title;
-        rev.comment = comment;
-        rev.status = "Under review";
-      }
-    });
+    if (!review) {
+      return handleCreateReview(req, res);
+    }
+    if (productRating) {
+      if (productRating.ratingCounts[review.rating] - 1 >= 0)
+        productRating.ratingCounts[review.rating] -= 1;
+      productRating.ratingCounts[rating] += 1;
+    }
+    review.rating = rating;
+    review.title = title;
+    review.comment = comment;
+    review.status = "Under review";
+    review.notify = true;
+    await review.save();
 
-    await reviews.save();
+    await productRating.save();
     res.status(200).send({
       userReview: {
         id: userUniqueIdentity.toString(),

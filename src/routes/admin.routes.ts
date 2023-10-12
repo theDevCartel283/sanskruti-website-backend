@@ -10,6 +10,7 @@ import * as userController from "../controllers/user/index.user.controller";
 import * as orderController from "../controllers/order/index.order.controller";
 import * as couponController from "../controllers/Coupons/index.coupon.controller";
 import * as markdownController from "../controllers/markdowns/index.markdown.controller";
+import * as reviewController from "../controllers/product_review/index.review.controller";
 import { categoryDetails } from "../schema/category.schema";
 import validateResources from "../middleware/validateResources";
 import { blankSchema } from "../schema/blank.schema";
@@ -180,5 +181,12 @@ router.put(
   validateResources(blankSchema, markdownDetails, blankSchema),
   markdownController.addMarkdown
 );
+
+// reviews
+router.route("/reviews").post(reviewController.handleGetReviewFilters);
+router.route("/reviews/notify").post(reviewController.handleAdminNotifyStatus);
+router
+  .route("/reviews/status")
+  .post(reviewController.handleAdminUpdateReviewStatus);
 
 export default router;

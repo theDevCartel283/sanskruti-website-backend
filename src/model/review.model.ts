@@ -2,35 +2,45 @@ import mongoose, { Schema } from "mongoose";
 
 export interface Reviews {
   id: string;
+  product_id: string;
+  product_name: string;
+  product_image: string;
   username: string;
   title: string;
   rating: number;
   comment: string;
-  status: "Under review" | "Accepted";
+  status: "Under review" | "Accepted" | "Denied";
+  notify: boolean;
 }
+export interface ReviewDocument extends Reviews, Document {}
 
-export interface ProductRating extends Document {
+export interface ProductRating {
   product_id: string;
   totalRatings: number;
-  reviews: Reviews[];
   ratingCounts: {
     [key: number]: number;
   };
 }
+export interface ProductRatingDocument extends ProductRating, Document {}
 
-const reviewSchema = new Schema<ProductRating>({
+const reviewSchema = new Schema<ReviewDocument>({
+  id: String,
+  product_id: String,
+  product_name: String,
+  product_image: String,
+  username: String,
+  title: String,
+  rating: Number,
+  comment: String,
+  status: String,
+  notify: Boolean,
+});
+
+export const reviewModel = mongoose.model("Reviews", reviewSchema);
+
+const productRatingSchema = new Schema<ProductRatingDocument>({
   product_id: String,
   totalRatings: Number,
-  reviews: [
-    {
-      id: String,
-      username: String,
-      title: String,
-      rating: Number,
-      comment: String,
-      status: String,
-    },
-  ],
   ratingCounts: {
     1: Number,
     2: Number,
@@ -40,5 +50,4 @@ const reviewSchema = new Schema<ProductRating>({
   },
 });
 
-const reviewModel = mongoose.model("Reviews", reviewSchema);
-export default reviewModel;
+export const productRatingModel = mongoose.model("Rating", productRatingSchema);

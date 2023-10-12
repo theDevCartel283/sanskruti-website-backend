@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
-import reviewModel from "../../model/review.model";
+import { productRatingModel, reviewModel } from "../../model/review.model";
 import { TokenPayload } from "../../utils/jwt.utils";
 
 const handleDeleteReview = async (
@@ -10,21 +10,26 @@ const handleDeleteReview = async (
   try {
     const { id } = req.params;
     const { userUniqueIdentity } = req.body;
-    const reviews = await reviewModel.findOne({ product_id: id });
-    if (!reviews) {
+    const review = await reviewModel.findOne({
+      product_id: id,
+      id: userUniqueIdentity.toString(),
+    });
+    let productRating = await productRatingModel.findOne({ product_id: id });
+    if (!review) {
       return res.status(200).send({
         message: "review successfully deleted",
         type: "success",
       });
     }
-    reviews.reviews = reviews.reviews.filter((review) => {
-      if (review.id === userUniqueIdentity.toString()) {
-        reviews.ratingCounts[review.rating] -= 1;
-        reviews.totalRatings -= 1;
-      }
-      return review.id !== userUniqueIdentity.toString();
+    if (productRating) {
+      productRating.ratingCounts[review.rating] -= 1;
+      productRating.totalRatings -= 1;
+    }
+
+    await reviewModel.deleteOne({
+      product_id: id,
+      id: userUniqueIdentity.toString(),
     });
-    await reviews.save();
     return res.status(200).send({
       message: "Review successfully deleted",
       type: "success",
