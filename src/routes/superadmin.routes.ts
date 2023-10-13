@@ -40,6 +40,7 @@ router.get("/getBannnedUser", superadminController.handleGetBannedUser);
 // Config
 router
   .route("/config/social")
+  .get(configController.handleGetSocialConfig)
   .post(
     validateResources(blankSchema, social, blankSchema),
     configController.handleSetSocialConfig
@@ -52,6 +53,10 @@ router
     validateResources(blankSchema, blankSchema, socialId),
     configController.handleDeleteSocialConfig
   );
+
+router
+  .route("/config/social/deleteImage")
+  .delete(configController.deleteSocialImage);
 
 // PayZApp
 router

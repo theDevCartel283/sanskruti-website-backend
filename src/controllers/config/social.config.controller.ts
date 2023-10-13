@@ -6,18 +6,26 @@ import { v4 as uuid } from "uuid";
 import axios from "axios";
 
 export const handleGetSocialConfig = async (req: Request, res: Response) => {
+  const { id } = req.query;
+  console.log(req.query);
   try {
     let config = await ConfigModel.findOne({ type: "production" });
 
     if (!config) {
-      config = new ConfigModel({
-        type: "production",
+      res.status(500).json({
+        type: "error",
+        message: "config doesn't exist",
+      });
+    } else {
+      const data = config.social?.map((i) => {
+        return i;
+      });
+      res.status(200).json({
+        type: "success",
+        message: "",
+        data,
       });
     }
-
-    return {
-      social: config.social || [],
-    };
   } catch (err) {
     logger.error("social config error " + err);
     res.status(500).send({
@@ -97,21 +105,60 @@ export const handleUpdateSocialConfig = async (
   res: Response
 ) => {
   try {
-    const { id, media } = req.body;
+    console.log(req.body);
+    const { media, Image, imageName } = req.body;
+    const { id } = req.body;
+    const image = Image;
+    const temp = {
+      image: Image.split(",")[1],
+      imageName: imageName,
+    };
     let config = await ConfigModel.findOne({ type: "production" });
 
     if (!config) {
-      config = new ConfigModel({
-        type: "production",
+      res.status(500).json({
+        type: "error",
+        message: "config doesn't exist",
       });
+    } else {
+      if (image === "" || image.length < 100) {
+        config.social?.forEach((i) => {
+          if (i.id === id) {
+            i.link = Image;
+            i.media = media;
+          }
+        });
+        config.save();
+        res.status(200).json({
+          type: "success",
+          message: "socials updated successfully",
+        });
+      } else {
+        const response = await axios.post(
+          `${process.env.CDN_ENDPOINT}/cdn/v1/images/svgUpload`,
+          temp,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = response.data;
+        const path = data.path;
+        config.social?.forEach((i) => {
+          if (i.id === id) {
+            i.link = path;
+            i.media = media;
+          }
+        });
+        config.save();
+        res.status(200).json({
+          type: "success",
+          message: "category updated successfully",
+        });
+      }
     }
-
-    config.social?.map((social) => (social.id === id ? { id, media } : social));
-    await config.save();
-
-    return {
-      social: config.social || [],
-    };
   } catch (err) {
     logger.error("social config error " + err);
     res.status(500).send({
@@ -164,6 +211,37 @@ export const handleDeleteSocialConfig = async (
     res.status(500).send({
       message: "something went wrong",
       type: "info",
+    });
+  }
+};
+
+export const deleteSocialImage = async (req: Request, res: Response) => {
+  const { id } = req.query;
+  console.log(req.query);
+  let config = await ConfigModel.findOne({ type: "production" });
+  const url_params = req.query;
+  if (!config) {
+    res.status(500).json({
+      type: "error",
+      message: "config doesn't exist",
+    });
+  } else {
+    config.social?.forEach(async (i) => {
+      if (i.id === id) {
+        const response = await axios.delete(
+          `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${url_params.name}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        i.link = "";
+        await config?.save();
+      }
+    });
+    res.status(200).json({
+      type: "success",
     });
   }
 };
