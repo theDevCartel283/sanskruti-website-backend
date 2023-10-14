@@ -70,17 +70,21 @@ const getFilteredProducts = async (
       return inName || inMainCategory || inSubCategory;
     })
     .map((item) => {
+      let price = item.varients.variations[0].discount
+        ? item.varients.variations[0].price *
+          ((100 - (item.varients.variations[0].discount || 0)) / 100)
+        : item.varients.variations[0].price;
       if (maxInProducts === undefined) {
-        maxInProducts = item.varients.variations[0].price;
+        maxInProducts = price;
       }
       if (minInProducts === undefined) {
-        minInProducts = item.varients.variations[0].price;
+        minInProducts = price;
       }
-      if (item.varients.variations[0].price > maxInProducts) {
-        maxInProducts = item.varients.variations[0].price;
+      if (price > maxInProducts) {
+        maxInProducts = price;
       }
-      if (item.varients.variations[0].price < minInProducts) {
-        minInProducts = item.varients.variations[0].price;
+      if (price < minInProducts) {
+        minInProducts = price;
       }
       return item;
     })
