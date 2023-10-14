@@ -9,24 +9,41 @@ const getTagsArray = (obj: Object) => {
 
   const tagsArray = [];
   const variantTagsArray: { [key: string]: string } = {};
+  let min = undefined;
+  let max = undefined;
 
   for (let i = 0; i < keys.length; i++) {
     let searchKey = `${keys[i]}`;
+
+    if (keys[i].startsWith("price.min") && !Number.isNaN(Number(values[i]))) {
+      min = Number(values[i]);
+      continue;
+    }
+
+    if (keys[i].startsWith("price.max") && !Number.isNaN(Number(values[i]))) {
+      max = Number(values[i]);
+      continue;
+    }
 
     keys[i].startsWith("var.")
       ? (variantTagsArray[searchKey.slice(4)] = values[i])
       : tagsArray.push({ [searchKey]: values[i] });
   }
-  return { tagsArray, variantTagsArray };
+  return { tagsArray, variantTagsArray, min, max };
 };
 
 const getFilteredProducts = async (
   products: ProductDocument[],
   variantTagsArray: Object,
-  search: string
+  search: string,
+  min?: number,
+  max?: number
 ) => {
   const keys = Object.keys(variantTagsArray);
   const values = Object.values(variantTagsArray) as string[];
+
+  let minInProducts: number | undefined = undefined;
+  let maxInProducts: number | undefined = undefined;
 
   const filteredProducts = products
     .filter((product) => {
@@ -51,8 +68,32 @@ const getFilteredProducts = async (
         search.toLowerCase()
       );
       return inName || inMainCategory || inSubCategory;
+    })
+    .map((item) => {
+      if (maxInProducts === undefined) {
+        maxInProducts = item.varients.variations[0].price;
+      }
+      if (minInProducts === undefined) {
+        minInProducts = item.varients.variations[0].price;
+      }
+      if (item.varients.variations[0].price > maxInProducts) {
+        maxInProducts = item.varients.variations[0].price;
+      }
+      if (item.varients.variations[0].price < minInProducts) {
+        minInProducts = item.varients.variations[0].price;
+      }
+      return item;
+    })
+    .filter((item) => {
+      if (max && item.varients.variations[0].price > max) {
+        return false;
+      }
+      if (min && item.varients.variations[0].price < min) {
+        return false;
+      }
+      return true;
     });
-  return filteredProducts;
+  return { filteredProducts, minInProducts, maxInProducts };
 };
 
 export const getallProductsFromSearchFilters = async (
@@ -66,7 +107,7 @@ export const getallProductsFromSearchFilters = async (
   const skip = (page - 1) * limit;
 
   let tags = _.omit(req.query, ["page", "search"]);
-  const { tagsArray, variantTagsArray } = getTagsArray(tags);
+  const { tagsArray, variantTagsArray, max, min } = getTagsArray(tags);
 
   const unFilteredProducts =
     tagsArray.length === 0
@@ -75,10 +116,16 @@ export const getallProductsFromSearchFilters = async (
           $and: tagsArray,
         });
 
-  const products = await getFilteredProducts(
+  const {
+    filteredProducts: products,
+    maxInProducts,
+    minInProducts,
+  } = await getFilteredProducts(
     unFilteredProducts,
     variantTagsArray,
-    search
+    search,
+    min,
+    max
   );
   const totalPages = Math.ceil(products.length / limit);
   const paginatedProducts =
@@ -91,6 +138,8 @@ export const getallProductsFromSearchFilters = async (
     totalPages,
     currentPage: page,
     products: paginatedProducts,
+    minValue: minInProducts,
+    maxValue: maxInProducts,
   });
 };
 

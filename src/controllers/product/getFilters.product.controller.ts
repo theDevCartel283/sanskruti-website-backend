@@ -9,39 +9,81 @@ const getTagsArray = (obj: Object) => {
 
   const tagsArray = [];
   const variantTagsArray: { [key: string]: string } = {};
+  let min = undefined;
+  let max = undefined;
 
   for (let i = 0; i < keys.length; i++) {
     let searchKey = `${keys[i]}`;
+
+    if (keys[i].startsWith("price.min") && !Number.isNaN(Number(values[i]))) {
+      min = Number(values[i]);
+      continue;
+    }
+
+    if (keys[i].startsWith("price.max") && !Number.isNaN(Number(values[i]))) {
+      max = Number(values[i]);
+      continue;
+    }
 
     keys[i].startsWith("var.")
       ? (variantTagsArray[searchKey.slice(4)] = values[i])
       : tagsArray.push({ [searchKey]: values[i] });
   }
-  return { tagsArray, variantTagsArray };
+  return { tagsArray, variantTagsArray, min, max };
 };
 
 const getFilteredProducts = async (
   products: ProductDocument[],
-  variantTagsArray: Object
+  variantTagsArray: Object,
+  min?: number,
+  max?: number
 ) => {
   const keys = Object.keys(variantTagsArray);
   const values = Object.values(variantTagsArray) as string[];
 
-  const filteredProducts = products.filter((product) => {
-    const allTrue = keys.map((key, index) => {
-      const attribute = product.varients.attributes.find(
-        (attr) => attr.name === key
-      );
-      if (!attribute) return false;
+  let minInProducts: number | undefined = undefined;
+  let maxInProducts: number | undefined = undefined;
 
-      return !!attribute.childern.find(
-        (child) => child.value === values[index] && child.state
-      );
+  const filteredProducts = products
+    .filter((product) => {
+      const allTrue = keys.map((key, index) => {
+        const attribute = product.varients.attributes.find(
+          (attr) => attr.name === key
+        );
+        if (!attribute) return false;
+
+        return !!attribute.childern.find(
+          (child) => child.value === values[index] && child.state
+        );
+      });
+
+      return allTrue.every((val) => val);
+    })
+    .map((item) => {
+      if (maxInProducts === undefined) {
+        maxInProducts = item.varients.variations[0].price;
+      }
+      if (minInProducts === undefined) {
+        minInProducts = item.varients.variations[0].price;
+      }
+      if (item.varients.variations[0].price > maxInProducts) {
+        maxInProducts = item.varients.variations[0].price;
+      }
+      if (item.varients.variations[0].price < minInProducts) {
+        minInProducts = item.varients.variations[0].price;
+      }
+      return item;
+    })
+    .filter((item) => {
+      if (max && item.varients.variations[0].price > max) {
+        return false;
+      }
+      if (min && item.varients.variations[0].price < min) {
+        return false;
+      }
+      return true;
     });
-
-    return allTrue.every((val) => val);
-  });
-  return filteredProducts;
+  return { filteredProducts, minInProducts, maxInProducts };
 };
 
 export const getallProductsFromFilters = async (
@@ -54,7 +96,7 @@ export const getallProductsFromFilters = async (
   const skip = (page - 1) * limit;
 
   let tags = _.omit(req.query, "page");
-  const { tagsArray, variantTagsArray } = getTagsArray(tags);
+  const { tagsArray, variantTagsArray, min, max } = getTagsArray(tags);
 
   const unFilteredProducts =
     tagsArray.length === 0
@@ -63,10 +105,11 @@ export const getallProductsFromFilters = async (
           $and: tagsArray,
         });
 
-  const products = await getFilteredProducts(
-    unFilteredProducts,
-    variantTagsArray
-  );
+  const {
+    filteredProducts: products,
+    maxInProducts,
+    minInProducts,
+  } = await getFilteredProducts(unFilteredProducts, variantTagsArray, min, max);
   const totalPages = Math.ceil(products.length / limit);
   const paginatedProducts =
     skip + limit < products.length
@@ -74,10 +117,13 @@ export const getallProductsFromFilters = async (
       : skip < products.length && products.length < skip + limit
       ? products.slice(skip)
       : [];
+
   res.status(200).json({
     totalPages,
     currentPage: page,
     products: paginatedProducts,
+    minValue: minInProducts,
+    maxValue: maxInProducts,
   });
 };
 
