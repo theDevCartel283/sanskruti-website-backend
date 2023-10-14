@@ -76,9 +76,8 @@ const getFilteredProducts = async (
     })
     .filter((item) => {
       let price = item.varients.variations[0].discount
-        ? item.varients.variations[0].price -
-          item.varients.variations[0].discount *
-            item.varients.variations[0].price
+        ? item.varients.variations[0].price *
+          ((100 - (item.varients.variations[0].discount || 0)) / 100)
         : item.varients.variations[0].price;
       if (max && price > max) {
         return false;
