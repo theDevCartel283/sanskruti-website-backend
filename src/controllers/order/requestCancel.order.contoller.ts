@@ -52,60 +52,60 @@ const handleCancellationRequest = async (
     }
 
     // condition 2: Return product request
-    if (
-      order.deliveryInfo?.status === "Delivered" &&
-      !order.cancellationInfo.isCancelled &&
-      !order.returnInfo.isReturned
-    ) {
-      const { message, type } = await addProductQuantityBack(order);
-      if (message && type)
-        return res.status(400).send({ message, type, order });
+    // if (
+    //   order.deliveryInfo?.status === "Delivered" &&
+    //   !order.cancellationInfo.isCancelled &&
+    //   !order.returnInfo.isReturned
+    // ) {
+    //   const { message, type } = await addProductQuantityBack(order);
+    //   if (message && type)
+    //     return res.status(400).send({ message, type, order });
 
-      order.returnInfo.isReturned = true;
-      order.returnInfo.status = "Pending";
-      order.returnInfo.date = new Date();
-      const newOrder = await order.save({ validateBeforeSave: true });
-      return res.status(200).send({
-        message: "Requested for product return",
-        type: "success",
-        content: "Your return request is currently under pending review.",
-        order: newOrder,
-      });
-    }
+    //   order.returnInfo.isReturned = true;
+    //   order.returnInfo.status = "Pending";
+    //   order.returnInfo.date = new Date();
+    //   const newOrder = await order.save({ validateBeforeSave: true });
+    //   return res.status(200).send({
+    //     message: "Requested for product return",
+    //     type: "success",
+    //     content: "Your return request is currently under pending review.",
+    //     order: newOrder,
+    //   });
+    // }
 
     // consdition 3: Cancel product return request
-    if (
-      order.deliveryInfo?.status === "Delivered" &&
-      !order.cancellationInfo.isCancelled &&
-      order.returnInfo.isReturned
-    ) {
-      if (
-        order.returnInfo.status !== "Pending" &&
-        order.returnInfo.status !== "Confirmed"
-      ) {
-        return res.status(200).send({
-          message: "Request is not cancellable",
-          type: "info",
-          content:
-            "Once return is out for pickup it is not cancellable. check our return policy for more details.",
-          order,
-        });
-      }
+    // if (
+    //   order.deliveryInfo?.status === "Delivered" &&
+    //   !order.cancellationInfo.isCancelled &&
+    //   order.returnInfo.isReturned
+    // ) {
+    //   if (
+    //     order.returnInfo.status !== "Pending" &&
+    //     order.returnInfo.status !== "Confirmed"
+    //   ) {
+    //     return res.status(200).send({
+    //       message: "Request is not cancellable",
+    //       type: "info",
+    //       content:
+    //         "Once return is out for pickup it is not cancellable. check our return policy for more details.",
+    //       order,
+    //     });
+    //   }
 
-      const { message, type } = await removeProductQuantity(order);
-      if (message && type)
-        return res.status(400).send({ message, type, order });
+    //   const { message, type } = await removeProductQuantity(order);
+    //   if (message && type)
+    //     return res.status(400).send({ message, type, order });
 
-      order.cancellationInfo.isCancelled = true;
-      order.cancellationInfo.date = new Date();
-      const newOrder = await order.save({ validateBeforeSave: true });
-      return res.status(200).send({
-        message: "Return request cancelled",
-        type: "success",
-        content: "Your return request has been successfull cancelled.",
-        order: newOrder,
-      });
-    }
+    //   order.cancellationInfo.isCancelled = true;
+    //   order.cancellationInfo.date = new Date();
+    //   const newOrder = await order.save({ validateBeforeSave: true });
+    //   return res.status(200).send({
+    //     message: "Return request cancelled",
+    //     type: "success",
+    //     content: "Your return request has been successfull cancelled.",
+    //     order: newOrder,
+    //   });
+    // }
 
     return res.status(500).send({
       message: "something went wrong",
