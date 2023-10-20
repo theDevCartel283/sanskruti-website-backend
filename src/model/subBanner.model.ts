@@ -16,6 +16,9 @@ const subBannerSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  bannerLink: {
+    type: String,
+  },
 });
 
 const subBannerModel = mongoose.model("SubBanner", subBannerSchema);

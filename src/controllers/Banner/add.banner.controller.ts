@@ -40,6 +40,7 @@ const addBanner = async (
     isPublished: req.body.isPublished,
     desktopImage: desktop_data.path || "",
     mobileImage: mobile_data.path || "",
+    bannerLink: req.body.bannerLink,
   });
 
   await newBanner.save();

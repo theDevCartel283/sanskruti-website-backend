@@ -25,6 +25,7 @@ const updateBanner = async (
           isPublished: req.body.isPublished,
           desktopImage: req.body.desktopImage,
           mobileImage: req.body.mobileImage,
+          bannerLink: req.body.bannerLink,
         },
         {
           new: true,

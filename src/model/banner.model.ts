@@ -16,6 +16,9 @@ const bannerSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  bannerLink: {
+    type: String,
+  },
 });
 
 const bannerModel = mongoose.model("Banner", bannerSchema);
