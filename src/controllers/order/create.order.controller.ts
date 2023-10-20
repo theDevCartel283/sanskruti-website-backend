@@ -284,7 +284,7 @@ const handlePlaceOrder = async (
       checkIfPending(orderId, tracking_id);
 
       return res.status(200).json({
-        link: `https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
+        link: `https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction&encRequest=${encRequest}&access_code=${access_code}`,
       });
     } else {
       const productsArray = filteredArray.map((product) => {
