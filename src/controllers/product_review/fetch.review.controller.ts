@@ -28,10 +28,8 @@ const handleReviewFetch = async (
     let filteredReviews =
       reviews.filter((review) => review.status === "Accepted") || [];
     res.status(200).send({
-      reviews: {
-        ...productRating,
-        reviews: filteredReviews,
-      },
+      reviews: filteredReviews,
+      productRating,
     });
   } catch (err) {
     logger.error("fetch review error " + err);
