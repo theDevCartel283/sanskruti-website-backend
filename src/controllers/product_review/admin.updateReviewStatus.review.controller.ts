@@ -42,7 +42,7 @@ const handleAdminUpdateReviewStatus = async (
 
     if (status === "Denied" && review.status === "Accepted") {
       productRating.ratingCounts[review.rating] -= 1;
-      productRating.totalRatings += 1;
+      productRating.totalRatings -= 1;
     }
 
     review.status = status;

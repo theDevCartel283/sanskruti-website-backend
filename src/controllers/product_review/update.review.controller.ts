@@ -36,8 +36,13 @@ const updateReview = async (
       return handleCreateReview(req, res);
     }
     if (productRating) {
-      if (productRating.ratingCounts[review.rating] - 1 >= 0)
+      if (
+        productRating.ratingCounts[review.rating] - 1 >= 0 &&
+        productRating.totalRatings - 1 >= 0
+      ) {
         productRating.ratingCounts[review.rating] -= 1;
+        productRating.totalRatings -= 1;
+      }
     }
     review.rating = rating;
     review.title = title;
