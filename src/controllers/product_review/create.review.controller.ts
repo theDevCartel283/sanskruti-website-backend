@@ -18,21 +18,6 @@ const handleCreateReview = async (
     req.body;
 
   try {
-    let productRating = await productRatingModel.findOne({ product_id });
-    if (!productRating) {
-      productRating = new productRatingModel({
-        product_id,
-        totalRatings: 0,
-        ratings: [],
-        ratingCounts: {
-          1: 0,
-          2: 0,
-          3: 0,
-          4: 0,
-          5: 0,
-        },
-      });
-    }
     const product = await ProductModel.findById(product_id);
     const userReview = new reviewModel({
       id: userUniqueIdentity.toString(),
@@ -47,11 +32,7 @@ const handleCreateReview = async (
       notify: true,
     });
 
-    productRating.ratingCounts[rating] += 1;
-    productRating.totalRatings += 1;
-
     await userReview.save();
-    await productRating.save();
 
     res.status(200).send({
       userReview,

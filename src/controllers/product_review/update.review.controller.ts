@@ -38,7 +38,6 @@ const updateReview = async (
     if (productRating) {
       if (productRating.ratingCounts[review.rating] - 1 >= 0)
         productRating.ratingCounts[review.rating] -= 1;
-      productRating.ratingCounts[rating] += 1;
     }
     review.rating = rating;
     review.title = title;

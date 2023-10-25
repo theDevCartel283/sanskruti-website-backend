@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
-import { Reviews, reviewModel } from "../../model/review.model";
+import {
+  Reviews,
+  productRatingModel,
+  reviewModel,
+} from "../../model/review.model";
 
 const handleAdminUpdateReviewStatus = async (
   req: Request<{}, {}, { status: Reviews["status"]; id: string }>,
@@ -10,10 +14,36 @@ const handleAdminUpdateReviewStatus = async (
     const { id, status } = req.body;
     const review = await reviewModel.findById(id);
 
+    let productRating = await productRatingModel.findOne({ product_id: id });
+    if (!productRating) {
+      productRating = new productRatingModel({
+        product_id: id,
+        totalRatings: 0,
+        ratings: [],
+        ratingCounts: {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0,
+        },
+      });
+    }
+
     if (!review)
       return res
         .status(404)
         .send({ message: "review not found", type: "error" });
+
+    if (status === "Accepted" && review?.status !== "Accepted") {
+      productRating.ratingCounts[review.rating] += 1;
+      productRating.totalRatings += 1;
+    }
+
+    if (status === "Denied" && review.status === "Accepted") {
+      productRating.ratingCounts[review.rating] -= 1;
+      productRating.totalRatings += 1;
+    }
 
     review.status = status;
 
