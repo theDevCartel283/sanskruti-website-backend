@@ -14,10 +14,17 @@ const handleAdminUpdateReviewStatus = async (
     const { id, status } = req.body;
     const review = await reviewModel.findById(id);
 
-    let productRating = await productRatingModel.findOne({ product_id: id });
+    if (!review)
+      return res
+        .status(404)
+        .send({ message: "review not found", type: "error" });
+
+    let productRating = await productRatingModel.findOne({
+      product_id: review?.product_id,
+    });
     if (!productRating) {
       productRating = new productRatingModel({
-        product_id: id,
+        product_id: review?.product_id,
         totalRatings: 0,
         ratings: [],
         ratingCounts: {
@@ -29,11 +36,6 @@ const handleAdminUpdateReviewStatus = async (
         },
       });
     }
-
-    if (!review)
-      return res
-        .status(404)
-        .send({ message: "review not found", type: "error" });
 
     if (status === "Accepted" && review?.status !== "Accepted") {
       productRating.ratingCounts[review.rating] += 1;
