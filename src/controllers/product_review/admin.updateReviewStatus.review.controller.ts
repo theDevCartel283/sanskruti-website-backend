@@ -48,6 +48,7 @@ const handleAdminUpdateReviewStatus = async (
     review.status = status;
 
     await review.save();
+    await productRating.save();
     return res
       .status(200)
       .send({ message: "review status modified", type: "success" });

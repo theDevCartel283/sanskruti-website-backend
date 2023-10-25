@@ -50,8 +50,8 @@ const updateReview = async (
     review.status = "Under review";
     review.notify = true;
     await review.save();
-
     await productRating.save();
+
     res.status(200).send({
       userReview: {
         id: userUniqueIdentity.toString(),
