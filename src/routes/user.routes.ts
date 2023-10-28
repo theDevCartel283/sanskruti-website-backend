@@ -77,6 +77,10 @@ router
 router.get("/categories", categoryController.getCategory);
 router.get("/categories/:id", categoryController.handleGetCategoryFromId);
 router.get("/subcategories", subCategoryController.getAllSubCategories);
+router.get(
+  "/subcategories/:id",
+  subCategoryController.handleGetSubCategoryById
+);
 
 // search
 router.get("/getallProducts", productController.getallProducts);

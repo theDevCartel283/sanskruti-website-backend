@@ -3,6 +3,7 @@ import deleteSubCategory from "./deleteSubCategory.controller";
 import updateSubCategory from "./updateSubCategory.controller";
 import getSubCategory from "./getSubCategory.controller";
 import getAllSubCategories from "./getAllSubCategories.controller";
+import handleGetSubCategoryById from "./getSubCategoryById";
 
 export {
   addSubCategory,
@@ -10,4 +11,5 @@ export {
   deleteSubCategory,
   updateSubCategory,
   getAllSubCategories,
+  handleGetSubCategoryById,
 };

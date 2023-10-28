@@ -1,26 +1,26 @@
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
-import categoryModel from "../../model/category.model";
+import subCategoryModel from "../../model/subCategory.model";
 
-const handleGetCategoryFromId = async (
+const handleGetSubCategoryById = async (
   req: Request<{ id: string }>,
   res: Response
 ) => {
   try {
     const { id } = req.params;
-    const category = await categoryModel.findById(id);
+    const subCategory = await subCategoryModel.findById(id);
 
-    if (!category) {
+    if (!subCategory) {
       return res
         .status(404)
         .send({ message: "category not found", type: "error" });
     }
 
     return res.status(200).send({
-      category,
+      subCategory,
     });
   } catch (err) {
-    logger.error("handle get catogory from id error" + err);
+    logger.error("handle get sub category error" + err);
     res.status(500).send({
       message: "something went wrong",
       type: "error",
@@ -28,4 +28,4 @@ const handleGetCategoryFromId = async (
   }
 };
 
-export default handleGetCategoryFromId;
+export default handleGetSubCategoryById;
