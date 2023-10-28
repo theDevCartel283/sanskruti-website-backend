@@ -4,6 +4,7 @@ import getCategory from "./getcategory.controller";
 import updateCategory from "./updatecategory.controller";
 import addCategoryImage from "./addCategoryImage.controller";
 import deleteCategoryImage from "./deleteCategoryImage.controller";
+import handleGetCategoryFromId from "./getCategoryById.controller";
 
 export {
   addCategory,
@@ -12,4 +13,5 @@ export {
   updateCategory,
   addCategoryImage,
   deleteCategoryImage,
+  handleGetCategoryFromId,
 };
