@@ -99,6 +99,7 @@ router.get(
 );
 router.get("/product", productController.getproductDetails);
 router.get("/getVarients", varientController.getallVarients);
+router.get("/getVarients/:id", varientController.handleGetVarientFromId);
 
 router.get("/getAllBanners", bannerController.getallBanners);
 router.get("/getAllSubBanners", subBannerController.getallBanners);
