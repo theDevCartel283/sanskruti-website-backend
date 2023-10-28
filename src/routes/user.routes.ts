@@ -102,7 +102,9 @@ router.get("/getVarients", varientController.getallVarients);
 router.get("/getVarients/:id", varientController.handleGetVarientFromId);
 
 router.get("/getAllBanners", bannerController.getallBanners);
+router.get("/getAllBanners/:id", bannerController.handleGetBannerById);
 router.get("/getAllSubBanners", subBannerController.getallBanners);
+router.get("/getAllSubBanners/:id", subBannerController.handleGetSubBannerById);
 
 router.get("/reviews/:id", reviewController.handleReviewFetch);
 
