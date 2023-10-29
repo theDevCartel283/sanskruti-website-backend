@@ -8,6 +8,7 @@ import addProductImages from "./add.productImage.controller";
 import deleteProductImages from "./delete.productImage.controller";
 import getallProductsFromFilters from "./getFilters.product.controller";
 import getallProductsFromSearchFilters from "./getSearchFilters";
+import handleGetProductFromId from "./getProductFromId.controller";
 
 export {
   addVariations,
@@ -20,4 +21,5 @@ export {
   addProductImages,
   deleteProductImages,
   getallProductsFromSearchFilters,
+  handleGetProductFromId,
 };

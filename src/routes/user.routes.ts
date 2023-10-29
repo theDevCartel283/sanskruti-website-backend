@@ -98,6 +98,7 @@ router.get(
   productController.getallProductsFromSearchFilters
 );
 router.get("/product", productController.getproductDetails);
+router.get("/product/:id", productController.handleGetProductFromId);
 router.get("/getVarients", varientController.getallVarients);
 router.get("/getVarients/:id", varientController.handleGetVarientFromId);
 
