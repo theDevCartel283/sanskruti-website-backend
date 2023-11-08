@@ -32,8 +32,6 @@ const addProduct = async (
     );
 
     const urls = response2.data.urls;
-    console.log(typeof urls);
-    console.log(urls.length);
 
     const newProduct = new ProductModel({
       name: req.body.name,
@@ -57,7 +55,7 @@ const addProduct = async (
     const product = await newProduct.save();
     res.status(201).json({
       type: "success",
-      message: "product added ",
+      message: "Product successfully added!",
     });
   } catch (error) {
     console.log(error);
