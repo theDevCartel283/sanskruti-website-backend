@@ -22,9 +22,9 @@ export const handleSetGoogleAnalytics = async (
     await config.save();
     return res
       .status(200)
-      .send({ message: "Google analytics set successfully", type: "succes" });
+      .send({ message: "Google Tag Manager set successfully", type: "succes" });
   } catch (err) {
-    logger.error("set google analytics error " + err);
+    logger.error("set google tag manager error " + err);
     return res
       .status(500)
       .send({ message: "something went wrong", type: "error" });
@@ -42,7 +42,7 @@ export const handleGetGoogleAnalytics = async (req: Request, res: Response) => {
 
     return res.status(200).send({ code: googleAnalytics.analytics?.google });
   } catch (err) {
-    logger.error("get Google analytics error " + err);
+    logger.error("get Google Tag Manager error " + err);
     return res.status(500).send({
       message: "something went wrong",
       type: "info",
@@ -58,7 +58,7 @@ export const handleDeleteGoogleAnalytics = async (
     const googleAnalytics = await ConfigModel.findOne({ type: "production" });
     if (!googleAnalytics)
       return res.status(200).send({
-        message: "Successfully deleted google analytics",
+        message: "Successfully deleted google tag manager",
         type: "success",
       });
 
@@ -67,11 +67,11 @@ export const handleDeleteGoogleAnalytics = async (
     };
     await googleAnalytics.save();
     return res.status(200).send({
-      message: "Successfully deleted google analytics",
+      message: "Successfully deleted google tag manager",
       type: "success",
     });
   } catch (err) {
-    logger.error("delete google analytics error");
+    logger.error("delete google tag manager error");
     return res.status(500).send({
       message: "Something went wrong",
       type: "error",
