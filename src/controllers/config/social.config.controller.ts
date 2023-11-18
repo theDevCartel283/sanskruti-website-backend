@@ -1,3 +1,4 @@
+import { social } from "./../../schema/config.schema";
 import { Request, Response } from "express";
 import logger from "../../utils/logger.utils";
 import ConfigModel from "../../model/config.model";
@@ -7,7 +8,6 @@ import axios from "axios";
 
 export const handleGetSocialConfig = async (req: Request, res: Response) => {
   const { id } = req.query;
-  console.log(req.query);
   try {
     let config = await ConfigModel.findOne({ type: "production" });
 
@@ -26,6 +26,39 @@ export const handleGetSocialConfig = async (req: Request, res: Response) => {
         data,
       });
     }
+  } catch (err) {
+    logger.error("social config error " + err);
+    res.status(500).send({
+      message: "something went wrong",
+      type: "info",
+    });
+  }
+};
+
+export const handleGetSocialById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const socials = await ConfigModel.findOne({ type: "production" });
+
+    if (!socials) {
+      return res.status(500).json({
+        type: "error",
+        message: "config doesn't exist",
+      });
+    }
+    const data = socials.social?.find((i) => i.id === id);
+
+    if (!data) {
+      return res.status(500).json({
+        type: "error",
+        message: "social media doesn't exist",
+      });
+    }
+    res.status(200).json({
+      type: "success",
+      message: "",
+      data,
+    });
   } catch (err) {
     logger.error("social config error " + err);
     res.status(500).send({
@@ -105,7 +138,6 @@ export const handleUpdateSocialConfig = async (
   res: Response
 ) => {
   try {
-    console.log(req.body);
     const { media, Image, imageName } = req.body;
     const { id } = req.body;
     const image = Image;
@@ -155,7 +187,7 @@ export const handleUpdateSocialConfig = async (
         config.save();
         res.status(200).json({
           type: "success",
-          message: "category updated successfully",
+          message: "Social Media updated successfully",
         });
       }
     }
@@ -174,7 +206,6 @@ export const handleDeleteSocialConfig = async (
 ) => {
   try {
     const { id } = req.query;
-    console.log(req.query);
     let config = await ConfigModel.findOne({ type: "production" });
 
     if (!config) {
@@ -217,7 +248,6 @@ export const handleDeleteSocialConfig = async (
 
 export const deleteSocialImage = async (req: Request, res: Response) => {
   const { id } = req.query;
-  console.log(req.query);
   let config = await ConfigModel.findOne({ type: "production" });
   const url_params = req.query;
   if (!config) {
@@ -226,21 +256,33 @@ export const deleteSocialImage = async (req: Request, res: Response) => {
       message: "config doesn't exist",
     });
   } else {
-    config.social?.forEach(async (i) => {
-      if (i.id === id) {
-        const response = await axios.delete(
-          `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${url_params.name}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        i.link = "";
-        await config?.save();
+    const social = config.social?.find((i) => i.id === id);
+    if (!social) {
+      return res.status(500).json({
+        type: "error",
+        message: "something went wrong",
+      });
+    }
+
+    const response = await axios.delete(
+      `${process.env.CDN_ENDPOINT}/cdn/v1/images/deleteImage?name=${url_params.name}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
+    if (response.status !== 200) {
+      return res.status(500).json({
+        type: "error",
+        message: "something went wrong",
+      });
+    }
+
+    social.link = "";
+    await config.save();
     res.status(200).json({
+      message: "Image deleted successfully",
       type: "success",
     });
   }

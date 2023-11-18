@@ -54,6 +54,8 @@ router
     configController.handleDeleteSocialConfig
   );
 
+router.get("/config/social/:id", configController.handleGetSocialById);
+
 router
   .route("/config/social/deleteImage")
   .delete(configController.deleteSocialImage);

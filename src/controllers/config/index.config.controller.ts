@@ -5,6 +5,7 @@ import {
   handleDeleteSocialConfig,
   GetAllSocialConfig,
   deleteSocialImage,
+  handleGetSocialById,
 } from "./social.config.controller";
 
 import {
@@ -55,6 +56,7 @@ export {
   handleDeleteSocialConfig,
   GetAllSocialConfig,
   deleteSocialImage,
+  handleGetSocialById,
 
   // PayZApp
   handleGetPayZApp,
