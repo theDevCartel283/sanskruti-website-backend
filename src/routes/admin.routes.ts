@@ -77,7 +77,7 @@ router.post(
 );
 router.put(
   "/updateSubCategory",
-  validateResources(blankSchema, categoryDetails, blankSchema),
+  validateResources(blankSchema, subCategoryDetails, blankSchema),
   subCategoryController.updateSubCategory
 );
 router.get("/getSubCategory", subCategoryController.getSubCategory);
