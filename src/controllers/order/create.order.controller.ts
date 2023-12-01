@@ -22,6 +22,7 @@ import axios from "axios";
 import { getValidDate } from "../../utils/getValidDate";
 import ProductModel from "../../model/product.model";
 import { removeProductQuantity } from "./requestCancel.order.contoller";
+import ConfigModel from "../../model/config.model";
 
 const handlePlaceOrder = async (
   req: Request<{}, {}, TokenPayload & ReqOrderDetails>,
@@ -37,6 +38,20 @@ const handlePlaceOrder = async (
   const orderId = uuid();
 
   try {
+    // Check payment method validity
+    let config = await ConfigModel.findOne({ type: "production" });
+    const paymentStatus =
+      paymentMethod === "COD" ? "cashondelivery" : "payZapp";
+    if (!config?.paymentStatus[paymentStatus]) {
+      return res.status(400).send({
+        message: "Invalid Payment",
+        type: "error",
+        content: `payment method "${
+          paymentMethod === "COD" ? "Cash on Delivery" : "PayZapp"
+        }" is currently invalid. Please refresh the page`,
+      });
+    }
+
     const user = await UserModel.findById(userUniqueIdentity);
     if (!user || !user.email)
       return res
