@@ -17,6 +17,7 @@ import { blankSchema } from "../schema/blank.schema";
 import { ProductObject } from "../schema/product.schema";
 import { varientDetails } from "../schema/varients.schema";
 import * as imageController from "../controllers/image/index.image.controller";
+import * as contactController from "../controllers/contact/index.contact.controller";
 import { varientArray } from "../schema/varients.schema";
 import {
   asyncArrayMiddleware,
@@ -188,5 +189,9 @@ router.route("/reviews/notify").post(reviewController.handleAdminNotifyStatus);
 router
   .route("/reviews/status")
   .post(reviewController.handleAdminUpdateReviewStatus);
+
+// contacts
+router.get("/getAllContacts", contactController.handleGetAllContacts);
+router.delete("/deleteContact/:id", contactController.handleDeleteContact);
 
 export default router;

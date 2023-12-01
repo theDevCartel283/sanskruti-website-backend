@@ -10,6 +10,7 @@ import * as reviewController from "../controllers/product_review/index.review.co
 import validateResources from "../middleware/validateResources";
 import * as configController from "../controllers/config/index.config.controller";
 import * as markdownController from "../controllers/markdowns/index.markdown.controller";
+import * as contactController from "../controllers/contact/index.contact.controller";
 import { blankSchema } from "../schema/blank.schema";
 import {
   userEmailPwd,
@@ -22,6 +23,7 @@ import {
 } from "../schema/user.schema";
 import * as categoryController from "../controllers/category/index.category.controller";
 import { filters } from "../schema/product.schema";
+import { contact } from "../schema/contact.schema";
 
 const router = express.Router();
 
@@ -114,5 +116,12 @@ router.get("/getSocials", configController.GetAllSocialConfig);
 
 router.get("/analytics/google", configController.handleGetGoogleAnalytics);
 router.get("/auth/status", configController.handleGetAuthStatus);
+
+// contact us
+router.post(
+  "/contactus",
+  validateResources(blankSchema, contact, blankSchema),
+  contactController.handleAddContact
+);
 
 export default router;
