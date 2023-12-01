@@ -28,6 +28,7 @@ export interface ProductAttributes {
   is_featured: boolean;
   is_new_arrival: boolean;
   is_best_seller: boolean;
+  stylesAndTips?: string;
   meta_tittle: string;
   meta_description: string;
   meta_keyword: string;
@@ -91,6 +92,10 @@ const productSchema: Schema<ProductDocument> =
       is_best_seller: {
         type: Boolean,
         required: true,
+      },
+      stylesAndTips: {
+        type: String,
+        default: null,
       },
       meta_tittle: {
         type: String,

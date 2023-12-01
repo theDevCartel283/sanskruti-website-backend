@@ -27,6 +27,7 @@ export const ProductObject = z.object({
   is_best_seller: z.boolean({
     required_error: "bestseller product ? (true/false) ",
   }),
+  stylesAndTips: z.string(),
   meta_tittle: z.string({ required_error: "meta tittle is not defined" }),
   meta_description: z.string({
     required_error: "meta description is not defined",

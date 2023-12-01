@@ -45,6 +45,7 @@ const addProduct = async (
       is_featured: req.body.is_featured,
       is_new_arrival: req.body.is_new_arrival,
       is_best_seller: req.body.is_best_seller,
+      stylesAndTips: req.body.stylesAndTips,
       meta_tittle: req.body.meta_tittle,
       meta_description: req.body.meta_description,
       meta_keyword: req.body.meta_keyword,
